@@ -1,0 +1,13 @@
+# Ignore venv
+venv/
+
+# Ignore arquivos de banco de dados SQLite (se você usar SQLite)
+*.sqlite3
+
+# Ignore arquivos de migração do Django
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore arquivos do sistema
+.DS_Store

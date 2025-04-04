@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Página do Gestor</title>
+</head>
+<body>
+    <h1>Bem-vindo à Página do Gestor, {{ usuario.first_name }} {{ usuario.last_name }}</h1>
+    <p>Esta é a área exclusiva para usuários do tipo Gestor.</p>
+
+    <h2>Registrar Nova Requisição de Pessoal</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form_rp.as_p }}
+        <button type="submit" name="submit_rp">Registrar Requisição de Pessoal</button>
+    </form>
+
+    <hr>
+
+    <h2>Registrar Nova Movimentação de Pessoal</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form_movimentacao.as_p }}
+        <button type="submit" name="submit_movimentacao">Registrar Movimentação de Pessoal</button>
+    </form>
+
+    <hr>
+
+    <h2>Registrar Nova Requisição de Desligamento</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form_rd.as_p }}
+        <button type="submit" name="submit_rd">Registrar Requisição de Desligamento </button>
+    </form>
+
+    <a href="{% url 'logout' %}">Sair</a>
+</body>
+</html>
