@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Página do Cômplice</title>
+</head>
+<body>
+    <h2>Movimentações Pendentes para Aprovação do Complice</h2>
+    <table border="1">
+        <tr>
+            <th>Gestor Atual</th>
+            <th>Colaborador a ser movimentado</th>
+            <th>Cargo Proposto</th>
+            <th>Data de Solicitação</th>
+            <th>Status Complice</th>
+            <th>Data Aprovação Complice</th>
+            <th>Ação</th>
+            <th>Tempo para Aprovação (dias)</th>
+        </tr>
+        {% for registro in movimentacao %}
+        <tr>
+            <td>{{ registro.gestor_atual }}</td>
+            <td>{{ registro.colaborador_movimentado }}</td>
+            <td>{{ registro.cargo_proposto }}</td>
+            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+            <td>{{ registro.get_status_complice_display }}</td>
+            <td>
+                {% if registro.status_complice == "aprovado" %}
+                    {{ registro.data_autorizacao_complice|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                    <select name="status_complice">
+                        <option value="pendente" {% if registro.status_complice == "pendente" %}selected{% endif %}>Pendente</option>
+                        <option value="aprovado" {% if registro.status_complice == "aprovado" %}selected{% endif %}>Aprovado</option>
+                    </select>
+                    <button type="submit">Salvar</button>
+                </form>
+            </td>
+            <td>
+                {% if registro.dias_para_autorizacao_complice is not None %}
+                    {% if registro.dias_para_autorizacao_complice == 0 %}
+                        Aprovado no mesmo dia
+                    {% else %}
+                        {{ registro.dias_para_autorizacao_complice }} dias
+                    {% endif %}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+  <a href="{% url 'logout' %}">Sair</a>
+</body>
+</html>

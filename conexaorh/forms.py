@@ -1,6 +1,9 @@
 from django import forms
 from django.forms import TimeInput, DateInput
+from django.contrib.auth import get_user_model
 from .models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
+
+User = get_user_model()
 
 SIMNAO_CHOICES = [
         ('SIM', 'SIM'),
@@ -130,11 +133,108 @@ class RHForm(forms.ModelForm):
         model = RequisicaoPessoal
         fields = ["status_rh"]
 
-
-class MovimentacaoPessoalForm(forms.ModelForm):
+class CompliceApprovalForm(forms.ModelForm):
     class Meta:
         model = MovimentacaoPessoal
-        fields = ["nome_gestor", "cargo_gestor", "descricao"]
+        fields = ['status_complice']
+
+class GestorPropostoApprovalForm(forms.ModelForm):
+    class Meta:
+        model = MovimentacaoPessoal
+        fields = ['status_gestor_proposto']
+
+class MovimentacaoPessoalForm(forms.ModelForm):
+
+    TIPOMOVIMENTACAO_CHOICES = [
+        ('PROMOÇÃO HORIZONTAL', 'PROMOÇÃO HORIZONTAL'),
+        ('TRANSFERÊNCIA DE ÁREA', 'TRANSFERÊNCIA DE ÁREA'),
+        ('TRANSFERÊNCIA DE CONTRATO', 'TRANSFERÊNCIA DE CONTRATO'),
+        ('PROMOÇÃO VERTICAL', 'PROMOÇÃO VERTICAL'),
+        ('TRANSFERÊNCIA DE LOCALIDADE', 'TRANSFERÊNCIA DE LOCALIDADE'),
+        ('ENQUADRAMENTO', 'ENQUADRAMENTO')
+    ]
+
+    TIPOADICIONAL_CHOICES = [
+        ('PERICULOSIDADE', 'PERICULOSIDADE'),
+        ('INSALUBRIDADE', 'INSALUBRIDADE'),
+        ('AJUDA DE CUSTO', 'AJUDA DE CUSTO'),
+        ('ADICIONAL', 'ADICIONAL')
+    ]
+
+    JUSTIFICATIVAMOVIMENTACAO_CHOICES = [
+        ('REESTRUTURAÇÃO DO DEPARTAMENTO (EMPRESA/UNIDADE)', 'REESTRUTURAÇÃO DO DEPARTAMENTO (EMPRESA/UNIDADE)'),
+        ('OPORTUNIDADE DE ASCENÇÃO', 'OPORTUNIDADE DE ASCENÇÃO'),
+        ('INADEQUAÇÃO À ATIVIDADE DO DEPARTAMENTO', 'INADEQUAÇÃO À ATIVIDADE DO DEPARTAMENTO')
+    ]
+
+    tipo_movimentacao = forms.MultipleChoiceField(
+        choices= TIPOMOVIMENTACAO_CHOICES,
+        widget=forms.SelectMultiple(attrs={'size': 6}),
+        required=False,
+        label='Tipo de Movimentação'
+    )
+    
+    tipo_adicional = forms.MultipleChoiceField(
+        choices= TIPOADICIONAL_CHOICES,
+        widget=forms.SelectMultiple(attrs={'size': 4}),
+        required=False,
+        label='Tipo de Adicional'
+    )
+
+    gestor_proposto = forms.ChoiceField(
+        choices=[],                    
+        label='Gestor Proposto',
+        required=False,                
+    )
+
+    jutificativa_movimentacao = forms.MultipleChoiceField(
+        choices= JUSTIFICATIVAMOVIMENTACAO_CHOICES,
+        widget=forms.SelectMultiple(attrs={'size': 3}),
+        required=False,
+        label='Justificativa para Movimentação'
+    )
+    substituicao = forms.MultipleChoiceField(
+        choices = SIMNAO_CHOICES,
+        widget= forms.SelectMultiple(attrs={'size': 2}),
+        required = False,
+        label = 'SERÁ NECESSÁRIO SUBSTITUIÇÃO?'
+    )
+
+    class Meta:
+        model = MovimentacaoPessoal
+        exclude = [
+            'data_solicitacao',
+            'status_diretor',
+            'data_autorizacao_diretor',
+            'status_presidente',
+            'data_autorizacao_presidente',
+            'status_rh',
+            'status_complice',
+            'status_gestor_proposto',
+            'data_autorizacao_rh',
+            'data_autorizacao_complice',
+            'data_autorizacao_gestor_proposto',
+            'dias_para_autorizacao_complice',
+            'dias_para_autorizacao_gestor_proposto',
+            'dias_para_autorizacao_diretor',
+            'dias_para_autorizacao_presidente',
+            'dias_para_autorizacao_rh',
+            
+        ]
+
+        widgets = {
+            'data_admissao': DateInput(attrs={'type': 'date'}),
+            'data_movimentacao': DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        gestores = User.objects.filter(user_type='gestor')
+        # monta lista de tuplas (valor, label)
+        choices = [('', '— selecione —')] + [
+            (g.username, g.get_full_name() or g.username) for g in gestores
+        ]
+        self.fields['gestor_proposto'].choices = choices
 
 
 class RequisicaoDesligamentoForm(forms.ModelForm):
@@ -204,5 +304,9 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
             'dias_para_autorizacao_presidente',
             'dias_para_autorizacao_rh',
         ]
+        widgets = {
+            'data_desligamento': DateInput(attrs={'type': 'date'}),
+            'data_admissao': DateInput(attrs={'type': 'date'}),
+        }
         
 

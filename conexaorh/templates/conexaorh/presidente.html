@@ -87,10 +87,10 @@
     <h2>Movimentação de Pessoal para Aprovação</h2>
     <table border="1">
         <tr>
-            <th>Nome Gestor</th>
-            <th>Cargo Gestor</th>
-            <th>Descrição</th>
-            <th>Data de Criação</th>
+            <th>Gestor Atual</th>
+            <th>Colaborador a ser movimentado</th>
+            <th>Cargo Proposto</th>
+            <th>Data de Solicitação</th>
             <th>Status Diretor</th>
             <th>Data Aprovação Diretor</th>
             <th>Status Presidente</th>
@@ -103,9 +103,9 @@
         <!-- Registros do OutroRegistro -->
         {% for registro in movimentacao %}
         <tr>
-            <td>{{ registro.nome_gestor }}</td>
-            <td>{{ registro.cargo_gestor }}</td>
-            <td>{{ registro.descricao }}</td>
+            <td>{{ registro.gestor_atual }}</td>
+            <td>{{ registro.colaborador_movimentado }}</td>
+            <td>{{ registro.cargo_proposto }}</td>
             <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
             <td>{{ registro.get_status_diretor_display }}</td>
             <td>
@@ -163,10 +163,10 @@
     <h2>Requisição de Desligamento para Aprovação</h2>
     <table border="1">
         <tr>
-            <th>Título</th>
-            <th>Cargo</th>
-            <th>Descrição</th>
-            <th>Data de Criação</th>
+            <th>Requisitante</th>
+            <th>Colaborador a ser Desligado</th>
+            <th>Função</th>
+            <th>Data de Solicitação</th>
             <th>Status Diretor</th>
             <th>Data Aprovação Diretor</th>
             <th>Status Presidente</th>
@@ -178,9 +178,9 @@
         </tr>
         {% for registro in rd %}
         <tr>
-            <td>{{ registro.titulo }}</td>
-            <td>{{ registro.cargo }}</td>
-            <td>{{ registro.descricao }}</td>
+            <td>{{ registro.requisitante }}</td>
+            <td>{{ registro.colaborador_desligado }}</td>
+            <td>{{ registro.funcao }}</td>
             <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
             <td>{{ registro.get_status_diretor_display }}</td>
             <td>

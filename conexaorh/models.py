@@ -11,6 +11,7 @@ class CustomUser(AbstractUser):
         ('diretor', 'Diretor'),
         ('presidente', 'Presidente'),
         ('rh', 'RH'),
+        ('complice','Complice')
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPES)
 
@@ -89,10 +90,44 @@ class RequisicaoPessoal(models.Model):
         return f"{self.nome_colaborador} - Diretor: {self.get_status_diretor_display()} - Presidente: {self.get_status_presidente_display()} - RH: {self.get_status_rh_display()}"
     
 class MovimentacaoPessoal(models.Model):
-    nome_gestor = models.CharField(max_length=100) 
-    cargo_gestor = models.CharField(max_length=100)  
-    descricao = models.TextField()
     data_solicitacao = models.DateTimeField(auto_now_add=True)
+    numero = models.CharField(max_length=100)
+    unidade = models.CharField(max_length=100, default="MANAUS")
+    tipo_movimentacao = models.CharField(max_length=100)
+    outro_tipo = models.CharField(max_length=100)
+    colaborador_movimentado = models.CharField(max_length=100)
+    matricula = models.CharField(max_length=100)
+    data_admissao = models.DateField()
+    outro_info = models.CharField(max_length=100)
+    localidade_atual = models.CharField(max_length=100)
+    cargo_atual = models.CharField(max_length=100)
+    departamento_atual = models.CharField(max_length=100)
+    salario_atual = models.FloatField()
+    gestor_atual = models.CharField(max_length=100)
+    centro_custo_atual = models.CharField(max_length=100)
+    localidade_proposta = models.CharField(max_length=100)
+    cargo_proposto = models.CharField(max_length=100)
+    departamento_proposto = models.CharField(max_length=100)
+    salario_proposto = models.FloatField()
+    gestor_proposto = models.CharField(max_length=100)
+    centro_custo_proposto = models.CharField(max_length=100)
+    data_movimentacao = models.DateField()
+    tipo_adicional = models.CharField(max_length=100)
+    tipo_ajuda_custo = models.CharField(max_length=100)
+    valor_ajuda = models.FloatField()
+    periodo =  models.CharField(max_length=100)
+    jutificativa_movimentacao = models.CharField(max_length=100)
+    outro_justificativa = models.CharField(max_length=100)
+    substituicao = models.CharField(max_length=100)
+    comentarios = models.TextField()
+
+    status_complice = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    data_autorizacao_complice = models.DateTimeField(null=True, blank=True)
+    dias_para_autorizacao_complice = models.IntegerField(null=True, blank=True)
+
+    status_gestor_proposto = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    data_autorizacao_gestor_proposto = models.DateTimeField(null=True, blank=True)
+    dias_para_autorizacao_gestor_proposto = models.IntegerField(null=True, blank=True)
 
     status_diretor = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
@@ -128,7 +163,6 @@ class RequisicaoDesligamento(models.Model):
     justificativa_aviso = models.TextField()
     substituicao = models.CharField(max_length=100)
 
-    descricao = models.TextField()
 
     status_diretor = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)

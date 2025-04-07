@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import RequisicaoPessoalForm, DiretorForm, PresidenteForm, RHForm, MovimentacaoPessoalForm, RequisicaoDesligamentoForm
+from .forms import RequisicaoPessoalForm, DiretorForm, PresidenteForm, RHForm, MovimentacaoPessoalForm, RequisicaoDesligamentoForm, GestorPropostoApprovalForm, CompliceApprovalForm
 from .models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 
@@ -25,6 +25,8 @@ def login_view(request):
                 return redirect('presidente_page')
             elif user.user_type == 'rh':
                 return redirect('rh_page')
+            elif user.user_type == 'complice':
+                return redirect('complice_page')
             else:
                 return redirect('home')
     else:
@@ -45,6 +47,13 @@ def gestor_page(request):
     form_movimentacao = MovimentacaoPessoalForm()
     form_rd = RequisicaoDesligamentoForm()
 
+   
+    movimentacao = MovimentacaoPessoal.objects.filter(
+        status_complice='aprovado',
+        gestor_proposto=request.user.username
+    )
+    aprovar_form = GestorPropostoApprovalForm()
+
     if request.method == "POST":
         if "submit_rp" in request.POST:
             form_rp = RequisicaoPessoalForm(request.POST)
@@ -60,6 +69,21 @@ def gestor_page(request):
                 movimentacao = form_movimentacao.save(commit=False)
                 movimentacao.save()
                 return redirect("gestor_page")
+        
+        if "submit_aprovacao_mov" in request.POST:
+            registro_id = request.POST.get("registro_id")
+            mov = get_object_or_404(MovimentacaoPessoal, id=registro_id)
+            form = GestorPropostoApprovalForm(request.POST, instance=mov)
+            if form.is_valid():
+                novo_status = form.cleaned_data['status_gestor_proposto']
+                if novo_status == 'aprovado' and mov.data_autorizacao_gestor_proposto is None:
+                    mov.data_autorizacao_gestor_proposto = now()
+                    mov.dias_para_autorizacao_gestor_proposto = (
+                        now().date() - mov.data_solicitacao.date()
+                    ).days
+                mov.status_gestor_proposto = novo_status
+                mov.save()
+            return redirect("gestor_page")
             
         elif "submit_rd" in request.POST:
             form_rd = RequisicaoDesligamentoForm(request.POST)
@@ -72,7 +96,36 @@ def gestor_page(request):
         "form_rp": form_rp,
         "form_movimentacao": form_movimentacao,
         "form_rd": form_rd,
+        "movimentacao": movimentacao,
+        "aprovar_form": aprovar_form,
          "usuario": request.user,
+    })
+
+@login_required
+def complice_page(request):
+    if request.user.user_type != 'complice':
+        return HttpResponseForbidden("Acesso negado!")
+
+    movimentacao = MovimentacaoPessoal.objects.all()
+
+    if request.method == 'POST':
+        registro_id = request.POST.get('registro_id')
+        mov = get_object_or_404(MovimentacaoPessoal, id=registro_id)
+        form = CompliceApprovalForm(request.POST, instance=mov)
+        if form.is_valid():
+            novo_status = form.cleaned_data['status_complice']
+            if novo_status == 'aprovado' and mov.data_autorizacao_complice is None:
+                mov.data_autorizacao_complice = now()
+                mov.dias_para_autorizacao_complice = (
+                    now().date() - mov.data_solicitacao.date()
+                ).days
+            mov.status_complice = novo_status
+            mov.save()
+        return redirect('complice_page')
+
+    return render(request, 'conexaorh/complice.html', {
+        'movimentacao': movimentacao,
+        'usuario': request.user,
     })
 
 
