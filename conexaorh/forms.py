@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import TimeInput, DateInput
 from django.contrib.auth import get_user_model
+from django.db import models
 from .models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 
 User = get_user_model()
@@ -77,6 +78,7 @@ class RequisicaoPessoalForm(forms.ModelForm):
             'dias_para_autorizacao_diretor',
             'dias_para_autorizacao_presidente',
             'dias_para_autorizacao_rh',
+            'n_rp',
         ]
         widgets = {
             'horario_trabalho_inicio': TimeInput(attrs={'type': 'time'}),
@@ -116,6 +118,20 @@ class RequisicaoPessoalForm(forms.ModelForm):
 
     def clean_cnh(self):
         return ','.join(self.cleaned_data['cnh'])
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # Converte todos os campos CharField e TextField para maiúsculas
+        for field in instance._meta.get_fields():
+            if isinstance(field, (models.CharField, models.TextField)):
+                value = getattr(instance, field.name)
+                if value:
+                    setattr(instance, field.name, value.upper())
+
+        if commit:
+            instance.save()
+        return instance
 
 
 class DiretorForm(forms.ModelForm):
@@ -204,6 +220,7 @@ class MovimentacaoPessoalForm(forms.ModelForm):
         model = MovimentacaoPessoal
         exclude = [
             'data_solicitacao',
+            'n_rp',
             'status_diretor',
             'data_autorizacao_diretor',
             'status_presidente',
@@ -235,6 +252,23 @@ class MovimentacaoPessoalForm(forms.ModelForm):
             (g.username, g.get_full_name() or g.username) for g in gestores
         ]
         self.fields['gestor_proposto'].choices = choices
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # Lista de campos que NÃO devem ser convertidos para maiúsculas
+        campos_excecao = ['gestor_proposto']
+
+        # Converte todos os campos CharField e TextField para maiúsculas, exceto os de exceção
+        for field in instance._meta.get_fields():
+            if isinstance(field, (models.CharField, models.TextField)) and field.name not in campos_excecao:
+                value = getattr(instance, field.name)
+                if value:
+                    setattr(instance, field.name, value.upper())
+
+        if commit:
+            instance.save()
+        return instance
 
 
 class RequisicaoDesligamentoForm(forms.ModelForm):
@@ -308,5 +342,18 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
             'data_desligamento': DateInput(attrs={'type': 'date'}),
             'data_admissao': DateInput(attrs={'type': 'date'}),
         }
-        
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # Converte todos os campos CharField e TextField para maiúsculas
+        for field in instance._meta.get_fields():
+            if isinstance(field, (models.CharField, models.TextField)):
+                value = getattr(instance, field.name)
+                if value:
+                    setattr(instance, field.name, value.upper())
+
+        if commit:
+            instance.save()
+        return instance
 

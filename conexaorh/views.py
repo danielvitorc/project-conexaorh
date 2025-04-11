@@ -135,7 +135,7 @@ def diretor_page(request):
         return HttpResponseForbidden("Acesso negado! Apenas diretores podem acessar esta página.")
 
     rp = RequisicaoPessoal.objects.all()
-    movimentacao = MovimentacaoPessoal.objects.all()
+    movimentacao = MovimentacaoPessoal.objects.filter(status_gestor_proposto="aprovado")
     rd = RequisicaoDesligamento.objects.all()
 
     if request.method == "POST":

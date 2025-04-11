@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.contrib.auth import get_user_model
-
+from django.db.models import Max
 
 class CustomUser(AbstractUser):
     USER_TYPES = (
@@ -56,7 +56,16 @@ class RequisicaoPessoal(models.Model):
     habilidades_comportamentais = models.TextField(default="ADAPTAÇÃO E FLEXIBILIDADE COMUNICAÇÃO ATENÇÃO CONCENTRADA ÉTICA")
     principais_atribuicoes = models.TextField()
     candidato_aprovado = models.CharField(max_length=100)
-    n_rp = models.CharField(max_length=100)
+    n_rp = models.PositiveIntegerField(unique=True, editable=False, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.n_rp:
+            ultimo = RequisicaoPessoal.objects.aggregate(maior=models.Max('n_rp'))['maior']
+            if ultimo is None:
+                self.n_rp = 1
+            else:
+                self.n_rp = ultimo + 1
+        super().save(*args, **kwargs)
 
     # Aprovação do diretor
     status_diretor = models.CharField(
@@ -141,8 +150,7 @@ class MovimentacaoPessoal(models.Model):
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 
-    def __str__(self):
-        return f"Registro por {self.nome_gestor} ({self.cargo_gestor}) - {self.data_criacao.strftime('%d/%m/%Y')}"
+    
     
 class RequisicaoDesligamento(models.Model):
     data_solicitacao = models.DateTimeField(auto_now_add=True)
