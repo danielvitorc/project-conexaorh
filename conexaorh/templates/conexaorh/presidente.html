@@ -16,13 +16,12 @@
             <th>Data de Solicitação</th>
             <th>Cargo</th>
             <th>Base</th>
-            <th>Status Diretor</th>
+            <th>Assinatura Diretor</th>
             <th>Data Autorização Diretor</th>
-            <th>Status Presidente</th>
+            <th>Assinatura Presidente</th>
             <th>Data Autorização Presidente</th>
-            <th>Status RH</th>
+            <th>Assinatura RH</th>
             <th>Data Autorização RH</th>
-            <th>Ação</th>
             <th>Tempo para Autorização (dias)</th>
         </tr>
     
@@ -33,41 +32,48 @@
             <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
             <td>{{ registro.cargo }}</td>
             <td>{{ registro.base }}</td>
-            <td>{{ registro.get_status_diretor_display }}</td>
+            <td>    
+                {% if registro.assinatura_diretor %}
+                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
-                {% if registro.status_diretor == "aprovado" %}
+                {% if registro.assinatura_diretor %}
                     {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.get_status_presidente_display }}</td>
             <td>
-                {% if registro.status_presidente == "aprovado" %}
+                {% if registro.assinatura_presidente %}
+                    <p>Aprovado pelo Presidente:</p>
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                        <input type="hidden" name="tipo_registro" value="rp">
+                        <button type="submit">Aprovar com Assinatura</button>
+                    </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_presidente %}
                     {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.get_status_rh_display }}</td>
+            <td>{{ registro.assinatura_rh }}</td>
             <td>
-                {% if registro.status_rh == "aprovado" %}
-                    {{ registro.data_autorizacap_rh|date:"d/m/Y H:i" }}
+                {% if registro.assinatura_rh %}
+                    {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
-            </td>
-            <td>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                    <input type="hidden" name="tipo_registro" value="rp">
-                    <select name="status_presidente">
-                        <option value="pendente" {% if registro.status_presidente == "pendente" %}selected{% endif %}>Pendente</option>
-                        <option value="aprovado" {% if registro.status_presidente == "aprovado" %}selected{% endif %}>Aprovado</option>
-                    </select>
-                    <button type="submit">Salvar</button>
-                </form>
             </td>
             <td>
                 {% if registro.dias_para_autorizacao_presidente is not None %}
@@ -97,7 +103,6 @@
             <th>Data Aprovação Presidente</th>
             <th>Status RH</th>
             <th>Data Aprovação RH</th>
-            <th>Ação</th>
             <th>Tempo para Aprovação (dias)</th>
         </tr>
         <!-- Registros do OutroRegistro -->
@@ -107,42 +112,42 @@
             <td>{{ registro.colaborador_movimentado }}</td>
             <td>{{ registro.cargo_proposto }}</td>
             <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
-            <td>{{ registro.get_status_diretor_display }}</td>
+            <td>{{ registro.assinatura_diretor }}</td>
             <td>
-                {% if registro.status_diretor == "aprovado" %}
+                {% if registro.assinatura_diretor == "aprovado" %}
                     {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.get_status_presidente_display }}</td>
             <td>
-                {% if registro.status_presidente == "aprovado" %}
+                {% if registro.assinatura_presidente %}
+                    <p>Aprovado pelo Presidente:</p>
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                        <input type="hidden" name="tipo_registro" value="rp">
+                        <button type="submit">Aprovar com Assinatura</button>
+                    </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_presidente %}
                     {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.get_status_rh_display }}</td>
+            <td>{{ registro.assinatura_rh }}</td>
             <td>
-                {% if registro.status_rh == "aprovado" %}
+                {% if registro.assinatura_rh %}
                     {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
-            </td>
-            
-            <td>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                    <input type="hidden" name="tipo_registro" value="movimentacao">
-                    <select name="status_presidente">
-                        <option value="pendente" {% if registro.status_presidente == "pendente" %}selected{% endif %}>Pendente</option>
-                        <option value="aprovado" {% if registro.status_presidente == "aprovado" %}selected{% endif %}>Aprovado</option>
-                    </select>
-                    <button type="submit">Salvar</button>
-                </form>
             </td>
             
             <td>
@@ -167,13 +172,12 @@
             <th>Colaborador a ser Desligado</th>
             <th>Função</th>
             <th>Data de Solicitação</th>
-            <th>Status Diretor</th>
-            <th>Data Aprovação Diretor</th>
-            <th>Status Presidente</th>
-            <th>Data Aprovação Presidente</th>
-            <th>Status RH</th>
-            <th>Data Aprovação RH</th>
-            <th>Ação</th>
+            <th>Assinatura Diretor</th>
+            <th>Data Assinatura Diretor</th>
+            <th>Assinatura Presidente</th>
+            <th>Data Assinatura Presidente</th>
+            <th>Assinatura RH</th>
+            <th>Data Assinatura RH</th>
             <th>Tempo para Aprovação (dias)</th>
         </tr>
         {% for registro in rd %}
@@ -182,42 +186,44 @@
             <td>{{ registro.colaborador_desligado }}</td>
             <td>{{ registro.funcao }}</td>
             <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
-            <td>{{ registro.get_status_diretor_display }}</td>
             <td>
-                {% if registro.status_diretor == "aprovado" %}
+                {% if registro.assinatura_diretor  %}
                     {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.get_status_presidente_display }}</td>
             <td>
-                {% if registro.status_presidente == "aprovado" %}
+                {% if registro.assinatura_presidente %}
+                    <p>Aprovado pelo Presidente:</p>
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                        <input type="hidden" name="tipo_registro" value="rp">
+                        <button type="submit">Aprovar com Assinatura</button>
+                    </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_presidente %}
                     {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.get_status_rh_display }}</td>
+
+            <td>{{ registro.assinatura_rh }}</td>
             <td>
-                {% if registro.status_rh == "aprovado" %}
+                {% if registro.assinatura_rh %}
                     {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
             <td>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                    <input type="hidden" name="tipo_registro" value="rd"> <!-- Indica que é OutroRegistro -->
-                    <select name="status_presidente">
-                        <option value="pendente" {% if registro.status_diretor == "pendente" %}selected{% endif %}>Pendente</option>
-                        <option value="aprovado" {% if registro.status_diretor == "aprovado" %}selected{% endif %}>Aprovado</option>
-                    </select>
-                    <button type="submit">Salvar</button>
-                </form>
-            </td>
             <td>
                 {% if registro.dias_para_autorizacao_presidente is not None %}
                     {% if registro.dias_para_autorizacao_presidente == 0 %}

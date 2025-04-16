@@ -12,9 +12,8 @@
             <th>Colaborador a ser movimentado</th>
             <th>Cargo Proposto</th>
             <th>Data de Solicitação</th>
-            <th>Status Complice</th>
+            <th>Assinatura Diretor</th>
             <th>Data Aprovação Complice</th>
-            <th>Ação</th>
             <th>Tempo para Aprovação (dias)</th>
         </tr>
         {% for registro in movimentacao %}
@@ -23,25 +22,30 @@
             <td>{{ registro.colaborador_movimentado }}</td>
             <td>{{ registro.cargo_proposto }}</td>
             <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
-            <td>{{ registro.get_status_complice_display }}</td>
+    
             <td>
-                {% if registro.status_complice == "aprovado" %}
+                {% if registro.assinatura_complice %}
+                    <p>Aprovado pelo Complice:</p>
+                    <img src="{{ registro.assinatura_complice.url }}" alt="Assinatura Complice" style="height: 100px;">
+                {% else %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                        <input type="hidden" name="tipo_registro" value="rp">
+                        <button type="submit">Aprovar com Assinatura</button>
+                    </form>
+                {% endif %}
+            </td>
+    
+            <td>
+                {% if registro.assinatura_complice %}
                     {{ registro.data_autorizacao_complice|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-            <td>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                    <select name="status_complice">
-                        <option value="pendente" {% if registro.status_complice == "pendente" %}selected{% endif %}>Pendente</option>
-                        <option value="aprovado" {% if registro.status_complice == "aprovado" %}selected{% endif %}>Aprovado</option>
-                    </select>
-                    <button type="submit">Salvar</button>
-                </form>
-            </td>
+    
             <td>
                 {% if registro.dias_para_autorizacao_complice is not None %}
                     {% if registro.dias_para_autorizacao_complice == 0 %}
@@ -56,6 +60,7 @@
         </tr>
         {% endfor %}
     </table>
+    
     
   <a href="{% url 'logout' %}">Sair</a>
 </body>

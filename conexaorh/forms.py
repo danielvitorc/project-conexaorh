@@ -69,11 +69,11 @@ class RequisicaoPessoalForm(forms.ModelForm):
         model = RequisicaoPessoal
         exclude = [
             'data_solicitacao',
-            'status_diretor',
+            'assinatura_diretor',
             'data_autorizacao_diretor',
-            'status_presidente',
+            'assinatura_presidente',
             'data_autorizacao_presidente',
-            'status_rh',
+            'assinatura_rh',
             'data_autorizacao_rh',
             'dias_para_autorizacao_diretor',
             'dias_para_autorizacao_presidente',
@@ -137,27 +137,27 @@ class RequisicaoPessoalForm(forms.ModelForm):
 class DiretorForm(forms.ModelForm):
     class Meta:
         model = RequisicaoPessoal
-        fields = ["status_diretor"]  # Somente esse campo pode ser editado pelo diretor
+        fields = ["assinatura_diretor"]  
 
 class PresidenteForm(forms.ModelForm):
     class Meta:
         model = RequisicaoPessoal
-        fields = ["status_presidente"]
+        fields = ["assinatura_presidente"]
         
 class RHForm(forms.ModelForm):
     class Meta:
         model = RequisicaoPessoal
-        fields = ["status_rh"]
+        fields = ["assinatura_rh"]
 
 class CompliceApprovalForm(forms.ModelForm):
     class Meta:
         model = MovimentacaoPessoal
-        fields = ['status_complice']
+        fields = ['assinatura_complice']
 
 class GestorPropostoApprovalForm(forms.ModelForm):
     class Meta:
         model = MovimentacaoPessoal
-        fields = ['status_gestor_proposto']
+        fields = ['assinatura_gestor_proposto']
 
 class MovimentacaoPessoalForm(forms.ModelForm):
 

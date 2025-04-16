@@ -67,28 +67,16 @@ class RequisicaoPessoal(models.Model):
                 self.n_rp = ultimo + 1
         super().save(*args, **kwargs)
 
-    # Aprovação do diretor
-    status_diretor = models.CharField(
-        max_length=20,
-        choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")],
-        default="pendente"
-    )
+    # Assinatura do diretor
+    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
 
-    # Aprovação do presidente
-    status_presidente = models.CharField(
-        max_length=20,
-        choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")],
-        default="pendente"
-    )
+    # Assinatura do presidente
+    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/")
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
 
-    # Aprovação do RH
-    status_rh = models.CharField(
-        max_length=20,
-        choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")],
-        default="pendente"
-    )
+    # Assinatura do RH
+    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/")
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
 
     dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
@@ -130,23 +118,23 @@ class MovimentacaoPessoal(models.Model):
     substituicao = models.CharField(max_length=100)
     comentarios = models.TextField()
 
-    status_complice = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    assinatura_complice = models.ImageField(upload_to="assinaturas/complice/")
     data_autorizacao_complice = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_complice = models.IntegerField(null=True, blank=True)
 
-    status_gestor_proposto = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    assinatura_gestor_proposto = models.ImageField(upload_to="assinaturas/gestor/")
     data_autorizacao_gestor_proposto = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_gestor_proposto = models.IntegerField(null=True, blank=True)
 
-    status_diretor = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
 
-    status_presidente = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/")
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_presidente = models.IntegerField(null=True, blank=True)
 
-    status_rh = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/", null=True, blank=True)
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 
@@ -172,15 +160,15 @@ class RequisicaoDesligamento(models.Model):
     substituicao = models.CharField(max_length=100)
 
 
-    status_diretor = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
 
-    status_presidente = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/")
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_presidente = models.IntegerField(null=True, blank=True)
 
-    status_rh = models.CharField(max_length=20, choices=[("pendente", "Pendente"), ("aprovado", "Aprovado")], default="pendente")
+    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/")
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 

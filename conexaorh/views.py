@@ -4,6 +4,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
+from django.db.models import Q
 from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RequisicaoPessoalForm, DiretorForm, PresidenteForm, RHForm, MovimentacaoPessoalForm, RequisicaoDesligamentoForm, GestorPropostoApprovalForm, CompliceApprovalForm
@@ -49,7 +50,7 @@ def gestor_page(request):
 
    
     movimentacao = MovimentacaoPessoal.objects.filter(
-        status_complice='aprovado',
+        assinatura_complice__isnull= False,
         gestor_proposto=request.user.username
     )
     aprovar_form = GestorPropostoApprovalForm()
@@ -73,16 +74,17 @@ def gestor_page(request):
         if "submit_aprovacao_mov" in request.POST:
             registro_id = request.POST.get("registro_id")
             mov = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-            form = GestorPropostoApprovalForm(request.POST, instance=mov)
+            form = GestorPropostoApprovalForm(request.POST, request.FILES, instance=mov)
             if form.is_valid():
-                novo_status = form.cleaned_data['status_gestor_proposto']
-                if novo_status == 'aprovado' and mov.data_autorizacao_gestor_proposto is None:
-                    mov.data_autorizacao_gestor_proposto = now()
-                    mov.dias_para_autorizacao_gestor_proposto = (
-                        now().date() - mov.data_solicitacao.date()
-                    ).days
-                mov.status_gestor_proposto = novo_status
-                mov.save()
+                assinatura = form.cleaned_data['assinatura_gestor_proposto']
+                if assinatura:
+                    mov.assinatura_gestor_proposto = assinatura
+                    if mov.data_autorizacao_gestor_proposto is None:
+                        mov.data_autorizacao_gestor_proposto = now()
+                        mov.dias_para_autorizacao_gestor_proposto = (
+                            now().date() - mov.data_solicitacao.date()
+                        ).days
+                    mov.save()
             return redirect("gestor_page")
             
         elif "submit_rd" in request.POST:
@@ -113,13 +115,14 @@ def complice_page(request):
         mov = get_object_or_404(MovimentacaoPessoal, id=registro_id)
         form = CompliceApprovalForm(request.POST, instance=mov)
         if form.is_valid():
-            novo_status = form.cleaned_data['status_complice']
-            if novo_status == 'aprovado' and mov.data_autorizacao_complice is None:
-                mov.data_autorizacao_complice = now()
-                mov.dias_para_autorizacao_complice = (
+            assinatura = form.cleaned_data['assinatura_complice']
+            if assinatura:
+                mov.assinatura_complice = assinatura
+                if mov.data_autorizacao_gestor_proposto is None:
+                     mov.assinatura_complice = now()
+                     mov.dias_para_autorizacao_complice = (
                     now().date() - mov.data_solicitacao.date()
                 ).days
-            mov.status_complice = novo_status
             mov.save()
         return redirect('complice_page')
 
@@ -135,8 +138,11 @@ def diretor_page(request):
         return HttpResponseForbidden("Acesso negado! Apenas diretores podem acessar esta página.")
 
     rp = RequisicaoPessoal.objects.all()
-    movimentacao = MovimentacaoPessoal.objects.filter(status_gestor_proposto="aprovado")
+    movimentacao = MovimentacaoPessoal.objects.filter(assinatura_gestor_proposto__isnull = False)
     rd = RequisicaoDesligamento.objects.all()
+
+
+    form = DiretorForm()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
@@ -151,24 +157,23 @@ def diretor_page(request):
         else:
             return HttpResponseBadRequest("Tipo de registro inválido.")
 
-        form = DiretorForm(request.POST, instance=registro)
+        form = DiretorForm(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
-            novo_status = form.cleaned_data["status_diretor"]
-
-            if novo_status == "aprovado":  
-                if registro.data_autorizacao_diretor is None:
-                    registro.data_autorizacao_diretor = now()
-
-                diferenca_dias = (registro.data_autorizacao_diretor.date() - registro.data_solicitacao.date()).days
-                registro.dias_para_autorizacao_diretor = max(0, diferenca_dias)  
-
-            registro.status_diretor = novo_status
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
+                registro.data_autorizacao_diretor = now()
+                registro.dias_para_autorizacao_diretor = (
+                    registro.data_autorizacao_diretor.date()
+                    - registro.data_solicitacao.date()
+                ).days
             registro.save()
+    
             
             return redirect("diretor_page")
 
-    return render(request, "conexaorh/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user})
+    return render(request, "conexaorh/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form})
 
 
 @login_required
@@ -176,10 +181,11 @@ def presidente_page(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso negado! Apenas presidentes podem acessar esta página.")
 
-    rp = RequisicaoPessoal.objects.filter(status_diretor="aprovado")
-    movimentacao = MovimentacaoPessoal.objects.filter(status_diretor="aprovado")
-    rd = RequisicaoDesligamento.objects.filter(status_diretor="aprovado")
+    rp = RequisicaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
+    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
+    rd = RequisicaoDesligamento.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
 
+    form = PresidenteForm()
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         tipo_registro = request.POST.get("tipo_registro")
@@ -193,20 +199,17 @@ def presidente_page(request):
         else:
             return HttpResponseBadRequest("Tipo de registro inválido.")
 
-        form = PresidenteForm(request.POST, instance=registro)
+        form = PresidenteForm(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
-            novo_status = form.cleaned_data["status_presidente"]
-
-            if novo_status == "aprovado":  
-                if registro.data_autorizacao_presidente is None:
-                    registro.data_autorizacao_presidente = now()
-
-                if registro.data_autorizacao_diretor:
-                    diferenca_dias = (registro.data_autorizacao_presidente.date() - registro.data_autorizacao_diretor.date()).days
-                    registro.dias_para_autorizacao_presidente = max(0, diferenca_dias)
-
-            registro.status_presidente = novo_status
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_presidente and registro.data_autorizacao_presidente is None:
+                registro.data_autorizacao_presidente = now()
+                registro.dias_para_autorizacao_presidente = (
+                    registro.data_autorizacao_presidente.date()
+                    - registro.data_solicitacao.date()
+                ).days
             registro.save()
             
             return redirect("presidente_page")
@@ -214,7 +217,7 @@ def presidente_page(request):
     return render(
         request, 
         "conexaorh/presidente.html", 
-        {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user,}
+        {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form}
     )
 
 @login_required
@@ -223,9 +226,11 @@ def rh_page(request):
         return HttpResponseForbidden("Acesso negado! Apenas usuários do RH podem acessar esta página.")
 
     # Buscar registros dos dois modelos que já foram aprovados pelo presidente
-    rp = RequisicaoPessoal.objects.filter(status_presidente="aprovado")
-    movimentacao = MovimentacaoPessoal.objects.filter(status_presidente="aprovado")
-    rd = RequisicaoDesligamento.objects.filter(status_presidente="aprovado")
+    rp = RequisicaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True), ~Q(assinatura_presidente=""))
+    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True), ~Q(assinatura_presidente=""))
+    rd = RequisicaoDesligamento.objects.filter(~Q(assinatura_presidente__isnull=True), ~Q(assinatura_presidente=""))
+
+    form = RHForm()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
@@ -240,20 +245,17 @@ def rh_page(request):
         else:
             return HttpResponseBadRequest("Tipo de registro inválido.")
 
-        form = RHForm(request.POST, instance=registro)
+        form = RHForm(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
-            novo_status = form.cleaned_data["status_rh"]
-
-            if novo_status == "aprovado":
-                if registro.data_autorizacao_rh is None:
-                    registro.data_autorizacao_rh = now()
-
-                if registro.data_autorizacao_presidente:
-                    diferenca_dias = (registro.data_autorizacao_rh.date() - registro.data_autorizacao_presidente.date()).days
-                    registro.dias_para_autorizacao_rh = max(0, diferenca_dias)
-
-            registro.status_rh = novo_status
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_rh and registro.data_autorizacao_rh is None:
+                registro.data_autorizacao_rh = now()
+                registro.dias_para_autorizacao_rh = (
+                    registro.data_autorizacao_rh.date()
+                    - registro.data_solicitacao.date()
+                ).days
             registro.save()
 
             return redirect("rh_page")
@@ -261,7 +263,7 @@ def rh_page(request):
     return render(
         request,
         "conexaorh/rh.html",
-        {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user,}
+        {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form}
     )
 
 

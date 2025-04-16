@@ -16,7 +16,7 @@
             <th>Colaborador a ser movimentado</th>
             <th>Cargo Proposto</th>
             <th>Data Solicitação</th>
-            <th>Status Gestor Proposto</th>
+            <th>Assinatura Gestor Proposto</th>
             <th>Data Aprovação</th>
             <th>Ação</th>
         </tr>
@@ -26,26 +26,22 @@
             <td>{{ mov.colaborador_movimentado }}</td>
             <td>{{ mov.cargo_proposto }}</td>
             <td>{{ mov.data_solicitacao|date:"d/m/Y H:i" }}</td>
-            <td>{{ mov.get_status_gestor_proposto_display }}</td>
             <td>
-                {% if mov.status_gestor_proposto == "aprovado" %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="hidden" name="registro_id" value="{{ mov.id }}">
+                    <button type="submit" name="submit_aprovacao_mov">Enviar Assinatura</button>
+                </form>
+            </td>
+            <td>
+                {% if mov.assinatura_gestor_proposto %}
                     {{ mov.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-            <td>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="registro_id" value="{{ mov.id }}">
-                    <input type="hidden" name="tipo_registro" value="gestor_proposto">
-                    <select name="status_gestor_proposto">
-                        <option value="pendente" {% if mov.status_gestor_proposto == "pendente" %}selected{% endif %}>Pendente</option>
-                        <option value="aprovado" {% if mov.status_gestor_proposto == "aprovado" %}selected{% endif %}>Aprovado</option>
-                    </select>
-                    <button type="submit" name="submit_aprovacao_mov">Salvar</button>
-                </form>
-            </td>
+
         </tr>
         {% endfor %}
     </table>
