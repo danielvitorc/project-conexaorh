@@ -47,13 +47,9 @@ def gestor_page(request):
     form_rp = RequisicaoPessoalForm()
     form_movimentacao = MovimentacaoPessoalForm()
     form_rd = RequisicaoDesligamentoForm()
-
    
-    movimentacao = MovimentacaoPessoal.objects.filter(
-        assinatura_complice__isnull= False,
-        gestor_proposto=request.user.username
-    )
-    aprovar_form = GestorPropostoApprovalForm()
+    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_complice__isnull=True), ~Q(assinatura_complice=""))
+    form = GestorPropostoApprovalForm()
 
     if request.method == "POST":
         if "submit_rp" in request.POST:
@@ -73,18 +69,18 @@ def gestor_page(request):
         
         if "submit_aprovacao_mov" in request.POST:
             registro_id = request.POST.get("registro_id")
-            mov = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-            form = GestorPropostoApprovalForm(request.POST, request.FILES, instance=mov)
+            registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
+            form = GestorPropostoApprovalForm(request.POST, request.FILES, instance=registro)
             if form.is_valid():
                 assinatura = form.cleaned_data['assinatura_gestor_proposto']
                 if assinatura:
-                    mov.assinatura_gestor_proposto = assinatura
-                    if mov.data_autorizacao_gestor_proposto is None:
-                        mov.data_autorizacao_gestor_proposto = now()
-                        mov.dias_para_autorizacao_gestor_proposto = (
-                            now().date() - mov.data_solicitacao.date()
+                    registro.assinatura_gestor_proposto = assinatura
+                    if registro.data_autorizacao_gestor_proposto is None:
+                        registro.data_autorizacao_gestor_proposto = now()
+                        registro.dias_para_autorizacao_gestor_proposto = (
+                            now().date() - registro.data_solicitacao.date()
                         ).days
-                    mov.save()
+                    registro.save()
             return redirect("gestor_page")
             
         elif "submit_rd" in request.POST:
@@ -93,14 +89,15 @@ def gestor_page(request):
                 rd = form_rd.save(commit=False)
                 rd.save()
                 return redirect("gestor_page")
+            
 
     return render(request, "conexaorh/gestor.html", {
         "form_rp": form_rp,
         "form_movimentacao": form_movimentacao,
         "form_rd": form_rd,
         "movimentacao": movimentacao,
-        "aprovar_form": aprovar_form,
-         "usuario": request.user,
+        "form": form,
+        "usuario": request.user,
     })
 
 @login_required
@@ -110,25 +107,30 @@ def complice_page(request):
 
     movimentacao = MovimentacaoPessoal.objects.all()
 
+    form = CompliceApprovalForm()
+
     if request.method == 'POST':
         registro_id = request.POST.get('registro_id')
-        mov = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-        form = CompliceApprovalForm(request.POST, instance=mov)
+        registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
+
+        form = CompliceApprovalForm(request.POST, request.FILES, instance=registro)
+
         if form.is_valid():
-            assinatura = form.cleaned_data['assinatura_complice']
-            if assinatura:
-                mov.assinatura_complice = assinatura
-                if mov.data_autorizacao_gestor_proposto is None:
-                     mov.assinatura_complice = now()
-                     mov.dias_para_autorizacao_complice = (
-                    now().date() - mov.data_solicitacao.date()
+            registro = form.save(commit=False)
+            if registro.assinatura_complice and registro.data_autorizacao_complice is None:
+                registro.data_autorizacao_complice = now()
+                registro.dias_para_autorizacao_complice = (
+                    registro.data_autorizacao_complice.date()
+                    - registro.data_solicitacao.date()
                 ).days
-            mov.save()
+            registro.save()
         return redirect('complice_page')
+    
 
     return render(request, 'conexaorh/complice.html', {
         'movimentacao': movimentacao,
         'usuario': request.user,
+        'form' : form
     })
 
 
@@ -138,7 +140,7 @@ def diretor_page(request):
         return HttpResponseForbidden("Acesso negado! Apenas diretores podem acessar esta página.")
 
     rp = RequisicaoPessoal.objects.all()
-    movimentacao = MovimentacaoPessoal.objects.filter(assinatura_gestor_proposto__isnull = False)
+    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_gestor_proposto__isnull=True), ~Q(assinatura_gestor_proposto=""))
     rd = RequisicaoDesligamento.objects.all()
 
 

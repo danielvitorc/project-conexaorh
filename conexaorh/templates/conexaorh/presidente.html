@@ -67,7 +67,13 @@
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.assinatura_rh }}</td>
+            <td>    
+                {% if registro.assinatura_rh %}
+                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_rh %}
                     {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
@@ -97,11 +103,11 @@
             <th>Colaborador a ser movimentado</th>
             <th>Cargo Proposto</th>
             <th>Data de Solicitação</th>
-            <th>Status Diretor</th>
+            <th>Assinatura Diretor</th>
             <th>Data Aprovação Diretor</th>
-            <th>Status Presidente</th>
+            <th>Assinatura Presidente</th>
             <th>Data Aprovação Presidente</th>
-            <th>Status RH</th>
+            <th>Assinatura RH</th>
             <th>Data Aprovação RH</th>
             <th>Tempo para Aprovação (dias)</th>
         </tr>
@@ -112,9 +118,15 @@
             <td>{{ registro.colaborador_movimentado }}</td>
             <td>{{ registro.cargo_proposto }}</td>
             <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
-            <td>{{ registro.assinatura_diretor }}</td>
+            <td>    
+                {% if registro.assinatura_diretor %}
+                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
-                {% if registro.assinatura_diretor == "aprovado" %}
+                {% if registro.assinatura_diretor  %}
                     {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
                 {% else %}
                     -
@@ -129,7 +141,7 @@
                         {% csrf_token %}
                         {{ form.as_p }}
                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="rp">
+                        <input type="hidden" name="tipo_registro" value="movimentacao">
                         <button type="submit">Aprovar com Assinatura</button>
                     </form>
                 {% endif %}
@@ -141,7 +153,13 @@
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.assinatura_rh }}</td>
+            <td>    
+                {% if registro.assinatura_rh %}
+                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_rh %}
                     {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
@@ -186,6 +204,13 @@
             <td>{{ registro.colaborador_desligado }}</td>
             <td>{{ registro.funcao }}</td>
             <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+            <td>    
+                {% if registro.assinatura_diretor %}
+                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_diretor  %}
                     {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
@@ -202,7 +227,7 @@
                         {% csrf_token %}
                         {{ form.as_p }}
                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="rp">
+                        <input type="hidden" name="tipo_registro" value="rd">
                         <button type="submit">Aprovar com Assinatura</button>
                     </form>
                 {% endif %}
@@ -215,7 +240,13 @@
                 {% endif %}
             </td>
 
-            <td>{{ registro.assinatura_rh }}</td>
+            <td>    
+                {% if registro.assinatura_rh %}
+                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_rh %}
                     {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
@@ -223,7 +254,6 @@
                     -
                 {% endif %}
             </td>
-            <td>
             <td>
                 {% if registro.dias_para_autorizacao_presidente is not None %}
                     {% if registro.dias_para_autorizacao_presidente == 0 %}

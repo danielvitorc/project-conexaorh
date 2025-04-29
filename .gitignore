@@ -11,3 +11,6 @@ __pycache__/
 
 # Ignore arquivos do sistema
 .DS_Store
+
+# Ignore os Arquivos Media
+/media/

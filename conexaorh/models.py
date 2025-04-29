@@ -68,15 +68,15 @@ class RequisicaoPessoal(models.Model):
         super().save(*args, **kwargs)
 
     # Assinatura do diretor
-    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/")
+    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/RequisicaoPessoal")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
 
     # Assinatura do presidente
-    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/")
+    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/RequisicaoPessoal")
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
 
     # Assinatura do RH
-    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/")
+    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/RequisicaoPessoal")
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
 
     dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
@@ -118,23 +118,23 @@ class MovimentacaoPessoal(models.Model):
     substituicao = models.CharField(max_length=100)
     comentarios = models.TextField()
 
-    assinatura_complice = models.ImageField(upload_to="assinaturas/complice/")
+    assinatura_complice = models.ImageField(upload_to="assinaturas/complice/MovimentacaoPessoal/")
     data_autorizacao_complice = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_complice = models.IntegerField(null=True, blank=True)
 
-    assinatura_gestor_proposto = models.ImageField(upload_to="assinaturas/gestor/")
+    assinatura_gestor_proposto = models.ImageField(upload_to="assinaturas/gestor/MovimentacaoPessoal/")
     data_autorizacao_gestor_proposto = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_gestor_proposto = models.IntegerField(null=True, blank=True)
 
-    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/")
+    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/MovimentacaoPessoal/")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
 
-    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/")
+    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/MovimentacaoPessoal/")
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_presidente = models.IntegerField(null=True, blank=True)
 
-    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/", null=True, blank=True)
+    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/MovimentacaoPessoal/", null=True, blank=True)
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 
@@ -160,15 +160,15 @@ class RequisicaoDesligamento(models.Model):
     substituicao = models.CharField(max_length=100)
 
 
-    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/")
+    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/RequisicaoDesligamento/")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
 
-    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/")
+    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/RequisicaoDesligamento/")
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_presidente = models.IntegerField(null=True, blank=True)
 
-    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/")
+    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/RequisicaoDesligamento/")
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 

@@ -51,7 +51,13 @@
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.assinatura_presidente }}</td>
+            <td>    
+                {% if registro.assinatura_presidente %}
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_presidente %}
                     {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
@@ -59,7 +65,13 @@
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.assinatura_rh }}</td>
+            <td>    
+                {% if registro.assinatura_rh %}
+                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_rh %}
                     {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
@@ -107,13 +119,13 @@
             <td>
                 {% if registro.assinatura_diretor %}
                     <p>Aprovado pelo Diretor:</p>
-                    <img src="{{ registro.assinatura_complice.url }}" alt="Assinatura Complice" style="height: 100px;">
+                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
                 {% else %}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="rp">
+                        <input type="hidden" name="tipo_registro" value="movimentacao">
                         <button type="submit">Aprovar com Assinatura</button>
                     </form>
                 {% endif %}
@@ -125,7 +137,13 @@
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.assinatura_presidente }}</td>
+            <td>    
+                {% if registro.assinatura_presidente %}
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_presidente %}
                     {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
@@ -133,7 +151,13 @@
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.get_status_rh_display }}</td>
+            <td>    
+                {% if registro.assinatura_presidente %}
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_rh %}
                     {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
@@ -180,13 +204,13 @@
             <td>
                 {% if registro.assinatura_diretor %}
                     <p>Aprovado pelo Diretor:</p>
-                    <img src="{{ registro.assinatura_complice.url }}" alt="Assinatura Complice" style="height: 100px;">
+                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
                 {% else %}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="rp">
+                        <input type="hidden" name="tipo_registro" value="rd">
                         <button type="submit">Aprovar com Assinatura</button>
                     </form>
                 {% endif %}
@@ -198,7 +222,13 @@
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.assinatura_presidente }}</td>
+            <td>    
+                {% if registro.assinatura_presidente %}
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_presidente %}
                     {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
@@ -206,7 +236,13 @@
                     -
                 {% endif %}
             </td>
-            <td>{{ registro.assinatura_rh }}</td>
+            <td>    
+                {% if registro.assinatura_rh %}
+                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>
                 {% if registro.assinatura_rh %}
                     {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}

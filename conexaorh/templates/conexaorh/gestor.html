@@ -18,30 +18,45 @@
             <th>Data Solicitação</th>
             <th>Assinatura Gestor Proposto</th>
             <th>Data Aprovação</th>
-            <th>Ação</th>
+            <th>Tempo para Aprovação (dias)</th>
         </tr>
-        {% for mov in movimentacao  %}
+        {% for registro in movimentacao  %}
         <tr>
-            <td>{{ mov.gestor_atual }}</td>
-            <td>{{ mov.colaborador_movimentado }}</td>
-            <td>{{ mov.cargo_proposto }}</td>
-            <td>{{ mov.data_solicitacao|date:"d/m/Y H:i" }}</td>
+            <td>{{ registro.gestor_atual }}</td>
+            <td>{{ registro.colaborador_movimentado }}</td>
+            <td>{{ registro.cargo_proposto }}</td>
+            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
             <td>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="hidden" name="registro_id" value="{{ mov.id }}">
-                    <button type="submit" name="submit_aprovacao_mov">Enviar Assinatura</button>
-                </form>
+                {% if registro.assinatura_gestor_proposto %}
+                    <p>Aprovado pelo Gestor:</p>
+                    <img src="{{ registro.assinatura_gestor_proposto.url }}" alt="Assinatura Gestor" style="height: 100px;">
+                {% else %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                        <button type="submit" name="submit_aprovacao_mov">Enviar Assinatura</button>
+                    </form>
+                {% endif %}
             </td>
             <td>
-                {% if mov.assinatura_gestor_proposto %}
-                    {{ mov.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
+                {% if registro.assinatura_gestor_proposto %}
+                    {{ registro.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
                 {% else %}
                     -
                 {% endif %}
             </td>
-
+            <td>
+                {% if registro.dias_para_autorizacao_gestor_proposto is not None %}
+                    {% if registro.dias_para_autorizacao_gestor_proposto == 0 %}
+                        Aprovado no mesmo dia
+                    {% else %}
+                        {{ registro.dias_para_autorizacao_gestor_proposto }} dias
+                    {% endif %}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
