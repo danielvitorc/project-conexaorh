@@ -24,7 +24,7 @@
             <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
     
             <td>
-                {% if registro.assinatura_complice %}    
+                {% if registro.assinatura_complice %}
                     <p>Aprovado pelo Complice:</p>
                     <img src="{{ registro.assinatura_complice.url }}" alt="Assinatura Complice" style="height: 100px;">
                 {% else %}
@@ -32,7 +32,6 @@
                         {% csrf_token %}
                         {{ form.as_p }}
                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="rp">
                         <button type="submit">Aprovar com Assinatura</button>
                     </form>
                 {% endif %}

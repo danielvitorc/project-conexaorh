@@ -48,7 +48,11 @@ def gestor_page(request):
     form_movimentacao = MovimentacaoPessoalForm()
     form_rd = RequisicaoDesligamentoForm()
    
-    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_complice__isnull=True), ~Q(assinatura_complice=""))
+    movimentacao = MovimentacaoPessoal.objects.filter(
+        ~Q(assinatura_complice__isnull=True),
+        ~Q(assinatura_complice=""),
+        gestor_proposto=request.user.username
+    )
     form = GestorPropostoApprovalForm()
 
     if request.method == "POST":
@@ -69,8 +73,12 @@ def gestor_page(request):
         
         if "submit_aprovacao_mov" in request.POST:
             registro_id = request.POST.get("registro_id")
+            if not registro_id:
+                return HttpResponseBadRequest("ID do registro não informado.")
+            
             registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
             form = GestorPropostoApprovalForm(request.POST, request.FILES, instance=registro)
+
             if form.is_valid():
                 assinatura = form.cleaned_data['assinatura_gestor_proposto']
                 if assinatura:
@@ -111,8 +119,10 @@ def complice_page(request):
 
     if request.method == 'POST':
         registro_id = request.POST.get('registro_id')
+        if not registro_id:
+            return HttpResponseBadRequest("ID do registro não informado.")
+        
         registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-
         form = CompliceApprovalForm(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
@@ -124,14 +134,15 @@ def complice_page(request):
                     - registro.data_solicitacao.date()
                 ).days
             registro.save()
-        return redirect('complice_page')
-    
+            return redirect('complice_page')
 
     return render(request, 'conexaorh/complice.html', {
         'movimentacao': movimentacao,
         'usuario': request.user,
-        'form' : form
+        'form': form
     })
+
+
 
 
 @login_required
@@ -171,8 +182,6 @@ def diretor_page(request):
                     - registro.data_solicitacao.date()
                 ).days
             registro.save()
-    
-            
             return redirect("diretor_page")
 
     return render(request, "conexaorh/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form})

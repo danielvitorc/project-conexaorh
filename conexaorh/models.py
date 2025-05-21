@@ -22,11 +22,22 @@ class CustomUser(AbstractUser):
 
 User = get_user_model()
 
-HASH_ASSINATURAS_DIRETORES = "ec13c29d7a2838322cca4d38262954072e9282ff63daa09874f2fc89ab100497"
-HASHES_ASSINATURAS_PRESIDENTE = "ec13c29d7a2838322cca4d38262954072e9282ff63daa09874f2fc89ab100497"
-HASHES_ASSINATURAS_RH = "ec13c29d7a2838322cca4d38262954072e9282ff63daa09874f2fc89ab100497"  
-HASHES_ASSINATURAS_COMPLICE = "ec13c29d7a2838322cca4d38262954072e9282ff63daa09874f2fc89ab100497"
-HASHES_ASSINATURAS_GESTORES = "ec13c29d7a2838322cca4d38262954072e9282ff63daa09874f2fc89ab100497"
+HASH_ASSINATURAS_DIRETORES = [
+    "ec13c29d7a2838322cca4d38262954072e9282ff63daa09874f2fc89ab100497"
+ ]
+
+HASHES_ASSINATURAS_PRESIDENTE = [
+    "c101cac72891d0d1586d0791a028ef2adcdcc3a7cbd53caec4c2bda8f8a443c0"
+]
+HASHES_ASSINATURAS_RH = [
+    "8e551767cfe9d662f0185cff3840c4616401a3726f52898ee38857cf495cbb8f"
+]  
+HASHES_ASSINATURAS_COMPLICE = [
+    "bc61c2c356167b859d9a008035e841ee32236ad44356772bfd5cec4cde5b3ffc"
+]
+HASHES_ASSINATURAS_GESTORES = [
+    "ec8ff0a6954a5f54e4ad246f0a788d076f675e457bca16a04248718cca3fe631"
+]
 
 class RequisicaoPessoal(models.Model):
     data_solicitacao = models.DateTimeField(auto_now_add=True)
@@ -92,30 +103,43 @@ class RequisicaoPessoal(models.Model):
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.nome_colaborador} - Diretor: {self.get_status_diretor_display()} - Presidente: {self.get_status_presidente_display()} - RH: {self.get_status_rh_display()}"
+        return f"Requisição {self.n_rp or 'Sem número'}"
     
     def clean(self):
         super().clean()
 
-     # Validação da assinatura do diretor
-        if self.assinatura_diretor:
-             hash_recebido = hashlib.sha256(self.assinatura_diretor.read()).hexdigest()
-             self.assinatura_diretor.seek(0)
-             if hash_recebido != HASH_ASSINATURAS_DIRETORES:
-                 raise ValidationError({"assinatura_diretor": "Arquivo Inválido."})
-
-    # Validação da assinatura do presidente
-        if self.assinatura_presidente:
-            hash_presidente = hashlib.sha256(self.assinatura_presidente.read()).hexdigest()
-            self.assinatura_presidente.seek(0)
+        if self.assinatura_diretor and hasattr(self.assinatura_diretor, 'file'):
+            try:
+                self.assinatura_diretor.file.seek(0)
+                hash_diretor = hashlib.sha256(self.assinatura_diretor.file.read()).hexdigest()
+                self.assinatura_diretor.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do diretor.")
+            
+            if hash_diretor not in HASH_ASSINATURAS_DIRETORES:
+                raise ValidationError("Arquivo de assinatura do diretor inválido.")
+            
+        if self.assinatura_presidente and hasattr(self.assinatura_presidente, 'file'):
+            try:
+                self.assinatura_presidente.file.seek(0)
+                hash_presidente = hashlib.sha256(self.assinatura_presidente.file.read()).hexdigest()
+                self.assinatura_presidente.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do presidente.")
+            
             if hash_presidente not in HASHES_ASSINATURAS_PRESIDENTE:
-                raise ValidationError({"assinatura_presidente": "Arquivo de assinatura do presidente inválido."})
-     # Validação da assinatura do RH       
-        if self.assinatura_rh:
-            hash_rh = hashlib.sha256(self.assinatura_rh.read()).hexdigest()
-            self.assinatura_rh.seek(0)
+                raise ValidationError("Arquivo de assinatura do presidente inválido.")
+
+        if self.assinatura_rh and hasattr(self.assinatura_rh, 'file'):
+            try:
+                self.assinatura_rh.file.seek(0)
+                hash_rh = hashlib.sha256(self.assinatura_rh.file.read()).hexdigest()
+                self.assinatura_rh.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do rh.")
+            
             if hash_rh not in HASHES_ASSINATURAS_RH:
-                raise ValidationError({"assinatura_rh": "Arquivo de assinatura do RH inválido."})
+                raise ValidationError("Arquivo de assinatura do rh inválido.")
     
 class MovimentacaoPessoal(models.Model):
     data_solicitacao = models.DateTimeField(auto_now_add=True)
@@ -169,41 +193,71 @@ class MovimentacaoPessoal(models.Model):
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return f"Movimentação: {self.colaborador_movimentado} ({self.tipo_movimentacao}) - {self.data_solicitacao.strftime('%d/%m/%Y')}"
+    
     def clean(self):
         super().clean()
 
      # Validação da assinatura do Complice
-        if self.assinatura_complice:
-             hash_recebido = hashlib.sha256(self.assinatura_complice.read()).hexdigest()
-             self.assinatura_complice.seek(0)
-             if hash_recebido != HASHES_ASSINATURAS_COMPLICE:
-                 raise ValidationError({"assinatura_complice": "Arquivo de assinatura do Complice inválido."})
+        if self.assinatura_complice and hasattr(self.assinatura_complice, 'file'):
+            try:
+                self.assinatura_complice.seek(0)
+                hash_complice = hashlib.sha256(self.assinatura_complice.file.read()).hexdigest()
+                self.assinatura_complice.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do Complice.")
+    
+            if hash_complice not in HASHES_ASSINATURAS_COMPLICE:
+                raise ValidationError({"assinatura_complice": "Arquivo de assinatura do Complice inválido."})
              
      # Validação da assinatura do Gestor Proposto
-        if self.assinatura_gestor_proposto:
-             hash_recebido = hashlib.sha256(self.assinatura_gestor_proposto.read()).hexdigest()
-             self.assinatura_gestor_proposto.seek(0)
-             if hash_recebido != HASHES_ASSINATURAS_GESTORES:
+        if self.assinatura_gestor_proposto and hasattr(self.assinatura_gestor_proposto, 'file'):
+            try:
+                self.assinatura_gestor_proposto.seek(0)
+                hash_gestor= hashlib.sha256(self.assinatura_gestor_proposto.read()).hexdigest()
+                self.assinatura_gestor_proposto.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do Gestor Proposto")
+            
+            if hash_gestor not in HASHES_ASSINATURAS_GESTORES:
                  raise ValidationError({"assinatura_gestor_proposto": "Arquivo de assinatura do Gestor Proposto inválido."})
+            
      # Validação da assinatura do diretor
-        if self.assinatura_diretor:
-             hash_recebido = hashlib.sha256(self.assinatura_diretor.read()).hexdigest()
-             self.assinatura_diretor.seek(0)
-             if hash_recebido != HASH_ASSINATURAS_DIRETORES:
-                 raise ValidationError({"assinatura_diretor": "Arquivo Inválido."})
+        if self.assinatura_diretor and hasattr(self.assinatura_diretor, 'file'):
+            try:
+                self.assinatura_diretor.file.seek(0)
+                hash_diretor = hashlib.sha256(self.assinatura_diretor.file.read()).hexdigest()
+                self.assinatura_diretor.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do diretor.")
+            
+            if hash_diretor not in HASH_ASSINATURAS_DIRETORES:
+                raise ValidationError("Arquivo de assinatura do diretor inválido.")
 
     # Validação da assinatura do presidente
-        if self.assinatura_presidente:
-            hash_presidente = hashlib.sha256(self.assinatura_presidente.read()).hexdigest()
-            self.assinatura_presidente.seek(0)
+        if self.assinatura_presidente and hasattr(self.assinatura_presidente, 'file'):
+            try:
+                self.assinatura_presidente.file.seek(0)
+                hash_presidente = hashlib.sha256(self.assinatura_presidente.file.read()).hexdigest()
+                self.assinatura_presidente.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do presidente.")
+            
             if hash_presidente not in HASHES_ASSINATURAS_PRESIDENTE:
-                raise ValidationError({"assinatura_presidente": "Arquivo de assinatura do presidente inválido."})
+                raise ValidationError("Arquivo de assinatura do presidente inválido.")
+            
      # Validação da assinatura do RH       
-        if self.assinatura_rh:
-            hash_rh = hashlib.sha256(self.assinatura_rh.read()).hexdigest()
-            self.assinatura_rh.seek(0)
+        if self.assinatura_rh and hasattr(self.assinatura_rh, 'file'):
+            try:
+                self.assinatura_rh.file.seek(0)
+                hash_rh = hashlib.sha256(self.assinatura_rh.file.read()).hexdigest()
+                self.assinatura_rh.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do rh.")
+            
             if hash_rh not in HASHES_ASSINATURAS_RH:
-                raise ValidationError({"assinatura_rh": "Arquivo de assinatura do RH inválido."})
+                raise ValidationError("Arquivo de assinatura do rh inválido.")
 
     
     
@@ -218,8 +272,8 @@ class RequisicaoDesligamento(models.Model):
     matricula = models.CharField(max_length=100)
     data_admissao = models.DateField()
     centro_custo = models.CharField(max_length=100)
-    tipo_desligamento = models.CharField(max_length=100)
-    motivo_desligamento = models.CharField(max_length=100)
+    tipo_desligamento = models.CharField(max_length=200)
+    motivo_desligamento = models.CharField(max_length=200)
     outro_motivo = models.CharField(max_length=100)
     justificativa_desligamento = models.TextField()
     tipo_aviso = models.CharField(max_length=100)
@@ -240,27 +294,40 @@ class RequisicaoDesligamento(models.Model):
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f"Registro por {self.titulo} ({self.cargo}) - {self.data_criacao.strftime('%d/%m/%Y')}"
+        return f"Desligamento: {self.colaborador_desligado} ({self.funcao}) - {self.data_solicitacao.strftime('%d/%m/%Y')}"
 
     def clean(self):
         super().clean()
 
-     # Validação da assinatura do diretor
-        if self.assinatura_diretor:
-             hash_recebido = hashlib.sha256(self.assinatura_diretor.read()).hexdigest()
-             self.assinatura_diretor.seek(0)
-             if hash_recebido != HASH_ASSINATURAS_DIRETORES:
-                 raise ValidationError({"assinatura_diretor": "Arquivo Inválido."})
-
-    # Validação da assinatura do presidente
-        if self.assinatura_presidente:
-            hash_presidente = hashlib.sha256(self.assinatura_presidente.read()).hexdigest()
-            self.assinatura_presidente.seek(0)
+        if self.assinatura_diretor and hasattr(self.assinatura_diretor, 'file'):
+            try:
+                self.assinatura_diretor.file.seek(0)
+                hash_diretor = hashlib.sha256(self.assinatura_diretor.file.read()).hexdigest()
+                self.assinatura_diretor.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do diretor.")
+            
+            if hash_diretor not in HASH_ASSINATURAS_DIRETORES:
+                raise ValidationError("Arquivo de assinatura do diretor inválido.")
+            
+        if self.assinatura_presidente and hasattr(self.assinatura_presidente, 'file'):
+            try:
+                self.assinatura_presidente.file.seek(0)
+                hash_presidente = hashlib.sha256(self.assinatura_presidente.file.read()).hexdigest()
+                self.assinatura_presidente.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do presidente.")
+            
             if hash_presidente not in HASHES_ASSINATURAS_PRESIDENTE:
-                raise ValidationError({"assinatura_presidente": "Arquivo de assinatura do presidente inválido."})
-     # Validação da assinatura do RH       
-        if self.assinatura_rh:
-            hash_rh = hashlib.sha256(self.assinatura_rh.read()).hexdigest()
-            self.assinatura_rh.seek(0)
+                raise ValidationError("Arquivo de assinatura do presidente inválido.")
+
+        if self.assinatura_rh and hasattr(self.assinatura_rh, 'file'):
+            try:
+                self.assinatura_rh.file.seek(0)
+                hash_rh = hashlib.sha256(self.assinatura_rh.file.read()).hexdigest()
+                self.assinatura_rh.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do rh.")
+            
             if hash_rh not in HASHES_ASSINATURAS_RH:
-                raise ValidationError({"assinatura_rh": "Arquivo de assinatura do RH inválido."})
+                raise ValidationError("Arquivo de assinatura do rh inválido.")

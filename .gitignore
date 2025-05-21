@@ -13,4 +13,6 @@ __pycache__/
 .DS_Store
 
 # Ignore os Arquivos Media
-/media/
+/media/**/*
+!/media/**/.gitkeep
+!/media/**/
