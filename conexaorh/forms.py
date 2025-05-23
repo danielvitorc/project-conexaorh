@@ -266,6 +266,11 @@ class MovimentacaoPessoalForm(forms.ModelForm):
                 if value:
                     setattr(instance, field.name, value.upper())
 
+        instance.tipo_movimentacao = ", ".join(self.cleaned_data.get('tipo_movimentacao', []))
+        instance.jutificativa_movimentacao = ", ".join(self.cleaned_data.get('jutificativa_movimentacao', []))
+        instance.tipo_adicional = ", ".join(self.cleaned_data.get('tipo_adicional', []))
+        instance.substituicao = ", ".join(self.cleaned_data.get('substituicao', []))
+        
         if commit:
             instance.save()
         return instance

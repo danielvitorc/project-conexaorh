@@ -11,4 +11,6 @@ urlpatterns = [
     path('presidente/', views.presidente_page, name='presidente_page'),
     path('rh/', views.rh_page, name='rh_page'),
     path('complice/', views.complice_page, name='complice_page'),
+    path('download_rp/<int:registro_id>/', views.download_rp_excel, name='download_rp_excel'),
+    path('download_mov/<int:registro_id>/', views.download_mov_excel, name='download_mov_excel'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -23,6 +23,7 @@
             <th>Assinatura RH</th>
             <th>Data Autorização RH</th>
             <th>Tempo para Autorização (dias)</th>
+            <th>Download Excel</th>
         </tr>
         {% for registro in rp %}
         <tr>
@@ -88,6 +89,11 @@
                     {{ registro.dias_para_autorizacao_rh|default:"-" }}
                 {% endif %}
             </td>
+            <td>
+                <a href="{% url 'download_rp_excel' registro.id %}">
+                    <button>Baixar Excel</button>
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -105,6 +111,7 @@
             <th>Assinatura RH</th>
             <th>Data Aprovação RH</th>
             <th>Tempo para Aprovação (dias)</th>
+            <th>Download Excel</th>
         </tr>
         {% for registro in movimentacao %}
         <tr>
@@ -171,6 +178,11 @@
                 {% else %}
                     -
                 {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'download_mov_excel' registro.id %}">
+                    <button>Baixar Excel</button>
+                </a>
             </td>
         </tr>
         {% endfor %}
