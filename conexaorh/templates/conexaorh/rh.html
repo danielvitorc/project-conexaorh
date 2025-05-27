@@ -202,6 +202,7 @@
             <th>Assinatura RH</th>
             <th>Data Assinatura RH</th>
             <th>Tempo para Autorização (dias)</th>
+            <th>Download Excel</th>
         </tr>
         {% for registro in rd %}
         <tr>
@@ -268,6 +269,11 @@
                 {% else %}
                     -
                 {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'download_rd_excel' registro.id %}">
+                    <button>Baixar Excel</button>
+                </a>
             </td>
         </tr>
         {% endfor %}

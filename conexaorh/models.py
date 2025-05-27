@@ -274,13 +274,16 @@ class RequisicaoDesligamento(models.Model):
     centro_custo = models.CharField(max_length=100)
     tipo_desligamento = models.CharField(max_length=200)
     motivo_desligamento = models.CharField(max_length=200)
-    outro_motivo = models.CharField(max_length=100)
+    outro_motivo = models.CharField(max_length=100, null=True, blank=True)
     justificativa_desligamento = models.TextField()
     tipo_aviso = models.CharField(max_length=100)
     justificativa_aviso = models.TextField()
     substituicao = models.CharField(max_length=100)
-
-
+    bloqueio_readmissao = models.BooleanField(default=False)
+    '''
+    assinatura_gestor_requisitante = models.ImageField(upload_to="assinaturas/gestor/RequisicaoDesligamento")
+    data_autorizacao_gestor_requisitante = models.DateTimeField(auto_now_add=True)
+    '''
     assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/RequisicaoDesligamento/")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
@@ -298,6 +301,17 @@ class RequisicaoDesligamento(models.Model):
 
     def clean(self):
         super().clean()
+
+        if self.assinatura_gestor_requisitante and hasattr(self.assinatura_gestor_requisitante, 'file'):
+            try:
+                self.assinatura_gestor_requisitante.seek(0)
+                hash_gestor= hashlib.sha256(self.assinatura_gestor_requisitante.read()).hexdigest()
+                self.assinatura_gestor_requisitante.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do Gestor requisitante")
+            
+            if hash_gestor not in HASHES_ASSINATURAS_GESTORES:
+                 raise ValidationError({"assinatura_gestor_requisitante": "Arquivo de assinatura do Gestor Requisitante inválido."})
 
         if self.assinatura_diretor and hasattr(self.assinatura_diretor, 'file'):
             try:

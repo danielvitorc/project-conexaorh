@@ -322,9 +322,9 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
         required = False,
         label = 'Tipo de Aviso'
     )
-    substituicao = forms.MultipleChoiceField(
-        choices = SIMNAO_CHOICES,
-        widget= forms.SelectMultiple(attrs={'size': 2}),
+    substituicao = forms.ChoiceField(
+        choices =  SIMNAO_CHOICES,
+        widget=forms.RadioSelect(), 
         required = False,
         label = 'SERÁ NECESSÁRIO SUBSTITUIÇÃO?'
     )
@@ -347,6 +347,9 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
             'data_desligamento': DateInput(attrs={'type': 'date'}),
             'data_admissao': DateInput(attrs={'type': 'date'}),
         }
+        labels = {
+            'bloqueio_readmissao': 'Bloqueio de Readmissão'
+        }
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -358,6 +361,10 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
                 if value:
                     setattr(instance, field.name, value.upper())
 
+        instance.tipo_desligamento = ", ".join(self.cleaned_data.get('tipo_desligamento', []))
+        instance.motivo_desligamento = ", ".join(self.cleaned_data.get('motivo_desligamento', []))
+        instance.tipo_aviso = ", ".join(self.cleaned_data.get('tipo_aviso', []))
+        
         if commit:
             instance.save()
         return instance
