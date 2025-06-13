@@ -79,6 +79,7 @@ class RequisicaoPessoalForm(forms.ModelForm):
             'dias_para_autorizacao_presidente',
             'dias_para_autorizacao_rh',
             'n_rp',
+            'usuario'
         ]
         widgets = {
             'horario_trabalho_inicio': TimeInput(attrs={'type': 'time'}),

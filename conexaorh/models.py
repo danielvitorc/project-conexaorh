@@ -41,6 +41,7 @@ HASHES_ASSINATURAS_GESTORES = [
 
 class RequisicaoPessoal(models.Model):
     data_solicitacao = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     requisitante= models.CharField(max_length=100)
     cargo = models.CharField(max_length=100)
     salario = models.FloatField()
@@ -57,7 +58,7 @@ class RequisicaoPessoal(models.Model):
     subtituicao = models.CharField(max_length=100)
     matricula = models.CharField(max_length=100)
     justificativa_substituicao = models.CharField(max_length=100)
-    justificativa_outros = models.CharField(max_length=100)
+    justificativa_outros = models.CharField(max_length=100, null=True, blank=True)
     processo_seletivo = models.CharField(max_length=100)
     localidade = models.CharField(max_length=100, default="MANAUS", )
     base = models.CharField(max_length=100 ,default="N/A", )
@@ -65,7 +66,7 @@ class RequisicaoPessoal(models.Model):
     exige_viagem = models.CharField(max_length=100)
     cnh = models.CharField(max_length=100)
     tipo_cnh = models.CharField(max_length=100)
-    outros_cnh = models.CharField(max_length=100)
+    outros_cnh = models.CharField(max_length=100, null=True, blank=True)
     departamento = models.CharField(max_length=100)
     escolaridade = models.CharField(max_length=100, default="ENSINO MÉDIO COMPLETO", )
     gestor_imediato = models.CharField(max_length=100)
@@ -82,9 +83,14 @@ class RequisicaoPessoal(models.Model):
             ultimo = RequisicaoPessoal.objects.aggregate(maior=models.Max('n_rp'))['maior']
             if ultimo is None:
                 self.n_rp = 1
-            else:
-                self.n_rp = ultimo + 1
+            else:                       
+                self.n_rp = ultimo + 1   
         super().save(*args, **kwargs)
+
+
+    # Assinatura do Gestor
+    assinatura_gestor = models.ImageField(upload_to="assinaturas/gestor/RequisicaoPessoal",null=True, blank=True)
+    data_autorizacao_gestor = models.DateTimeField(null=True, blank=True, auto_now_add=True)    
 
     # Assinatura do diretor
     assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/RequisicaoPessoal")
@@ -92,7 +98,7 @@ class RequisicaoPessoal(models.Model):
 
     # Assinatura do presidente
     assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/RequisicaoPessoal")
-    data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
+    data_autorizacao_presidente = models.DateTimeField(null=True, blank=True) 
 
     # Assinatura do RH
     assinatura_rh = models.ImageField(upload_to="assinaturas/rh/RequisicaoPessoal")
@@ -107,6 +113,17 @@ class RequisicaoPessoal(models.Model):
     
     def clean(self):
         super().clean()
+
+        if self.assinatura_gestor and hasattr(self.assinatura_gestor, 'file'):
+            try:
+                self.assinatura_gestor.file.seek(0)
+                hash_gestor = hashlib.sha256(self.assinatura_gestor.file.read()).hexdigest()
+                self.assinatura_gestor.file.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do Gestor.")
+            
+            if hash_gestor not in HASHES_ASSINATURAS_GESTORES:
+                raise ValidationError("Arquivo de assinatura do gestor inválido.")
 
         if self.assinatura_diretor and hasattr(self.assinatura_diretor, 'file'):
             try:
@@ -143,14 +160,23 @@ class RequisicaoPessoal(models.Model):
     
 class MovimentacaoPessoal(models.Model):
     data_solicitacao = models.DateTimeField(auto_now_add=True)
-    numero = models.CharField(max_length=100)
+    n_mov =  models.PositiveIntegerField(unique=True, editable=False, null=True, blank=True)
+    def save(self, *args, **kwargs):
+        if not self.n_mov:
+            ultimo = MovimentacaoPessoal.objects.aggregate(maior=models.Max('n_mov'))['maior']
+            if ultimo is None:
+                self.n_mov = 1
+            else:                       
+                self.n_mov = ultimo + 1   
+        super().save(*args, **kwargs)
+
     unidade = models.CharField(max_length=100, default="MANAUS")
-    tipo_movimentacao = models.CharField(max_length=100)
-    outro_tipo = models.CharField(max_length=100)
+    tipo_movimentacao = models.CharField(max_length=255)
+    outro_tipo = models.CharField(max_length=100, null=True, blank=True)
     colaborador_movimentado = models.CharField(max_length=100)
     matricula = models.CharField(max_length=100)
     data_admissao = models.DateField()
-    outro_info = models.CharField(max_length=100)
+    outro_info = models.CharField(max_length=100, null=True, blank=True)
     localidade_atual = models.CharField(max_length=100)
     cargo_atual = models.CharField(max_length=100)
     departamento_atual = models.CharField(max_length=100)
@@ -165,13 +191,16 @@ class MovimentacaoPessoal(models.Model):
     centro_custo_proposto = models.CharField(max_length=100)
     data_movimentacao = models.DateField()
     tipo_adicional = models.CharField(max_length=100)
-    tipo_ajuda_custo = models.CharField(max_length=100)
-    valor_ajuda = models.FloatField()
+    tipo_ajuda_custo = models.CharField(max_length=100, null=True, blank=True)
+    valor_ajuda = models.FloatField(null=True, blank=True)
     periodo =  models.CharField(max_length=100)
     jutificativa_movimentacao = models.CharField(max_length=100)
-    outro_justificativa = models.CharField(max_length=100)
+    outro_justificativa = models.CharField(max_length=100, null=True, blank=True)
     substituicao = models.CharField(max_length=100)
     comentarios = models.TextField()
+
+    assinatura_gestor_atual =  models.ImageField(upload_to="assinaturas/gestor/MovimentacaoPessoal/", null=True, blank=True)
+    data_autorizacao_gestor_atual = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
     assinatura_complice = models.ImageField(upload_to="assinaturas/complice/MovimentacaoPessoal/")
     data_autorizacao_complice = models.DateTimeField(null=True, blank=True)
@@ -198,6 +227,18 @@ class MovimentacaoPessoal(models.Model):
     
     def clean(self):
         super().clean()
+
+     # Validação da assinatura do Gestor Atual
+        if self.assinatura_gestor_atual and hasattr(self.assinatura_gestor_atual, 'file'):
+            try:
+                self.assinatura_gestor_atual.seek(0)
+                hash_gestor_atual = hashlib.sha256(self.assinatura_gestor_atual.file.read()).hexdigest()
+                self.assinatura_gestor_atual.seek(0)
+            except Exception:
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do gestor atual")
+    
+            if hash_gestor_atual not in HASHES_ASSINATURAS_GESTORES:
+                raise ValidationError({"assinatura_gestor_atual": "Arquivo de assinatura do Gestor Atual inválido."})
 
      # Validação da assinatura do Complice
         if self.assinatura_complice and hasattr(self.assinatura_complice, 'file'):
@@ -280,10 +321,11 @@ class RequisicaoDesligamento(models.Model):
     justificativa_aviso = models.TextField()
     substituicao = models.CharField(max_length=100)
     bloqueio_readmissao = models.BooleanField(default=False)
-    '''
-    assinatura_gestor_requisitante = models.ImageField(upload_to="assinaturas/gestor/RequisicaoDesligamento")
-    data_autorizacao_gestor_requisitante = models.DateTimeField(auto_now_add=True)
-    '''
+
+    
+    assinatura_gestor = models.ImageField(upload_to="assinaturas/gestor/RequisicaoDesligamento",null=True, blank=True)
+    data_autorizacao_gestor = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+
     assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/RequisicaoDesligamento/")
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
@@ -302,16 +344,16 @@ class RequisicaoDesligamento(models.Model):
     def clean(self):
         super().clean()
 
-        if self.assinatura_gestor_requisitante and hasattr(self.assinatura_gestor_requisitante, 'file'):
+        if self.assinatura_gestor and hasattr(self.assinatura_gestor, 'file'):
             try:
-                self.assinatura_gestor_requisitante.seek(0)
-                hash_gestor= hashlib.sha256(self.assinatura_gestor_requisitante.read()).hexdigest()
-                self.assinatura_gestor_requisitante.seek(0)
+                self.assinatura_gestor.file.seek(0)
+                hash_gestor = hashlib.sha256(self.assinatura_gestor.file.read()).hexdigest()
+                self.assinatura_gestor.file.seek(0)
             except Exception:
-                raise ValidationError("Não foi possível processar o arquivo de assinatura do Gestor requisitante")
+                raise ValidationError("Não foi possível processar o arquivo de assinatura do Gestor.")
             
             if hash_gestor not in HASHES_ASSINATURAS_GESTORES:
-                 raise ValidationError({"assinatura_gestor_requisitante": "Arquivo de assinatura do Gestor Requisitante inválido."})
+                raise ValidationError("Arquivo de assinatura do gestor inválido.")
 
         if self.assinatura_diretor and hasattr(self.assinatura_diretor, 'file'):
             try:
