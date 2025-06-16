@@ -3,8 +3,9 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from itertools import chain
 from ..forms import RequisicaoPessoalForm, MovimentacaoPessoalForm, RequisicaoDesligamentoForm, GestorPropostoApprovalForm
-from ..models import MovimentacaoPessoal, RequisicaoPessoal
+from ..models import MovimentacaoPessoal, RequisicaoPessoal, RequisicaoDesligamento
 
 @login_required
 def gestor_page(request):
@@ -35,6 +36,7 @@ def gestor_page(request):
             form_movimentacao = MovimentacaoPessoalForm(request.POST, request.FILES)
             if form_movimentacao.is_valid():
                 movimentacao = form_movimentacao.save(commit=False)
+                movimentacao.usuario = request.user
                 movimentacao.save()
                 return redirect("gestor_page")
         
@@ -62,6 +64,7 @@ def gestor_page(request):
             form_rd = RequisicaoDesligamentoForm(request.POST, request.FILES)
             if form_rd.is_valid():
                 rd = form_rd.save(commit=False)
+                rd.usuario = request.user
                 rd.save()
                 return redirect("gestor_page")
             
@@ -75,10 +78,37 @@ def gestor_page(request):
         "usuario": request.user,
     })
 
-'''
 @login_required
 def registros_gestor(request):
-    rp = RequisicaoPessoal.objects.filter(usuario=request.user).~Q(assinatura_rh__isnull=True), ~Q(assinatura_complice=""),
-    mov 
-    rd
-'''
+    rp = RequisicaoPessoal.objects.filter(
+        Q(usuario=request.user) &
+        ~Q(assinatura_rh__isnull=True)
+    )
+    for r in rp:
+        r.tipo = "RP"
+
+    mov = MovimentacaoPessoal.objects.filter(
+        Q(usuario=request.user) &
+        ~Q(assinatura_rh__isnull=True)
+    )
+    for m in mov:
+        m.tipo = "MOV"
+    
+    rd = RequisicaoDesligamento.objects.filter(
+        Q(usuario=request.user) &
+        ~Q(assinatura_rh__isnull=True)
+    )
+    for d in rd:
+        d.tipo = "RD"
+
+    registros = sorted(
+        chain(rp, mov, rd),
+        key=lambda x: x.data_solicitacao,
+        reverse=True
+    )
+
+    return render(request, "conexaorh/registros_gestor.html", {
+        "registros": registros
+    })
+
+

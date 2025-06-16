@@ -237,6 +237,7 @@ class MovimentacaoPessoalForm(forms.ModelForm):
             'dias_para_autorizacao_diretor',
             'dias_para_autorizacao_presidente',
             'dias_para_autorizacao_rh',
+            'usuario',
             
         ]
 
@@ -343,6 +344,7 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
             'dias_para_autorizacao_diretor',
             'dias_para_autorizacao_presidente',
             'dias_para_autorizacao_rh',
+            'usuario',
         ]
         widgets = {
             'data_desligamento': DateInput(attrs={'type': 'date'}),

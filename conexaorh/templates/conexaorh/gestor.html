@@ -5,6 +5,8 @@
     <title>Página do Gestor</title>
 </head>
 <body>
+
+    <a href="{% url 'registros_gestor' %}">Registros do Gestor</a>
     <h1>Bem-vindo à Página do Gestor, {{ usuario.first_name }} {{ usuario.last_name }}</h1>
     <p>Esta é a área exclusiva para usuários do tipo Gestor.</p>
 

@@ -160,6 +160,7 @@ class RequisicaoPessoal(models.Model):
     
 class MovimentacaoPessoal(models.Model):
     data_solicitacao = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     n_mov =  models.PositiveIntegerField(unique=True, editable=False, null=True, blank=True)
     def save(self, *args, **kwargs):
         if not self.n_mov:
@@ -304,6 +305,7 @@ class MovimentacaoPessoal(models.Model):
     
 class RequisicaoDesligamento(models.Model):
     data_solicitacao = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     requisitante = models.CharField(max_length=100)
     colaborador_desligado = models.CharField(max_length=100)
     data_desligamento = models.DateField()

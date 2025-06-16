@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from itertools import chain
 from ..forms import PresidenteForm
 from ..models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 
@@ -49,3 +50,33 @@ def presidente_page(request):
         "conexaorh/presidente.html", 
         {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form}
     )
+
+@login_required
+def registros_presidente(request):
+    rp = RequisicaoPessoal.objects.filter(
+        ~Q(assinatura_rh__isnull=True)
+    )
+    for r in rp:
+        r.tipo = "RP"
+
+    mov = MovimentacaoPessoal.objects.filter(
+        ~Q(assinatura_rh__isnull=True)
+    )
+    for m in mov:
+        m.tipo = "MOV"
+    
+    rd = RequisicaoDesligamento.objects.filter(
+        ~Q(assinatura_rh__isnull=True)
+    )
+    for d in rd:
+        d.tipo = "RD"
+
+    registros = sorted(
+        chain(rp, mov, rd),
+        key=lambda x: x.data_solicitacao,
+        reverse=True
+    )
+
+    return render(request, "conexaorh/registros_presidente.html", {
+        "registros": registros
+    })
