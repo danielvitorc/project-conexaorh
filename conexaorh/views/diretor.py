@@ -49,6 +49,84 @@ def diretor_page(request):
     return render(request, "conexaorh/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form})
 
 @login_required
+def diretor_rp(request):
+    if request.user.user_type != "diretor":
+        return HttpResponseForbidden("Acesso negado!")
+
+    registros = RequisicaoPessoal.objects.all()
+    form = DiretorForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
+        form = DiretorForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
+                registro.data_autorizacao_diretor = now()
+                registro.dias_para_autorizacao_diretor = (
+                    registro.data_autorizacao_diretor.date() - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("diretor_rp")
+
+    return render(request, "conexaorh/diretor/rp.html", {"registros": registros, "form": form})
+
+
+@login_required
+def diretor_mov(request):
+    if request.user.user_type != "diretor":
+        return HttpResponseForbidden("Acesso negado!")
+
+    registros = MovimentacaoPessoal.objects.filter(
+        ~Q(assinatura_gestor_proposto__isnull=True), ~Q(assinatura_gestor_proposto="")
+    )
+    form = DiretorForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
+        form = DiretorForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
+                registro.data_autorizacao_diretor = now()
+                registro.dias_para_autorizacao_diretor = (
+                    registro.data_autorizacao_diretor.date() - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("diretor_mov")
+
+    return render(request, "conexaorh/diretor/mov.html", {"registros": registros, "form": form})
+
+@login_required
+def diretor_rd(request):
+    if request.user.user_type != "diretor":
+        return HttpResponseForbidden("Acesso negado!")
+
+    registros = RequisicaoDesligamento.objects.all()
+    form = DiretorForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(RequisicaoDesligamento, id=registro_id)
+        form = DiretorForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
+                registro.data_autorizacao_diretor = now()
+                registro.dias_para_autorizacao_diretor = (
+                    registro.data_autorizacao_diretor.date() - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("diretor_rd")
+
+    return render(request, "conexaorh/diretor/rd.html", {"registros": registros, "form": form})
+
+@login_required
 def registros_diretor(request):
     rp = RequisicaoPessoal.objects.filter(
         ~Q(assinatura_rh__isnull=True)

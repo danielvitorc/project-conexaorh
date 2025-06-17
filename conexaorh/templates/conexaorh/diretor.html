@@ -7,6 +7,9 @@
 </head>
 <body>
     <a href="{% url 'registros_diretor' %}">Registros do Diretor</a>
+    <a href="{% url 'diretor_rp' %}">Requisição de Pessoal</a>
+    <a href="{% url 'diretor_mov' %}">Movimentação de Pessoal</a>
+    <a href="{% url 'diretor_rd' %}">Requisição de Desligamento</a>
     <h1>Bem-vindo à Página do Diretor, {{ usuario.first_name }} {{ usuario.last_name }}</h1>
     <p>Esta é a área exclusiva para usuários do tipo Diretor.</p>
 

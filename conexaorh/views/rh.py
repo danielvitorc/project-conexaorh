@@ -55,6 +55,114 @@ def rh_page(request):
 
 
 @login_required
+def rh_rp(request):
+    if request.user.user_type != "rh":
+        return HttpResponseForbidden("Acesso negado!")
+
+    registros = RequisicaoPessoal.objects.all()
+    form = RHForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
+        form = RHForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_rh and registro.data_autorizacao_rh is None:
+                registro.data_autorizacao_rh = now()
+                registro.dias_para_autorizacao_rh = (
+                    registro.data_autorizacao_rh.date()
+                    - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("rh_rp")
+
+    return render(request, "conexaorh/rh/rp.html", {"registros": registros, "form": form})
+
+@login_required
+def rh_rp(request):
+    if request.user.user_type != "rh":
+        return HttpResponseForbidden("Acesso negado!")
+
+    registros = RequisicaoPessoal.objects.all()
+    form = RHForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
+        form = RHForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_rh and registro.data_autorizacao_rh is None:
+                registro.data_autorizacao_rh = now()
+                registro.dias_para_autorizacao_rh = (
+                    registro.data_autorizacao_rh.date()
+                    - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("rh_rp")
+
+    return render(request, "conexaorh/rh/rp.html", {"registros": registros, "form": form})
+
+@login_required
+def rh_mov(request):
+    if request.user.user_type != "rh":
+        return HttpResponseForbidden("Acesso negado!")
+
+    registros = MovimentacaoPessoal.objects.all()
+    form = RHForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
+        form = RHForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_rh and registro.data_autorizacao_rh is None:
+                registro.data_autorizacao_rh = now()
+                registro.dias_para_autorizacao_rh = (
+                    registro.data_autorizacao_rh.date()
+                    - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("rh_mov")
+
+    return render(request, "conexaorh/rh/mov.html", {"registros": registros, "form": form})
+
+@login_required
+def rh_rd(request):
+    if request.user.user_type != "rh":
+        return HttpResponseForbidden("Acesso negado!")
+
+    registros = RequisicaoDesligamento.objects.all()
+    form = RHForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(RequisicaoDesligamento, id=registro_id)
+        form = RHForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_rh and registro.data_autorizacao_rh is None:
+                registro.data_autorizacao_rh = now()
+                registro.dias_para_autorizacao_rh = (
+                    registro.data_autorizacao_rh.date()
+                    - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("rh_rd")
+
+    return render(request, "conexaorh/rh/rd.html", {"registros": registros, "form": form})
+
+@login_required
 def registros_rh(request):
     rp = RequisicaoPessoal.objects.filter(
         ~Q(assinatura_rh__isnull=True)

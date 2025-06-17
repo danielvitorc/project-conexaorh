@@ -50,6 +50,87 @@ def presidente_page(request):
         "conexaorh/presidente.html", 
         {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form}
     )
+@login_required
+def presidente_rp(request):
+    if request.user.user_type != "presidente":
+        return HttpResponseForbidden("Acesso Negado!")
+    
+    registros = RequisicaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
+    form = PresidenteForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
+        form = PresidenteForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_presidente and registro.data_autorizacao_presidente is None:
+                registro.data_autorizacao_presidente = now()
+                registro.dias_para_autorizacao_presidente = (
+                    registro.data_autorizacao_presidente.date()
+                    - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("presidente_rp")
+
+    return render(request, "conexaorh/presidente/rp.html", {"registros": registros, "form": form})
+
+
+@login_required
+def presidente_mov(request):
+    if request.user.user_type != "presidente":
+        return HttpResponseForbidden("Acesso Negado!")
+    
+    registros = MovimentacaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
+    form = PresidenteForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
+        form = PresidenteForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_presidente and registro.data_autorizacao_presidente is None:
+                registro.data_autorizacao_presidente = now()
+                registro.dias_para_autorizacao_presidente = (
+                    registro.data_autorizacao_presidente.date()
+                    - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("presidente_mov")
+
+    return render(request, "conexaorh/presidente/mov.html", {"registros": registros, "form": form})
+
+@login_required
+def presidente_rd(request):
+    if request.user.user_type != "presidente":
+        return HttpResponseForbidden("Acesso Negado!")
+    
+    registros = RequisicaoDesligamento.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
+    form = PresidenteForm()
+
+    if request.method == "POST":
+        registro_id = request.POST.get("registro_id")
+        registro = get_object_or_404(RequisicaoDesligamento, id=registro_id)
+        form = PresidenteForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            registro = form.save(commit=False)
+            # se acabou de assinar
+            if registro.assinatura_presidente and registro.data_autorizacao_presidente is None:
+                registro.data_autorizacao_presidente = now()
+                registro.dias_para_autorizacao_presidente = (
+                    registro.data_autorizacao_presidente.date()
+                    - registro.data_solicitacao.date()
+                ).days
+            registro.save()
+            return redirect("presidente_rd")
+
+    return render(request, "conexaorh/presidente/rd.html", {"registros": registros, "form": form})
 
 @login_required
 def registros_presidente(request):
