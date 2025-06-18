@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="https://encrypted-tbn2.gstatic.com/faviconV2?url=https://www.nortetech.net&client=VFE&size=64&type=FAVICON&fallback_opts=TYPE,SIZE,URL&nfrp=2" type="image/png">
+    <title>{% block title %}Formularios - RH{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'conexaorh/css/gestor.css' %}">
+</head>
+<body>
+
+{% include 'conexaorh/include/navbar.html' with pagina_ativa='gestor_page' botao_movimentacao=True %}
+
+<div class="main-content">
+
+    <h1 class="mb-4">Bem-vindo à Página do Gestor, {{ usuario.first_name }}</h1>
+    <p>Esta é a área exclusiva para usuários do tipo Gestor.</p>
+
+    <div class="mb-5">
+        <h5 class="text-primary fw-bold mb-3">Ações Rápidas</h5>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Requisição de Pessoal</h5>
+                        <p class="card-text">Solicite novas contratações de forma rápida e organizada.</p>
+                        <button onclick="openModal('modalRp')" class="btn btn-outline-primary mt-auto">Abrir Formulário</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                        <i class="fas fa-exchange-alt fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Movimentação de Pessoal</h5>
+                        <p class="card-text">Registre promoções ou transferências internas com facilidade.</p>
+                        <button onclick="openModal('modalMov')" class="btn btn-outline-warning mt-auto">Abrir Formulário</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center d-flex flex-column">
+                        <i class="fas fa-user-times fa-3x text-danger mb-3"></i>
+                        <h5 class="card-title">Requisição de Desligamento</h5>
+                        <p class="card-text">Solicite desligamentos de colaboradores com o devido registro.</p>
+                        <button onclick="openModal('modalRd')" class="btn btn-outline-danger mt-auto">Abrir Formulário</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-4">
+                    <i class="fas fa-tasks text-info me-2"></i>Movimentações Pendentes como Gestor Proposto
+                </h5>
+                <div class="table-responsive">
+                    <table id="tabela-movimentacoes" class="table table-bordered align-middle display" style="width:100%">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th>Gestor Atual</th>
+                                <th>Colaborador</th>
+                                <th>Cargo Proposto</th>
+                                <th>Data Solicitação</th>
+                                <th>Assinatura Gestor</th>
+                                <th>Data Aprovação</th>
+                                <th>SLA (dias)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in movimentacao %}
+                            <tr>
+                                <td>{{ registro.gestor_atual }}</td>
+                                <td>{{ registro.colaborador_movimentado }}</td>
+                                <td>{{ registro.cargo_proposto }}</td>
+                                <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if registro.assinatura_gestor_proposto %}
+                                        <p class="mb-1">Aprovado:</p>
+                                        <img src="{{ registro.assinatura_gestor_proposto.url }}" alt="Assinatura" style="height: 80px;">
+                                    {% else %}
+                                        <form method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="file" name="assinatura_gestor_proposto" class="form-control form-control-sm mb-2" required>
+                                            <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                                            <button type="submit" name="submit_aprovacao_mov" class="btn btn-sm btn-success">Aprovar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if registro.data_autorizacao_gestor_proposto %}
+                                        {{ registro.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
+                                    {% else %} - {% endif %}
+                                </td>
+                                <td>
+                                    {% if registro.dias_para_autorizacao_gestor_proposto is not None %}
+                                        {{ registro.dias_para_autorizacao_gestor_proposto }}
+                                    {% else %} - {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if not movimentacao %}
+                    <p class="text-muted text-center mt-3">Não há movimentações para aprovação.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'conexaorh/js/tema.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!-- templates/conexaorh/diretor.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Página do Diretor</title>
+</head>
+<body>
+    <a href="{% url 'registros_diretor' %}">Registros do Diretor</a>
+    <a href="{% url 'diretor_rp' %}">Requisição de Pessoal</a>
+    <a href="{% url 'diretor_mov' %}">Movimentação de Pessoal</a>
+    <a href="{% url 'diretor_rd' %}">Requisição de Desligamento</a>
+    <h1>Bem-vindo à Página do Diretor, {{ usuario.first_name }} {{ usuario.last_name }}</h1>
+    <p>Esta é a área exclusiva para usuários do tipo Diretor.</p>
+
+    <h2>Requisição de Pessoal para Aprovação</h2>
+    <table border="1">
+        <tr>
+            <th>Requisitante</th>
+            <th>Data de Solicitação</th>
+            <th>Cargo</th>
+            <th>Base</th>
+            <th>Assinatura Diretor</th>
+            <th>Data Assinatura Diretor</th>
+            <th>Assinatura Presidente</th>
+            <th>Data Assinatura Presidente</th>
+            <th>Assinatura RH</th>
+            <th>Data Assinatura RH</th>
+            <th>Tempo para Autorização (dias)</th>
+        </tr>
+        {% for registro in rp %}
+        <tr>
+            <td>{{ registro.requisitante }}</td>
+            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+            <td>{{ registro.cargo }}</td>
+            <td>{{ registro.base }}</td>
+            <td>
+                {% if registro.assinatura_diretor %}
+                    <p>Aprovado pelo Diretor:</p>
+                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                {% else %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                        <input type="hidden" name="tipo_registro" value="rp">
+                        <button type="submit">Aprovar com Assinatura</button>
+                    </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_diretor %}
+                    {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>    
+                {% if registro.assinatura_presidente %}
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_presidente %}
+                    {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>    
+                {% if registro.assinatura_rh %}
+                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_rh %}
+                    {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.dias_para_autorizacao_diretor is not None %}
+                    {% if registro.dias_para_autorizacao_diretor == 0 %}
+                        Aprovado no mesmo dia
+                    {% else %}
+                        {{ registro.dias_para_autorizacao_diretor }} dias
+                    {% endif %}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Movimentação de Pessoal para Aprovação</h2>
+    <table border="1">
+        <tr>
+            <th>Gestor Atual</th>
+            <th>Colaborador a ser movimentado</th>
+            <th>Cargo Proposto</th>
+            <th>Data de Solicitação</th>
+            <th>Assinatura Diretor</th>
+            <th>Data Assinatura Diretor</th>
+            <th>Assinatura Presidente</th>
+            <th>Data Assinatura Presidente</th>
+            <th>Assinatura RH</th>
+            <th>Data Assinatura RH</th>
+            <th>Tempo para Aprovação (dias)</th>
+        </tr>
+        {% for registro in movimentacao %}
+        <tr>
+            <td>{{ registro.gestor_atual }}</td>
+            <td>{{ registro.colaborador_movimentado }}</td>
+            <td>{{ registro.cargo_proposto }}</td>
+            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if registro.assinatura_diretor %}
+                    <p>Aprovado pelo Diretor:</p>
+                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                {% else %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                        <input type="hidden" name="tipo_registro" value="movimentacao">
+                        <button type="submit">Aprovar com Assinatura</button>
+                    </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_diretor %}
+                    {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>    
+                {% if registro.assinatura_presidente %}
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_presidente %}
+                    {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>    
+                {% if registro.assinatura_rh %}
+                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_rh %}
+                    {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.dias_para_autorizacao_diretor is not None %}
+                    {% if registro.dias_para_autorizacao_diretor == 0 %}
+                        Aprovado no mesmo dia
+                    {% else %}
+                        {{ registro.dias_para_autorizacao_diretor }} dias
+                    {% endif %}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Requisição de Desligamento para Aprovação</h2>
+    <table border="1">
+        <tr>
+            <th>Requisitante</th>
+            <th>Colaborador a ser Desligado</th>
+            <th>Função</th>
+            <th>Data de Solicitação</th>
+            <th>Assinatura Diretor</th>
+            <th>Data Assinatura Diretor</th>
+            <th>Assinatura Presidente</th>
+            <th>Data Assinatura Presidente</th>
+            <th>Assinatura RH</th>
+            <th>Data Assinatura RH</th>
+            <th>Tempo para Aprovação (dias)</th>
+        </tr>
+        {% for registro in rd %}
+        <tr>
+            <td>{{ registro.requisitante }}</td>
+            <td>{{ registro.colaborador_desligado }}</td>
+            <td>{{ registro.funcao }}</td>
+            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if registro.assinatura_diretor %}
+                    <p>Aprovado pelo Diretor:</p>
+                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                {% else %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                        <input type="hidden" name="tipo_registro" value="rd">
+                        <button type="submit">Aprovar com Assinatura</button>
+                    </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_diretor %}
+                    {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>    
+                {% if registro.assinatura_presidente %}
+                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_presidente %}
+                    {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>    
+                {% if registro.assinatura_rh %}
+                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.assinatura_rh %}
+                    {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if registro.dias_para_autorizacao_diretor is not None %}
+                    {% if registro.dias_para_autorizacao_diretor == 0 %}
+                        Aprovado no mesmo dia
+                    {% else %}
+                        {{ registro.dias_para_autorizacao_diretor }} dias
+                    {% endif %}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{% url 'logout' %}">Sair</a>
+</body>
+</html>

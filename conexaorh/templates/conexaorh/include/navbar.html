@@ -1,0 +1,56 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'conexaorh/css/sidebar.css' %}">
+<script src="{% static 'conexaorh/js/sidebar.js' %}" defer></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div id="sidebar" class="sidebar">
+    <div>
+        <div class="sidebar-header">
+            <span class="logo-full">
+                {% if botao_movimentacao %} GESTOR RH-DP
+                {% elif complice %} COMPLICE RH
+                {% elif rh %} RH-DP
+                {% else %} CONEXAORH
+                {% endif %}
+            </span>
+            <span class="logo-mini">
+                {% if botao_movimentacao %} RH-DP
+                {% elif complice %} CRH
+                {% elif rh %} RH
+                {% else %} CX
+                {% endif %}
+            </span>
+        </div>
+
+        <nav class="sidebar-nav">
+            {% if botao_movimentacao %}
+            <a href="{% url 'registros_gestor' %}" class="{% if pagina_ativa == 'gestor_page' %}active{% endif %}">
+                <i class="fas fa-tasks"></i>
+                <span>Movimentações Pendentes</span>
+            </a>
+            {% endif %}
+            <a href="#">
+                <i class="fas fa-users"></i>
+                <span>Funcionários</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-chart-bar"></i>
+                <span>Relatórios</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-footer">
+        <span class="user-greeting">Olá, {{ request.user.first_name|default:'Usuário' }}</span>
+        <div class="footer-actions">
+            <button id="themeToggleButton" title="Alterar Tema">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+            <a href="{% url 'logout' %}" class="text-danger" title="Sair">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </div>
+</div>

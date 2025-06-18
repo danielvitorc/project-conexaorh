@@ -33,7 +33,7 @@ def complice_page(request):
             registro.save()
             return redirect('complice_page')
 
-    return render(request, 'conexaorh/complice.html', {
+    return render(request, 'conexaorh/complice/complice.html', {
         'movimentacao': movimentacao,
         'usuario': request.user,
         'form': form

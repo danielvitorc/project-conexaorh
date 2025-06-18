@@ -46,7 +46,7 @@ def diretor_page(request):
             registro.save()
             return redirect("diretor_page")
 
-    return render(request, "conexaorh/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form})
+    return render(request, "conexaorh/diretor/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form})
 
 @login_required
 def diretor_rp(request):
@@ -152,6 +152,6 @@ def registros_diretor(request):
         reverse=True
     )
 
-    return render(request, "conexaorh/registros_diretor.html", {
+    return render(request, "conexaorh/diretor/registros_diretor.html", {
         "registros": registros
     })

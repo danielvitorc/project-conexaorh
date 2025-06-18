@@ -7,6 +7,7 @@ urlpatterns = [
     path('', auth.login_view, name='login'),
     path('logout/', auth.logout_view, name='logout'),
     path('gestor/', gestor.gestor_page, name='gestor_page'),
+    path('gestor/movimentacao/',gestor.movimentacoes_pendentes, name='movimentacoes_pendentes'),
     path('registros_gestor/', gestor.registros_gestor, name='registros_gestor'),
     path('diretor/', diretor.diretor_page, name='diretor_page'),
     path('registros_diretor/', diretor.registros_diretor, name='registros_diretor'),

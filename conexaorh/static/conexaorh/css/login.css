@@ -1,0 +1,175 @@
+:root {
+  --azulEscuro-nort: #021B33;
+  --azul-nort: #0d71a7;
+  --branco-nort: #F7F7F7;
+  --dourado-nort: #FFD700;
+  --erro-nort: #ff4d4d;
+  --gradiente-center: var(--azul-nort);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--azulEscuro-nort);
+    overflow: hidden;
+}
+
+/* Wrapper dividido */
+.login-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Formulário à esquerda */
+.login-box {
+    flex: 1;
+    max-width: 460px;
+    padding: 80px 50px;
+    background: radial-gradient(circle at center, var(--azul-nort) 0%, var(--azulEscuro-nort) 65%);
+    color: var(--branco-nort);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: fadeInLeft 0.8s ease;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+}
+
+@keyframes pulsarGradiente {
+  0% {
+    --gradiente-center: var(--azul-nort);
+  }
+  50% {
+    --gradiente-center: #1a90c9; /* tom mais claro para pulsar */
+  }
+  100% {
+    --gradiente-center: var(--azulEscuro-nort);
+  }
+}
+/* Logo */
+.login-logo {
+    width: 140px;
+    margin-bottom: 30px;
+}
+
+/* Campos com ícones */
+.input-icon {
+    position: relative;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.input-icon i {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: var(--azul-nort);
+    font-size: 1.1rem;
+}
+
+.form-control {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--branco-nort);
+    border-radius: 0;
+    color: var(--branco-nort);
+    padding: 12px 40px 12px 12px;
+    font-size: 1rem;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.form-control::placeholder {
+    color: var(--branco-nort);
+    opacity: 0.75;
+}
+
+.form-control:focus {
+    border-bottom: 1.5px solid var(--dourado-nort);
+    background-color: rgba(255, 255, 255, 0.05);
+    outline: none;
+}
+
+/* Botão de login */
+.btn-login {
+    background-color: var(--branco-nort);
+    color: var(--azulEscuro-nort);
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 25px;
+    border: none;
+    transition: 0.3s ease;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.btn-login:hover {
+    background-color: var(--dourado-nort);
+    color: var(--azulEscuro-nort);
+    transform: scale(1.03);
+}
+
+/* Mensagens de erro */
+.text-danger {
+    color: var(--erro-nort);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* Área da imagem à direita */
+.login-wrapper::after {
+    content: "";
+    flex: 1;
+    background: url("/static/conexaorh/img/login-bg1.jpg") no-repeat center center;
+    background-size: cover;
+    animation: fadeInRight 0.8s ease;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .login-wrapper {
+        flex-direction: column;
+    }
+
+    .login-wrapper::after {
+        display: none;
+    }
+
+    .login-box {
+        max-width: 100%;
+        padding: 60px 30px;
+        box-shadow: none;
+    }
+}
+
+/* Animações */
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

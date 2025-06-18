@@ -49,7 +49,7 @@ def rh_page(request):
 
     return render(
         request,
-        "conexaorh/rh.html",
+        "conexaorh/rh/rh.html",
         {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form}
     )
 
@@ -188,6 +188,6 @@ def registros_rh(request):
         reverse=True
     )
 
-    return render(request, "conexaorh/registros_rh.html", {
+    return render(request, "conexaorh/rh/registros_rh.html", {
         "registros": registros
     })
