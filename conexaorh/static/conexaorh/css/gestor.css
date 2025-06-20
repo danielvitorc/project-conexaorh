@@ -6,6 +6,7 @@
   --bg-color: #F2F2F2;
   --text-color: #000000;
   --card-bg: #ffffff;
+  --dourado-nort: #FFD700;
 }
 
 [data-theme="dark"] {
@@ -16,39 +17,49 @@
   --bg-color: #0D0D0D;
   --text-color: #FFFFFF;
   --card-bg: #1c1c1c;
+  --dourado-nort: #FFD700;
 }
 
 body {
-  background-color: var(--bg-color);
+  background: var(--bg-color);
   color: var(--text-color);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 2rem;
-  transition: background-color 0.5s, color 0.5s;
   padding-top: 70px; /* espaço para a navbar */
+  transition: background-color 0.5s, color 0.5s;
 }
 
 h1, h2 {
-  color: var(--primary-color);
+  color: var(--dourado-nort);
   transition: color 0.5s;
 }
 
 a {
-  color: var(--accent-color);
+  color: var(--accent-color);.sidebar {
+    width: 88px; 
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: radial-gradient(
+        circle,
+        var(--azul-nort) 0%,       /* centro claro */
+        var(--azulEscuro-nort) 100% /* borda escura */
+    );
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--secondary-color);
+    transition: width 0.3s ease;
+    z-index: 1050;
+    overflow-x: hidden;
+}
   transition: color 0.3s;
 }
 
-/* Navbar padrão */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 0.5rem 1rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
+
 
 
 /* Estilo da navbar no tema escuro */
@@ -64,7 +75,7 @@ a {
 }
 /* Cor padrão no tema claro */
 .user-greeting {
-  color: var(--text-color);
+  color: var(--);
   transition: color 0.3s;
 }
 
@@ -110,12 +121,15 @@ a {
 }
 
 .card {
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.15); /* fundo branco transparente */
+  backdrop-filter: blur(10px);           /* desfoque acrílico */
+  -webkit-backdrop-filter: blur(10px);   /* suporte Safari */
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.25); /* borda clara translúcida */
   color: var(--text-color);
   padding: 1.5rem;
   flex: 1 1 calc(33.333% - 2rem);
-  border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   transition: transform 0.4s, box-shadow 0.4s, background 0.4s;
   cursor: pointer;
 }

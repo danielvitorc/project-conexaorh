@@ -6,22 +6,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <div id="sidebar" class="sidebar">
-    <div>
-        <div class="sidebar-header">
-            <span class="logo-full">
-                {% if botao_movimentacao %} GESTOR RH-DP
-                {% elif complice %} COMPLICE RH
-                {% elif rh %} RH-DP
-                {% else %} CONEXAORH
-                {% endif %}
-            </span>
-            <span class="logo-mini">
-                {% if botao_movimentacao %} RH-DP
-                {% elif complice %} CRH
-                {% elif rh %} RH
-                {% else %} CX
-                {% endif %}
-            </span>
+        <div>
+                <div class="sidebar-header">
+            <img class="logo" src="{% static 'conexaorh/img/logo.png' %}" alt="Logo NortTech">
         </div>
 
         <nav class="sidebar-nav">

@@ -33,7 +33,7 @@
 
 /* --- ESTILOS DA SIDEBAR --- */
 .sidebar {
-    width: 65px; 
+    width: 88px; 
     height: 100vh;
     position: fixed;
     left: 0;
@@ -55,33 +55,31 @@
 
 /* HEADER LOGO */
 .sidebar-header {
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 1rem;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem;
+  height: 70px;
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
-.logo-full {
-    display: none;
-}
-.sidebar:hover .logo-full {
-    display: inline;
-}
-
-.logo-mini {
-    display: inline;
-    font-weight: bold;
-    font-size: 1.5rem;
-}
-.sidebar:hover .logo-mini {
-    display: none;
+.sidebar-header .logo {
+  max-height: 40px;       /* <- DIMINUI AQUI O TAMANHO RECOLHIDO */
+  width: auto;            /* Mantém proporção */
+  transition: all 0.3s ease;
+  margin-left: 8px;
 }
 
+/* Quando expandida */
+.sidebar:hover .sidebar-header {
+  justify-content: center;
+}
+
+.sidebar:hover .sidebar-header .logo {
+  max-height: 40px;       /* <- DIMINUI AQUI O TAMANHO EXPANDIDO */
+  margin-left: 0;
+}
 /* NAVEGAÇÃO */
 .sidebar-nav {
     flex-grow: 1;
