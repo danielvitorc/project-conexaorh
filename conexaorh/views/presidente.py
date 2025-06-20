@@ -12,7 +12,7 @@ def presidente_page(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso negado! Apenas presidentes podem acessar esta página.")
 
-    rp = RequisicaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
+    rp = RequisicaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True))
     movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
     rd = RequisicaoDesligamento.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
 
@@ -34,6 +34,7 @@ def presidente_page(request):
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_presidente and registro.data_autorizacao_presidente is None:
                 registro.data_autorizacao_presidente = now()
@@ -55,7 +56,7 @@ def presidente_rp(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso Negado!")
     
-    registros = RequisicaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
+    registros = RequisicaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True))
     form = PresidenteForm()
 
     if request.method == "POST":
@@ -65,6 +66,7 @@ def presidente_rp(request):
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_presidente and registro.data_autorizacao_presidente is None:
                 registro.data_autorizacao_presidente = now()

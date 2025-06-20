@@ -13,7 +13,7 @@ def rh_page(request):
         return HttpResponseForbidden("Acesso negado! Apenas usuários do RH podem acessar esta página.")
 
     # Buscar registros dos dois modelos que já foram aprovados pelo presidente
-    rp = RequisicaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True), ~Q(assinatura_presidente=""))
+    rp = RequisicaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))
     movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True), ~Q(assinatura_presidente=""))
     rd = RequisicaoDesligamento.objects.filter(~Q(assinatura_presidente__isnull=True), ~Q(assinatura_presidente=""))
 
@@ -36,6 +36,7 @@ def rh_page(request):
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_rh and registro.data_autorizacao_rh is None:
                 registro.data_autorizacao_rh = now()
@@ -59,7 +60,7 @@ def rh_rp(request):
     if request.user.user_type != "rh":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = RequisicaoPessoal.objects.all()
+    registros = RequisicaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))
     form = RHForm()
 
     if request.method == "POST":
@@ -96,6 +97,7 @@ def rh_rp(request):
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_rh and registro.data_autorizacao_rh is None:
                 registro.data_autorizacao_rh = now()

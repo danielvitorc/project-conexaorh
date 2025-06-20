@@ -34,10 +34,11 @@
             <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
             <td>{{ registro.cargo }}</td>
             <td>{{ registro.base }}</td>
+
             <td>
                 {% if registro.assinatura_diretor %}
                     <p>Aprovado pelo Diretor:</p>
-                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                    <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
                 {% else %}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -57,7 +58,7 @@
             </td>
             <td>    
                 {% if registro.assinatura_presidente %}
-                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                    <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Presidente" style="height: 100px;">
                 {% else %}
                     -
                 {% endif %}

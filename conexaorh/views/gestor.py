@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
+from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from itertools import chain
@@ -27,9 +28,7 @@ def gestor_page(request):
         if "submit_rp" in request.POST:
             form_rp = RequisicaoPessoalForm(request.POST, request.FILES)
             if form_rp.is_valid():
-                rp = form_rp.save(commit=False)
-                rp.usuario = request.user
-                rp.save()
+                form_rp.save(user=request.user)
                 return redirect("gestor_page")
 
         elif "submit_movimentacao" in request.POST:
@@ -111,4 +110,14 @@ def registros_gestor(request):
         "registros": registros
     })
 
+@login_required
+def assinar_requisicao_gestor(request, requisicao_id):
+    requisicao = get_object_or_404(RequisicaoPessoal, id=requisicao_id)
 
+    if requisicao.assinatura_gestor:
+        messages.warning(request, "Esta requisição já foi assinada.")
+    else:
+        requisicao.assinar_gestor(request.user)
+        messages.success(request, "Requisição assinada com sucesso.")
+
+    return redirect('pagina_requisicao', requisicao_id=requisicao.id)  # redirecione para onde preferir

@@ -36,6 +36,7 @@ def diretor_page(request):
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
                 registro.data_autorizacao_diretor = now()
@@ -63,6 +64,8 @@ def diretor_rp(request):
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
+            
             if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
                 registro.data_autorizacao_diretor = now()
                 registro.dias_para_autorizacao_diretor = (

@@ -116,10 +116,10 @@ def preencher_excel_rp(rp):
     ws["J58"] = rp.data_autorizacao_gestor.strftime("%d/%m/%Y") if rp.data_autorizacao_gestor else ""
 
     # Inserção das assinaturas
-    adicionar_imagem_excel(ws, rp.assinatura_diretor, "S61")
-    adicionar_imagem_excel(ws, rp.assinatura_presidente, "AB61")
-    adicionar_imagem_excel(ws, rp.assinatura_rh, "A61")
-    adicionar_imagem_excel(ws, rp.assinatura_gestor, "J61")
+    adicionar_imagem_excel(ws, rp.imagem_assinatura_diretor, "S61")
+    adicionar_imagem_excel(ws, rp.imagem_assinatura_presidente, "AB61")
+    adicionar_imagem_excel(ws, rp.imagem_assinatura_rh, "A61")
+    adicionar_imagem_excel(ws, rp.imagem_assinatura_gestor, "J61")
 
     # Salva em memória
     buffer = io.BytesIO()
