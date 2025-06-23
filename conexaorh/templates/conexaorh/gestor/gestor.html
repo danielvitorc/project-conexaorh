@@ -20,9 +20,6 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-{# Carregado acima com DataTables, não precisa repetir #}
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 
 
 <link rel="stylesheet" href="{% static 'conexaorh/css/gestor.css' %}">
@@ -33,12 +30,40 @@
 
 <div class="main-content">
 
-    <h1 class="mb-4">Bem-vindo à Página do Gestor, {{ usuario.first_name }}</h1>
-    <p>Esta é a área exclusiva para usuários do tipo Gestor.</p>
+      <!-- Card de boas-vindas -->
+  <div class="card-welcome">
+        <div class="welcome-text">
+            <h1 class="mb-4">Bem-vindo à Página do Gestor, {{ usuario.first_name }}</h1>
+            <p>Esta é a área exclusiva para usuários do tipo Gestor.</p>
+        </div>
 
-    <div class="container mt-5 d-flex gap-4 align-items-stretch">
+        <div class="user-profile">
+            <div class="profile-info">
+            <span class="user-name">{{ usuario.first_name }} {{ usuario.last_name }}</span>
+            <span class="user-role">{{ usuario.get_user_type_display }}</span>
+            </div>
+            <div class="dropdown-container">
+            <span class="dropdown-icon" onclick="toggleDropdown()">
+                <i class="fa fa-chevron-down"></i>
+            </span>
 
-        <div class="d-flex flex-column align-items-start gap-4 p-3 rounded" style="background-color: transparent; width: 320px;">
+            <div id="userDropdown" class="dropdown-menu">
+                <a href="{% url 'logout' %}" class="dropdown-item logout">
+                <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+  <div class="container mt-5">
+    
+      <!-- Coluna das ações rápidas -->
+      <div class="container-fluid mt-5 d-flex gap-4 align-items-stretch">
+
+        <div class="d-flex flex-column align-items-start gap-4 p-3 rounded" style="background-color: transparent; width: 320px; ">
+
             <h5 class="text-primary fw-bold ms-2">Ações Rápidas</h5>
 
             <div class="card shadow-sm w-100">
@@ -68,85 +93,84 @@
                 </div>
             </div>
         </div>
+      <div style="width: 2px; background-color: #FFD700;"></div>
+      <!-- Coluna da tabela com nova estilização -->
+      <div class="col-md-8">
+        <div class="tabela-estilizada">
+          <div class="tabela-header">
+            <h3>
+              <i class="fas fa-tasks text-info me-2"></i>Movimentações Pendentes como Gestor Proposto
+            </h3>
+          </div>
 
-        <div style="width: 2px; background-color: #FFD700;"></div>
-
-        <div class="flex-grow-1 align-self-stretch" style="flex-basis: 70%; max-width: 70%;">
-            <div class="card shadow-sm h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-center mb-4">
-                        <i class="fas fa-tasks text-info me-2"></i>Movimentações Pendentes como Gestor Proposto
-                    </h5>
-
-                    <div class="table-responsive flex-grow-1">
-                        <table id="tabela-movimentacoes" class="table table-bordered align-middle display nowrap" style="width:100%">
-                            <thead class="table-light text-center">
-                                <tr>
-                                    <th>Gestor Atual</th>
-                                    <th>Colaborador a ser movimentado</th>
-                                    <th>Cargo Proposto</th>
-                                    <th>Data Solicitação</th>
-                                    <th>Assinatura Gestor Proposto</th>
-                                    <th>Data Aprovação</th>
-                                    <th>Tempo para Aprovação (dias)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for registro in movimentacao %}
-                                <tr>
-                                    <td>{{ registro.gestor_atual }}</td>
-                                    <td>{{ registro.colaborador_movimentado }}</td>
-                                    <td>{{ registro.cargo_proposto }}</td>
-                                    <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
-                                    <td>
-                                        {% if registro.assinatura_gestor_proposto %}
-                                            <p class="mb-1">Aprovado pelo Gestor:</p>
-                                            <img src="{{ registro.assinatura_gestor_proposto.url }}" alt="Assinatura Gestor" style="height: 80px;">
-                                        {% else %}
-                                            <form method="post" enctype="multipart/form-data" class="d-flex flex-column align-items-start">
-                                                {% csrf_token %}
-                                                {{ form.as_p }}
-                                                <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                                                <button type="submit" name="submit_aprovacao_mov" class="btn btn-sm btn-outline-success mt-2">Enviar Assinatura</button>
-                                            </form>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if registro.assinatura_gestor_proposto %}
-                                            {{ registro.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
-                                        {% else %}
-                                            -
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if registro.dias_para_autorizacao_gestor_proposto is not None %}
-                                            {% if registro.dias_para_autorizacao_gestor_proposto == 0 %}
-                                                Aprovado no mesmo dia
-                                            {% else %}
-                                                {{ registro.dias_para_autorizacao_gestor_proposto }} dias
-                                            {% endif %}
-                                        {% else %}
-                                            -
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {% if movimentacao|length == 0 %}
-                        <p class="text-muted text-center mt-3">Não há movimentações aguardando sua aprovação.</p>
+          <div class="table-responsive">
+            <table id="tabela-movimentacoes" class="tabela-moderninha display nowrap w-100">
+              <thead>
+                <tr>
+                  <th>Gestor Atual</th>
+                  <th>Colaborador a ser movimentado</th>
+                  <th>Cargo Proposto</th>
+                  <th>Data Solicitação</th>
+                  <th>Assinatura Gestor Proposto</th>
+                  <th>Data Aprovação</th>
+                  <th>Tempo para Aprovação (dias)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for registro in movimentacao %}
+                <tr>
+                  <td>{{ registro.gestor_atual }}</td>
+                  <td>{{ registro.colaborador_movimentado }}</td>
+                  <td>{{ registro.cargo_proposto }}</td>
+                  <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+                  <td>
+                    {% if registro.assinatura_gestor_proposto %}
+                    <p class="mb-1">Aprovado pelo Gestor:</p>
+                    <img src="{{ registro.assinatura_gestor_proposto.url }}" alt="Assinatura Gestor" style="height: 80px;">
+                    {% else %}
+                    <form method="post" enctype="multipart/form-data" class="d-flex flex-column align-items-start">
+                      {% csrf_token %}
+                      {{ form.as_p }}
+                      <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                      <button type="submit" name="submit_aprovacao_mov" class="btn btn-sm btn-outline-success mt-2">Enviar Assinatura</button>
+                    </form>
                     {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="mt-5">
-        <a href="{% url 'logout' %}" class="btn btn-outline-secondary">Sair</a>
-    </div>
+                  </td>
+                  <td>
+                    {% if registro.assinatura_gestor_proposto %}
+                    {{ registro.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if registro.dias_para_autorizacao_gestor_proposto is not None %}
+                      {% if registro.dias_para_autorizacao_gestor_proposto == 0 %}
+                        Aprovado no mesmo dia
+                      {% else %}
+                        {{ registro.dias_para_autorizacao_gestor_proposto }} dias
+                      {% endif %}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
 
+          {% if movimentacao|length == 0 %}
+          <div class="tabela-rodape">
+            <p class="text-muted text-center mt-3">Não há movimentações aguardando sua aprovação.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+  </div>
+
+    </div>
 </div>
 
 
@@ -244,6 +268,27 @@
 </div>
 
 <script>
+  function toggleDropdown() {
+    const menu = document.getElementById("userDropdown");
+    const blur = document.getElementById("blur-background");
+
+    const isOpen = menu.style.display === "block";
+    menu.style.display = isOpen ? "none" : "block";
+    blur.style.display = isOpen ? "none" : "block";
+  }
+
+  document.addEventListener("click", function (e) {
+    const dropdown = document.getElementById("userDropdown");
+    const icon = document.querySelector(".dropdown-icon");
+    const blur = document.getElementById("blur-background");
+
+    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+      dropdown.style.display = "none";
+      blur.style.display = "none";
+    }
+  });
+</script>
+<script>
     $(document).ready(function () {
         $('#tabela-movimentacoes').DataTable({
             responsive: true,
@@ -261,6 +306,7 @@
 </script>
 
 <script src="{% static 'conexaorh/js/tema.js' %}"></script>
+<div id="blur-background" class="blur-overlay"></div>
 
 
 </body>

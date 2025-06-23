@@ -13,31 +13,52 @@
 
         <nav class="sidebar-nav">
             {% if botao_movimentacao %}
-            <a href="{% url 'registros_gestor' %}" class="{% if pagina_ativa == 'gestor_page' %}active{% endif %}">
-                <i class="fas fa-tasks"></i>
-                <span>Movimentações Pendentes</span>
+            <a href="{% url 'gestor_page' %}" class="{% if request.resolver_match.url_name == 'gestor_page' %}active{% endif %}">
+                <i class="fa fa-home"></i>
+                <span>Home</span>
             </a>
-            {% endif %}
-            <a href="#">
-                <i class="fas fa-users"></i>
-                <span>Funcionários</span>
+            <a href="{% url 'registros_gestor' %}" class="{% if request.resolver_match.url_name == 'registros_gestor' %}active{% endif %}">
+                <i class="fas fa-tasks"></i>
+                <span>Registros Pendentes</span>
             </a>
             <a href="#">
                 <i class="fas fa-chart-bar"></i>
                 <span>Relatórios</span>
             </a>
+            {% endif %}
+            {% if diretor %}
+                <!-- Menu de Navegação do Diretor -->
+                <a href="{% url 'diretor_page' %}" 
+                class="{% if request.resolver_match.url_name == 'diretor_page' %}active{% endif %}">
+                    <i class="fa fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{% url 'diretor_rp' %}" 
+                class="{% if request.resolver_match.url_name == 'diretor_rp' %}active{% endif %}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Requisição de Pessoal</span>
+                </a>
+
+                <a href="{% url 'diretor_mov' %}" 
+                class="{% if request.resolver_match.url_name == 'diretor_mov' %}active{% endif %}">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Movimentação de Pessoal</span>
+                </a>
+
+                <a href="{% url 'diretor_rd' %}" 
+                class="{% if request.resolver_match.url_name == 'diretor_rd' %}active{% endif %}">
+                    <i class="fas fa-user-times"></i>
+                    <span>Desligamento</span>
+                </a>
+            {% endif %}
         </nav>
     </div>
 
     <div class="sidebar-footer">
-        <span class="user-greeting">Olá, {{ request.user.first_name|default:'Usuário' }}</span>
         <div class="footer-actions">
             <button id="themeToggleButton" title="Alterar Tema">
                 <i class="fas fa-moon" id="themeIcon"></i>
             </button>
-            <a href="{% url 'logout' %}" class="text-danger" title="Sair">
-                <i class="fas fa-sign-out-alt"></i>
-            </a>
         </div>
     </div>
 </div>

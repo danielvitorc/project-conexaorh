@@ -119,23 +119,20 @@ def movimentacoes_pendentes(request):
 @login_required
 def registros_gestor(request):
     rp = RequisicaoPessoal.objects.filter(
-        Q(usuario=request.user) &
-        ~Q(assinatura_rh__isnull=True)
-    )
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
     for r in rp:
         r.tipo = "RP"
 
     mov = MovimentacaoPessoal.objects.filter(
-        Q(usuario=request.user) &
-        ~Q(assinatura_rh__isnull=True)
-    )
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
     for m in mov:
         m.tipo = "MOV"
-    
+
     rd = RequisicaoDesligamento.objects.filter(
-        Q(usuario=request.user) &
-        ~Q(assinatura_rh__isnull=True)
-    )
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
     for d in rd:
         d.tipo = "RD"
 
@@ -146,7 +143,8 @@ def registros_gestor(request):
     )
 
     return render(request, "conexaorh/gestor/registros_gestor.html", {
-        "registros": registros
+        "registros": registros,
+        "usuario": request.user  # opcional: para usar dados diretamente no template
     })
 
 

@@ -53,7 +53,7 @@ def diretor_rp(request):
     if request.user.user_type != "diretor":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = RequisicaoPessoal.objects.all()
+    registros = RequisicaoPessoal.objects.all().select_related("usuario")
     form = DiretorForm()
 
     if request.method == "POST":
@@ -71,7 +71,8 @@ def diretor_rp(request):
             registro.save()
             return redirect("diretor_rp")
 
-    return render(request, "conexaorh/diretor/rp.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/diretor/rp.html", {"registros": registros, "form": form, "usuario": request.user})
+
 
 
 @login_required
@@ -81,7 +82,7 @@ def diretor_mov(request):
 
     registros = MovimentacaoPessoal.objects.filter(
         ~Q(assinatura_gestor_proposto__isnull=True), ~Q(assinatura_gestor_proposto="")
-    )
+    ).select_related("usuario")
     form = DiretorForm()
 
     if request.method == "POST":
@@ -99,14 +100,15 @@ def diretor_mov(request):
             registro.save()
             return redirect("diretor_mov")
 
-    return render(request, "conexaorh/diretor/mov.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/diretor/mov.html", {"registros": registros, "form": form, "usuario": request.user})
+
 
 @login_required
 def diretor_rd(request):
     if request.user.user_type != "diretor":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = RequisicaoDesligamento.objects.all()
+    registros = RequisicaoDesligamento.objects.all().select_related("usuario")
     form = DiretorForm()
 
     if request.method == "POST":
@@ -124,25 +126,26 @@ def diretor_rd(request):
             registro.save()
             return redirect("diretor_rd")
 
-    return render(request, "conexaorh/diretor/rd.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/diretor/rd.html", {"registros": registros, "form": form, "usuario": request.user})
+
 
 @login_required
 def registros_diretor(request):
     rp = RequisicaoPessoal.objects.filter(
         ~Q(assinatura_rh__isnull=True)
-    )
+    ).select_related("usuario")
     for r in rp:
         r.tipo = "RP"
 
     mov = MovimentacaoPessoal.objects.filter(
         ~Q(assinatura_rh__isnull=True)
-    )
+    ).select_related("usuario")
     for m in mov:
         m.tipo = "MOV"
     
     rd = RequisicaoDesligamento.objects.filter(
         ~Q(assinatura_rh__isnull=True)
-    )
+    ).select_related("usuario")
     for d in rd:
         d.tipo = "RD"
 
@@ -153,5 +156,6 @@ def registros_diretor(request):
     )
 
     return render(request, "conexaorh/diretor/registros_diretor.html", {
-        "registros": registros
+        "registros": registros,
+        "usuario": request.user
     })

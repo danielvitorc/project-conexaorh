@@ -7,15 +7,6 @@
     --dourado-nort: #FFD700;
     --erro-nort: #ff4d4d;
     --gradiente-center: var(--azul-nort);
-
-    /* Mapeando as novas cores para as variáveis usadas pelo layout */
-    --primary-color: var(--azul-nort);
-    --secondary-color: #B8BBBF;
-    --accent-color: var(--azulEscuro-nort);
-    --highlight-color: var(--azul-nort);
-    --bg-color: var(--branco-nort);
-    --text-color: #000000;
-    --card-bg: #ffffff;
 }
 
 /* TEMA ESCURO */
@@ -38,12 +29,12 @@
     position: fixed;
     left: 0;
     top: 0;
-    background-color: var(--card-bg);
-    color: var(--text-color);
+    background-color: var(--azulEscuro-nort);
+    color: #FFFFFF;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-right: 1px solid var(--secondary-color);
+    border-right: 1.5px solid var(--secondary-color);
     transition: width 0.3s ease;
     z-index: 1050;
     overflow-x: hidden;
@@ -91,7 +82,7 @@
     align-items: center;
     gap: 15px;
     padding: 0.75rem 1.25rem;
-    color: var(--text-color);
+    color: #ffffff;
     text-decoration: none;
     font-weight: 500;
     transition: background-color 0.2s;
@@ -100,8 +91,11 @@
 
 .sidebar-nav a:hover,
 .sidebar-nav a.active {
-    background-color: var(--highlight-color);
-    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--dourado-nort);
 }
 
 .sidebar-nav a i {
@@ -149,16 +143,10 @@
 }
 
 /* ======================================================= */
-/* CONTEÚDO PRINCIPAL (O TRECHO QUE VOCÊ PERGUNTOU)        */
-/* ======================================================= */
-.main-content {
-    margin-left: 65px; /* Empurra o conteúdo para dar espaço à sidebar RECOLHIDA */
-    padding: 2rem;
-    background-color: var(--bg-color); 
-    transition: margin-left 0.3s ease;
-}
+/*                   CONTEÚDO PRINCIPAL                    */
+/* ======================================================= *
 
 /* Empurra AINDA MAIS o conteúdo quando a sidebar expande com o mouse */
 .sidebar:hover ~ .main-content {
-    margin-left: 250px;
+    margin-left: 218px;
 }

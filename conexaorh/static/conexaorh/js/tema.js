@@ -153,3 +153,46 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Animar cards na entrada da página
+  const cards = document.querySelectorAll(".card-welcome, .card-tabela-estilizada");
+  cards.forEach(card => {
+    setTimeout(() => {
+      card.classList.add("show");
+    }, 100); // pequeno delay para efeito nice
+  });
+
+  // Dropdown toggle com animação
+  const dropdownIcon = document.querySelector(".dropdown-icon");
+  const dropdownMenu = document.getElementById("userDropdown");
+  const blur = document.getElementById("blur-background");
+
+  dropdownIcon.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("show");
+    blur.style.display = dropdownMenu.classList.contains("show") ? "block" : "none";
+  });
+
+  // Fechar dropdown clicando fora
+  document.addEventListener("click", e => {
+    if (!dropdownMenu.contains(e.target) && !dropdownIcon.contains(e.target)) {
+      dropdownMenu.classList.remove("show");
+      blur.style.display = "none";
+    }
+  });
+
+  // Scroll reveal para tabela (opcional)
+  const tabela = document.querySelector(".card-tabela-estilizada");
+  if (tabela) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          tabela.classList.add("show");
+          observer.disconnect();
+        }
+      });
+    }, {threshold: 0.1});
+    observer.observe(tabela);
+  }
+});
