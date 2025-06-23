@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" href="https://encrypted-tbn2.gstatic.com/faviconV2?url=https://www.nortetech.net&client=VFE&size=64&type=FAVICON&fallback_opts=TYPE,SIZE,URL&nfrp=2" type="image/png">
+<title>{% block title %}Complice - RH{% endblock %}</title>
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+  <link rel="stylesheet" href="{% static 'conexaorh/css/complice.css' %}">
+</head>
+<body>
+    {% include 'conexaorh/include/navbar.html' with pagina_ativa='complice_page' complice=True %}
+    <div class="main-content">
+
+         <!-- Card de boas-vindas -->
+        <div class="card-welcome">
+            <div class="welcome-text">
+                <h1 class="mb-4">Bem-vindo à Página do complice, {{ usuario.first_name }}</h1>
+                <p>Esta é a área exclusiva para usuários do tipo Complice.</p>
+            </div>
+
+            <div class="user-profile">
+                <div class="profile-info">
+                <span class="user-name">{{ usuario.first_name }} {{ usuario.last_name }}</span>
+                <span class="user-role">{{ usuario.get_user_type_display }}</span>
+                </div>
+                <div class="dropdown-container">
+                <span class="dropdown-icon" onclick="toggleDropdown()">
+                    <i class="fa fa-chevron-down"></i>
+                </span>
+
+                <div id="userDropdown" class="dropdown-menu">
+                    <a href="{% url 'logout' %}" class="dropdown-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid mt-5 d-flex gap-4 align-items-stretch"></div>
+        <div>
+        <div class="tabela-estilizada">
+          <div class="tabela-header">
+            <h3>
+              <i class="fas fa-tasks text-info me-2"></i>Movimentações Pendentes
+            </h3>
+          </div>
+            <h2>Movimentações Pendentes para Aprovação do Complice</h2>
+            <div class="table-responsive"></div>
+                <table id="tabela-movimentacoes" class="tabela-moderninha ">
+                    <thead>
+                        <tr>
+                            <th>Gestor Atual</th>
+                            <th>Colaborador a ser movimentado</th>
+                            <th>Cargo Proposto</th>
+                            <th>Data de Solicitação</th>
+                            <th>Assinatura Complice</th>
+                            <th>Data Aprovação Complice</th>
+                            <th>Tempo para Aprovação (dias)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in movimentacao %}
+                        <tr>
+                            <td>{{ registro.gestor_atual }}</td>
+                            <td>{{ registro.colaborador_movimentado }}</td>
+                            <td>{{ registro.cargo_proposto }}</td>
+                            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+                    
+                            <td>
+                                {% if registro.assinatura_complice %}
+                                    <p>Aprovado pelo Complice:</p>
+                                    <img src="{{ registro.assinatura_complice.url }}" alt="Assinatura Complice" style="height: 100px;">
+                                {% else %}
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
+                                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                                        <button type="submit">Aprovar com Assinatura</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                    
+                            <td>
+                                {% if registro.assinatura_complice %}
+                                    {{ registro.data_autorizacao_complice|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                    
+                            <td>
+                                {% if registro.dias_para_autorizacao_complice is not None %}
+                                    {% if registro.dias_para_autorizacao_complice == 0 %}
+                                        Aprovado no mesmo dia
+                                    {% else %}
+                                        {{ registro.dias_para_autorizacao_complice }} dias
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+    </div> 
+
+
+<script>
+  function toggleDropdown() {
+    const menu = document.getElementById("userDropdown");
+    const blur = document.getElementById("blur-background");
+
+    const isOpen = menu.style.display === "block";
+    menu.style.display = isOpen ? "none" : "block";
+    blur.style.display = isOpen ? "none" : "block";
+  }
+
+  document.addEventListener("click", function (e) {
+    const dropdown = document.getElementById("userDropdown");
+    const icon = document.querySelector(".dropdown-icon");
+    const blur = document.getElementById("blur-background");
+
+    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+      dropdown.style.display = "none";
+      blur.style.display = "none";
+    }
+  });
+</script>
+<script src="{% static 'conexaorh/js/tema.js' %}"></script>
+</body>
+</html>

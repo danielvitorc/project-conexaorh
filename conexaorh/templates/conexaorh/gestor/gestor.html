@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" href="https://encrypted-tbn2.gstatic.com/faviconV2?url=https://www.nortetech.net&client=VFE&size=64&type=FAVICON&fallback_opts=TYPE,SIZE,URL&nfrp=2" type="image/png">
+<title>{% block title %}Formularios - RH{% endblock %}</title>
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+
+<link rel="stylesheet" href="{% static 'conexaorh/css/gestor.css' %}">
+</head>
+<body>
+
+{% include 'conexaorh/include/navbar.html' with pagina_ativa='gestor_page' botao_movimentacao=True %}
+
+<div class="main-content">
+
+      <!-- Card de boas-vindas -->
+  <div class="card-welcome">
+        <div class="welcome-text">
+            <h1 class="mb-4">Bem-vindo à Página do Gestor, {{ usuario.first_name }}</h1>
+            <p>Esta é a área exclusiva para usuários do tipo Gestor.</p>
+        </div>
+
+        <div class="user-profile">
+            <div class="profile-info">
+            <span class="user-name">{{ usuario.first_name }} {{ usuario.last_name }}</span>
+            <span class="user-role">{{ usuario.get_user_type_display }}</span>
+            </div>
+            <div class="dropdown-container">
+            <span class="dropdown-icon" onclick="toggleDropdown()">
+                <i class="fa fa-chevron-down"></i>
+            </span>
+
+            <div id="userDropdown" class="dropdown-menu">
+                <a href="{% url 'logout' %}" class="dropdown-item logout">
+                <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+  <div class="container mt-5">
+    
+      <!-- Coluna das ações rápidas -->
+      <div class="container-fluid mt-5 d-flex gap-4 align-items-stretch">
+
+        <div class="d-flex flex-column align-items-start gap-4 p-3 rounded" style="background-color: transparent; width: 320px; ">
+
+            <h5 class="text-primary fw-bold ms-2">Ações Rápidas</h5>
+
+            <div class="card shadow-sm w-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Requisição de Pessoal</h5>
+                    <p class="card-text">Solicite novas contratações de forma rápida e organizada.</p>
+                    <button onclick="openModal('modalRp')" class="btn btn-outline-primary">Abrir Formulário</button>
+                </div>
+            </div>
+
+            <div class="card shadow-sm w-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-exchange-alt fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Movimentação de Pessoal</h5>
+                    <p class="card-text">Registre promoções ou transferências internas com facilidade.</p>
+                    <button onclick="openModal('modalMov')" class="btn btn-outline-warning">Abrir Formulário</button>
+                </div>
+            </div>
+
+            <div class="card shadow-sm w-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-times fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Requisição de Desligamento</h5>
+                    <p class="card-text">Solicite desligamentos de colaboradores com o devido registro.</p>
+                    <button onclick="openModal('modalRd')" class="btn btn-outline-danger">Abrir Formulário</button>
+                </div>
+            </div>
+        </div>
+      <div style="width: 2px; background-color: #FFD700;"></div>
+      <!-- Coluna da tabela com nova estilização -->
+      <div class="col-md-8">
+        <div class="tabela-estilizada">
+          <div class="tabela-header">
+            <h3>
+              <i class="fas fa-tasks text-info me-2"></i>Movimentações Pendentes como Gestor Proposto
+            </h3>
+          </div>
+
+          <div class="table-responsive">
+            <table id="tabela-movimentacoes" class="tabela-moderninha display nowrap w-100">
+              <thead>
+                <tr>
+                  <th>Gestor Atual</th>
+                  <th>Colaborador a ser movimentado</th>
+                  <th>Cargo Proposto</th>
+                  <th>Data Solicitação</th>
+                  <th>Assinatura Gestor Proposto</th>
+                  <th>Data Aprovação</th>
+                  <th>Tempo para Aprovação (dias)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for registro in movimentacao %}
+                <tr>
+                  <td>{{ registro.gestor_atual }}</td>
+                  <td>{{ registro.colaborador_movimentado }}</td>
+                  <td>{{ registro.cargo_proposto }}</td>
+                  <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+                  <td>
+                    {% if registro.assinatura_gestor_proposto %}
+                    <p class="mb-1">Aprovado pelo Gestor:</p>
+                    <img src="{{ registro.assinatura_gestor_proposto.url }}" alt="Assinatura Gestor" style="height: 80px;">
+                    {% else %}
+                    <form method="post" enctype="multipart/form-data" class="d-flex flex-column align-items-start">
+                      {% csrf_token %}
+                      {{ form.as_p }}
+                      <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                      <button type="submit" name="submit_aprovacao_mov" class="btn btn-sm btn-outline-success mt-2">Enviar Assinatura</button>
+                    </form>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if registro.assinatura_gestor_proposto %}
+                    {{ registro.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if registro.dias_para_autorizacao_gestor_proposto is not None %}
+                      {% if registro.dias_para_autorizacao_gestor_proposto == 0 %}
+                        Aprovado no mesmo dia
+                      {% else %}
+                        {{ registro.dias_para_autorizacao_gestor_proposto }} dias
+                      {% endif %}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% if movimentacao|length == 0 %}
+          <div class="tabela-rodape">
+            <p class="text-muted text-center mt-3">Não há movimentações aguardando sua aprovação.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+  </div>
+
+    </div>
+</div>
+
+
+<div id="modalRp" class="modal">
+    <div class="modal-content-custom">
+        <span class="close" onclick="closeModal('modalRp')">&times;</span>
+        <h2>Requisição de Pessoal</h2>
+        <p class="form-flow-hint">Preencha os dados da vaga desejada, depois especifique o perfil do candidato e os benefícios oferecidos.</p>
+        <form method="post">
+            {% csrf_token %}
+            <h3 class="section-title">Informações da Vaga</h3>
+            <div class="form-grid">
+                {% for field in form_rp.visible_fields %}
+                    {% if forloop.counter <= 10 %}
+                    <div class="form-group">
+                        {{ form.media }}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <h3 class="section-title">Perfil do Candidato</h3>
+            <div class="form-grid">
+                {% for field in form_rp.visible_fields %}
+                    {% if forloop.counter > 10 and forloop.counter <= 20 %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <h3 class="section-title">Benefícios e Requisitos</h3>
+            <div class="form-grid">
+                {% for field in form_rp.visible_fields %}
+                    {% if forloop.counter > 20 %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <button type="submit" name="submit_rp" class="btn btn-primary">Registrar Requisição</button>
+        </form>
+    </div>
+</div>
+
+<div id="modalMov" class="modal">
+    <div class="modal-content-custom">
+        <span class="close" onclick="closeModal('modalMov')">&times;</span>
+        <h2>Movimentação de Pessoal</h2>
+        <p class="form-flow-hint">Informe os dados da movimentação desejada, como setor, motivo e nova função.</p>
+        <form method="post">
+            {% csrf_token %}
+            <h3 class="section-title">Dados da Movimentação</h3>
+            <div class="form-grid">
+                {% for field in form_movimentacao.visible_fields %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" name="submit_movimentacao" class="btn btn-warning">Registrar Movimentação</button>
+        </form>
+    </div>
+</div>
+
+<div id="modalRd" class="modal">
+    <div class="modal-content-custom">
+        <span class="close" onclick="closeModal('modalRd')">&times;</span>
+        <h2>Requisição de Desligamento</h2>
+        <p class="form-flow-hint">Preencha os dados da solicitação de desligamento, justificativa e prazos.</p>
+        <form method="post">
+            {% csrf_token %}
+            <h3 class="section-title">Detalhes do Desligamento</h3>
+            <div class="form-grid">
+                {% for field in form_rd.visible_fields %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" name="submit_rd" class="btn btn-danger">Registrar Desligamento</button>
+        </form>
+    </div>
+</div>
+
+<script>
+  function toggleDropdown() {
+    const menu = document.getElementById("userDropdown");
+    const blur = document.getElementById("blur-background");
+
+    const isOpen = menu.style.display === "block";
+    menu.style.display = isOpen ? "none" : "block";
+    blur.style.display = isOpen ? "none" : "block";
+  }
+
+  document.addEventListener("click", function (e) {
+    const dropdown = document.getElementById("userDropdown");
+    const icon = document.querySelector(".dropdown-icon");
+    const blur = document.getElementById("blur-background");
+
+    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+      dropdown.style.display = "none";
+      blur.style.display = "none";
+    }
+  });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#tabela-movimentacoes').DataTable({
+            responsive: true,
+            pageLength: 5,
+            lengthMenu: [5, 10, 15, 20, "Todos"],
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+            },
+            columnDefs: [
+                { targets: [0,1,2,3,5,6], orderable: true },
+                { targets: [4], orderable: false }
+            ]
+        });
+    });
+</script>
+
+<script src="{% static 'conexaorh/js/tema.js' %}"></script>
+
+
+</body>
+</html>

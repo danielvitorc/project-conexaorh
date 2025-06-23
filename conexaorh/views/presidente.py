@@ -48,7 +48,7 @@ def presidente_page(request):
 
     return render(
         request, 
-        "conexaorh/presidente.html", 
+        "conexaorh/presidente/presidente.html", 
         {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form}
     )
 @login_required
@@ -77,7 +77,7 @@ def presidente_rp(request):
             registro.save()
             return redirect("presidente_rp")
 
-    return render(request, "conexaorh/presidente/rp.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/presidente/rp.html", {"registros": registros, "usuario": request.user, "form": form})
 
 
 @login_required
@@ -106,7 +106,7 @@ def presidente_mov(request):
             registro.save()
             return redirect("presidente_mov")
 
-    return render(request, "conexaorh/presidente/mov.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/presidente/mov.html", {"registros": registros, "usuario": request.user,"form": form})
 
 @login_required
 def presidente_rd(request):
@@ -134,7 +134,7 @@ def presidente_rd(request):
             registro.save()
             return redirect("presidente_rd")
 
-    return render(request, "conexaorh/presidente/rd.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/presidente/rd.html", {"registros": registros, "usuario": request.user,"form": form})
 
 @login_required
 def registros_presidente(request):
@@ -162,6 +162,6 @@ def registros_presidente(request):
         reverse=True
     )
 
-    return render(request, "conexaorh/registros_presidente.html", {
-        "registros": registros
+    return render(request, "conexaorh/presidente/registros_presidente.html", {
+        "registros": registros, "usuario": request.user,
     })

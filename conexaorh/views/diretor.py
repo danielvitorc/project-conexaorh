@@ -47,14 +47,14 @@ def diretor_page(request):
             registro.save()
             return redirect("diretor_page")
 
-    return render(request, "conexaorh/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form})
+    return render(request, "conexaorh/diretor/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form})
 
 @login_required
 def diretor_rp(request):
     if request.user.user_type != "diretor":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = RequisicaoPessoal.objects.all()
+    registros = RequisicaoPessoal.objects.all().select_related("usuario")
     form = DiretorForm()
 
     if request.method == "POST":
@@ -74,7 +74,8 @@ def diretor_rp(request):
             registro.save()
             return redirect("diretor_rp")
 
-    return render(request, "conexaorh/diretor/rp.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/diretor/rp.html", {"registros": registros, "form": form, "usuario": request.user})
+
 
 
 @login_required
@@ -83,9 +84,15 @@ def diretor_mov(request):
         return HttpResponseForbidden("Acesso negado!")
 
     registros = MovimentacaoPessoal.objects.filter(
+<<<<<<< HEAD
         ~Q(assinatura_gestor_proposto__isnull=True)
     )
     form = DiretorFormMOV()
+=======
+        ~Q(assinatura_gestor_proposto__isnull=True), ~Q(assinatura_gestor_proposto="")
+    ).select_related("usuario")
+    form = DiretorForm()
+>>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
@@ -103,15 +110,21 @@ def diretor_mov(request):
             registro.save()
             return redirect("diretor_mov")
 
-    return render(request, "conexaorh/diretor/mov.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/diretor/mov.html", {"registros": registros, "form": form, "usuario": request.user})
+
 
 @login_required
 def diretor_rd(request):
     if request.user.user_type != "diretor":
         return HttpResponseForbidden("Acesso negado!")
 
+<<<<<<< HEAD
     registros = RequisicaoDesligamento.objects.all()
     form = DiretorFormRD()
+=======
+    registros = RequisicaoDesligamento.objects.all().select_related("usuario")
+    form = DiretorForm()
+>>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
@@ -129,25 +142,26 @@ def diretor_rd(request):
             registro.save()
             return redirect("diretor_rd")
 
-    return render(request, "conexaorh/diretor/rd.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/diretor/rd.html", {"registros": registros, "form": form, "usuario": request.user})
+
 
 @login_required
 def registros_diretor(request):
     rp = RequisicaoPessoal.objects.filter(
         ~Q(assinatura_rh__isnull=True)
-    )
+    ).select_related("usuario")
     for r in rp:
         r.tipo = "RP"
 
     mov = MovimentacaoPessoal.objects.filter(
         ~Q(assinatura_rh__isnull=True)
-    )
+    ).select_related("usuario")
     for m in mov:
         m.tipo = "MOV"
     
     rd = RequisicaoDesligamento.objects.filter(
         ~Q(assinatura_rh__isnull=True)
-    )
+    ).select_related("usuario")
     for d in rd:
         d.tipo = "RD"
 
@@ -157,6 +171,7 @@ def registros_diretor(request):
         reverse=True
     )
 
-    return render(request, "conexaorh/registros_diretor.html", {
-        "registros": registros
+    return render(request, "conexaorh/diretor/registros_diretor.html", {
+        "registros": registros,
+        "usuario": request.user
     })

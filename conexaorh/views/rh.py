@@ -50,7 +50,7 @@ def rh_page(request):
 
     return render(
         request,
-        "conexaorh/rh.html",
+        "conexaorh/rh/rh.html",
         {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form}
     )
 
@@ -80,7 +80,7 @@ def rh_rp(request):
             registro.save()
             return redirect("rh_rp")
 
-    return render(request, "conexaorh/rh/rp.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/rh/rp.html", {"registros": registros,"usuario": request.user, "form": form})
 
 @login_required
 def rh_rp(request):
@@ -108,7 +108,7 @@ def rh_rp(request):
             registro.save()
             return redirect("rh_rp")
 
-    return render(request, "conexaorh/rh/rp.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/rh/rp.html", {"registros": registros,"usuario": request.user, "form": form})
 
 @login_required
 def rh_mov(request):
@@ -136,7 +136,7 @@ def rh_mov(request):
             registro.save()
             return redirect("rh_mov")
 
-    return render(request, "conexaorh/rh/mov.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/rh/mov.html", {"registros": registros,"usuario": request.user, "form": form})
 
 @login_required
 def rh_rd(request):
@@ -164,7 +164,7 @@ def rh_rd(request):
             registro.save()
             return redirect("rh_rd")
 
-    return render(request, "conexaorh/rh/rd.html", {"registros": registros, "form": form})
+    return render(request, "conexaorh/rh/rd.html", {"registros": registros,"usuario": request.user, "form": form})
 
 @login_required
 def registros_rh(request):
@@ -192,6 +192,6 @@ def registros_rh(request):
         reverse=True
     )
 
-    return render(request, "conexaorh/registros_rh.html", {
-        "registros": registros
+    return render(request, "conexaorh/rh/registros_rh.html", {
+        "registros": registros, "usuario": request.user,
     })

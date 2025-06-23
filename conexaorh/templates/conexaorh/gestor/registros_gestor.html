@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="https://encrypted-tbn2.gstatic.com/faviconV2?url=https://www.nortetech.net&client=VFE&size=64&type=FAVICON&fallback_opts=TYPE,SIZE,URL&nfrp=2" type="image/png">
+  <title>{% block title %}Registros do Gestor{% endblock %}</title>
+
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+
+  <link rel="stylesheet" href="{% static 'conexaorh/css/gestor.css' %}">
+
+</head>
+<body>
+
+{% include 'conexaorh/include/navbar.html' with pagina_ativa='gestor_page' botao_movimentacao=True %}
+
+<div class="main-content">  
+    <div class="card-welcome">
+        <div class="welcome-text">
+          <h1>Registros de Movimentações</h1>
+        </div>
+
+        <div class="user-profile">
+            <div class="profile-info">
+            <span class="user-name">{{ usuario.first_name }} {{ usuario.last_name }}</span>
+            <span class="user-role">{{ usuario.get_user_type_display }}</span>
+            </div>
+            <div class="dropdown-container">
+            <span class="dropdown-icon" onclick="toggleDropdown()">
+                <i class="fa fa-chevron-down"></i>
+            </span>
+
+            <div id="userDropdown" class="dropdown-menu">
+                <a href="{% url 'logout' %}" class="dropdown-item logout">
+                <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="linha-amarela"></div>
+
+    <!-- Tabela estilizada de Registros do Gestor -->
+    <div class="card-tabela-estilizada">
+      <div class="tabela-header">
+        <h3><i class="fas fa-folder-open text-warning me-2"></i>Registros do Gestor</h3>
+      </div>
+
+      <div class="tabela-filtro p-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar..." onkeyup="searchTable()">
+      </div>
+
+      <div class="table-responsive">
+        <table class="tabela-moderninha display nowrap w-100" id="tabela-moderninha">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Nº</th>
+              <th>Data de Solicitação</th>
+              <th>Baixar Excel</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for registro in registros %}
+            <tr>
+              <td>{{ registro.tipo }}</td>
+              <td>
+                {% if registro.tipo == "RP" %}{{ registro.n_rp }}
+                {% elif registro.tipo == "MOV" %}{{ registro.n_mov }}
+                {% else %}RD{% endif %}
+              </td>
+              <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
+              <td>
+                {% if registro.tipo == 'RP' %}
+                  <a href="{% url 'download_rp_excel' registro.id %}" class="btn btn-download btn-sm">
+                    <i class="fas fa-download me-1"></i>Excel
+                  </a>
+                {% elif registro.tipo == 'MOV' %}
+                  <a href="{% url 'download_mov_excel' registro.id %}" class="btn btn-download btn-sm">
+                    <i class="fas fa-download me-1"></i>Excel
+                  </a>
+                {% elif registro.tipo == 'RD' %}
+                  <a href="{% url 'download_rd_excel' registro.id %}" class="btn btn-download btn-sm">
+                    <i class="fas fa-download me-1"></i>Excel
+                  </a>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-muted text-center">Nenhum registro encontrado.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tabela-rodape">
+        <a href="#">Ver todos <span>&rarr;</span></a>
+      </div>
+    </div>
+
+
+</div>
+  <!-- Bootstrap JS (opcional) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function searchTable() {
+      let input = document.getElementById("searchInput");
+      let filter = input.value.toLowerCase();
+      let table = document.getElementById("registrosTable");
+      let tr = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < tr.length; i++) {
+        let tds = tr[i].getElementsByTagName("td");
+        let show = false;
+        for (let j = 0; j < tds.length; j++) {
+          if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+            show = true;
+            break;
+          }
+        }
+        tr[i].style.display = show ? "" : "none";
+      }
+    }
+  </script>
+
+  <script>
+    function toggleDropdown() {
+      const menu = document.getElementById("userDropdown");
+      const blur = document.getElementById("blur-background");
+
+      const isOpen = menu.style.display === "block";
+      menu.style.display = isOpen ? "none" : "block";
+      blur.style.display = isOpen ? "none" : "block";
+    }
+
+    document.addEventListener("click", function (e) {
+      const dropdown = document.getElementById("userDropdown");
+      const icon = document.querySelector(".dropdown-icon");
+      const blur = document.getElementById("blur-background");
+
+      if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+        dropdown.style.display = "none";
+        blur.style.display = "none";
+      }
+    });
+  </script>
+  <script>
+      $(document).ready(function () {
+          $('#tabela-movimentacoes').DataTable({
+              responsive: true,
+              pageLength: 5,
+              lengthMenu: [5, 10, 15, 20, "Todos"],
+              language: {
+                  url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+              },
+              columnDefs: [
+                  { targets: [0,1,2,3,5,6], orderable: true },
+                  { targets: [4], orderable: false }
+              ]
+          });
+      });
+  </script>
+
+  <script src="{% static 'conexaorh/js/tema.js' %}"></script>
+</body>
+</html>

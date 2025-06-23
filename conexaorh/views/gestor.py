@@ -63,7 +63,7 @@ def gestor_page(request):
                 return redirect("gestor_page")
             
 
-    return render(request, "conexaorh/gestor.html", {
+    return render(request, "conexaorh/gestor/gestor.html", {
         "form_rp": form_rp,
         "form_movimentacao": form_movimentacao,
         "form_rd": form_rd,
@@ -73,25 +73,60 @@ def gestor_page(request):
     })
 
 @login_required
+def movimentacoes_pendentes(request):
+    if request.user.user_type != 'gestor':
+        return HttpResponseForbidden("Acesso negado!")
+
+    movimentacao = MovimentacaoPessoal.objects.filter(
+        ~Q(assinatura_complice__isnull=True),
+        ~Q(assinatura_complice=""),
+        gestor_proposto=request.user.username
+    )
+    form = GestorPropostoApprovalForm()
+
+    if request.method == "POST" and "submit_aprovacao_mov" in request.POST:
+        registro_id = request.POST.get("registro_id")
+        if not registro_id:
+            return HttpResponseBadRequest("ID do registro não informado.")
+        
+        registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
+        form = GestorPropostoApprovalForm(request.POST, request.FILES, instance=registro)
+
+        if form.is_valid():
+            assinatura = form.cleaned_data['assinatura_gestor_proposto']
+            if assinatura:
+                registro.assinatura_gestor_proposto = assinatura
+                if registro.data_autorizacao_gestor_proposto is None:
+                    registro.data_autorizacao_gestor_proposto = now()
+                    registro.dias_para_autorizacao_gestor_proposto = (
+                        now().date() - registro.data_solicitacao.date()
+                    ).days
+                registro.save()
+        return redirect("movimentacoes_pendentes")
+
+    return render(request, "conexaorh/gestor/movimentacao.html", {
+        "movimentacao": movimentacao,
+        "form": form,
+        "usuario": request.user,
+    })
+
+@login_required
 def registros_gestor(request):
     rp = RequisicaoPessoal.objects.filter(
-        Q(usuario=request.user) &
-        ~Q(assinatura_rh__isnull=True)
-    )
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
     for r in rp:
         r.tipo = "RP"
 
     mov = MovimentacaoPessoal.objects.filter(
-        Q(usuario=request.user) &
-        ~Q(assinatura_rh__isnull=True)
-    )
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
     for m in mov:
         m.tipo = "MOV"
-    
+
     rd = RequisicaoDesligamento.objects.filter(
-        Q(usuario=request.user) &
-        ~Q(assinatura_rh__isnull=True)
-    )
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
     for d in rd:
         d.tipo = "RD"
 
@@ -101,8 +136,9 @@ def registros_gestor(request):
         reverse=True
     )
 
-    return render(request, "conexaorh/registros_gestor.html", {
-        "registros": registros
+    return render(request, "conexaorh/gestor/registros_gestor.html", {
+        "registros": registros,
+        "usuario": request.user  # opcional: para usar dados diretamente no template
     })
 
 @login_required

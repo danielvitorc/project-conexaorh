@@ -1,0 +1,152 @@
+/* --- VARIAVEIS DE TEMA --- */
+/* TEMA CLARO (PADRÃO) */
+:root {
+    --azulEscuro-nort: #021B33;
+    --azul-nort: #0d71a7;
+    --branco-nort: #F7F7F7;
+    --dourado-nort: #FFD700;
+    --erro-nort: #ff4d4d;
+    --gradiente-center: var(--azul-nort);
+}
+
+/* TEMA ESCURO */
+[data-theme="dark"] {
+    --primary-color: #0F5FA6;
+    --secondary-color: #0A8CBF;
+    --accent-color: #04B2D9;
+    --highlight-color: #05DBF2;
+    --bg-color: #0D0D0D;
+    --text-color: #FFFFFF;
+    --card-bg: #1c1c1c;
+    --dourado-nort: #FFD700;
+}
+
+
+/* --- ESTILOS DA SIDEBAR --- */
+.sidebar {
+    width: 88px; 
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: var(--azulEscuro-nort);
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1.5px solid var(--secondary-color);
+    transition: width 0.3s ease;
+    z-index: 1050;
+    overflow-x: hidden;
+}
+
+.sidebar:hover {
+    width: 250px;
+}
+
+/* HEADER LOGO */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem;
+  height: 70px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar-header .logo {
+  max-height: 40px;       /* <- DIMINUI AQUI O TAMANHO RECOLHIDO */
+  width: auto;            /* Mantém proporção */
+  transition: all 0.3s ease;
+  margin-left: 8px;
+}
+
+/* Quando expandida */
+.sidebar:hover .sidebar-header {
+  justify-content: center;
+}
+
+.sidebar:hover .sidebar-header .logo {
+  max-height: 40px;       /* <- DIMINUI AQUI O TAMANHO EXPANDIDO */
+  margin-left: 0;
+}
+/* NAVEGAÇÃO */
+.sidebar-nav {
+    flex-grow: 1;
+    padding-top: 1rem;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0.75rem 1.25rem;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--dourado-nort);
+}
+
+.sidebar-nav a i {
+    font-size: 1.2rem;
+    min-width: 20px;
+    text-align: center;
+}
+
+.sidebar-nav a span {
+    display: none;
+}
+.sidebar:hover .sidebar-nav a span {
+    display: inline;
+}
+
+/* RODAPÉ */
+.sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--secondary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.sidebar:hover .sidebar-footer {
+    justify-content: space-between;
+}
+
+.sidebar-footer .user-greeting {
+    display: none;
+}
+.sidebar:hover .sidebar-footer .user-greeting {
+    display: inline;
+}
+
+.sidebar-footer .footer-actions a,
+.sidebar-footer .footer-actions button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-left: 0.5rem;
+}
+
+/* ======================================================= */
+/*                   CONTEÚDO PRINCIPAL                    */
+/* ======================================================= *
+
+/* Empurra AINDA MAIS o conteúdo quando a sidebar expande com o mouse */
+.sidebar:hover ~ .main-content {
+    margin-left: 218px;
+}
