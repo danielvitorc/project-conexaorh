@@ -1,100 +1,179 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="https://encrypted-tbn2.gstatic.com/faviconV2?url=https://www.nortetech.net&client=VFE&size=64&type=FAVICON&fallback_opts=TYPE,SIZE,URL&nfrp=2" type="image/png">
+    <title>{% block title %}MV - RH/DP{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+    <!-- CSS próprio -->
+    <link rel="stylesheet" href="{% static 'conexaorh/css/rh.css' %}">
 </head>
 <body>
-       <h2>Movimentação de Pessoal para Aprovação</h2>
-    <table border="1">
-        <tr>
-            <th>Gestor Atual</th>
-            <th>Colaborador a ser movimentado</th>
-            <th>Cargo Proposto</th>
-            <th>Data de Solicitação</th>
-            <th>Assinatura Diretor</th>
-            <th>Data Aprovação Diretor</th>
-            <th>Assinatura Presidente</th>
-            <th>Data Aprovação Presidente</th>
-            <th>Assinatura RH</th>
-            <th>Data Aprovação RH</th>
-            <th>Tempo para Aprovação (dias)</th>
-            <th>Download Excel</th>
-        </tr>
-        {% for registro in registros %}
-        <tr>
-            <td>{{ registro.gestor_atual }}</td>
-            <td>{{ registro.colaborador_movimentado }}</td>
-            <td>{{ registro.cargo_proposto }}</td>
-            <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
-            <td>    
-                {% if registro.assinatura_diretor %}
-                    <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_diretor  %}
-                    {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>    
-                {% if registro.assinatura_presidente %}
-                    <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_presidente %}
-                    {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_rh %}
-                    <p>Aprovado pelo RH:</p>
-                    <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
-                {% else %}
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="movimentacao">
-                        <button type="submit">Aprovar com Assinatura</button>
-                    </form>
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_rh %}
-                    {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.dias_para_autorizacao_rh is not None %}
-                    {% if registro.dias_para_autorizacao_rh == 0 %}
-                        Aprovado no mesmo dia
-                    {% else %}
-                        {{ registro.dias_para_autorizacao_rh }} dias
-                    {% endif %}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                <a href="{% url 'download_mov_excel' registro.id %}">
-                    <button>Baixar Excel</button>
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+
+    {% include 'conexaorh/include/navbar.html' with pagina_ativa='rh_page' rh=True %}
+    <div class="main-content">
+        <!-- Header com perfil -->
+        <div class="card-welcome">
+            <div class="welcome-text">
+                <h1>Movimentação de Pessoal para Aprovação</h1>
+            </div>
+            <div class="user-profile">
+                <div class="profile-info">
+                    <span class="user-name">{{ usuario.first_name }} {{ usuario.last_name }}</span>
+                    <span class="user-role">{{ usuario.get_user_type_display }}</span>
+                </div>
+                <div class="dropdown-container">
+                    <span class="dropdown-icon" onclick="toggleDropdown()"><i class="fa fa-chevron-down"></i></span>
+                    <div id="userDropdown" class="dropdown-menu">
+                        <a href="{% url 'logout' %}" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="linha-amarela"></div>
+
+        <!-- Tabela estilizada -->
+        <div class="card-tabela-estilizada">
+            <div class="tabela-header">
+                <h3>Registros de Movimentação</h3>
+            </div>
+            <table class="tabela-moderninha">
+                <thead>
+                <tr>
+                    <th>Gestor Atual</th>
+                    <th>Colaborador a ser movimentado</th>
+                    <th>Cargo Proposto</th>
+                    <th>Data de Solicitação</th>
+                    <th>Assinatura Diretor</th>
+                    <th>Data Aprovação Diretor</th>
+                    <th>Assinatura Presidente</th>
+                    <th>Data Aprovação Presidente</th>
+                    <th>Assinatura RH</th>
+                    <th>Data Aprovação RH</th>
+                    <th>Tempo para Aprovação (dias)</th>
+                    <th>Download Excel</th>
+                </tr>
+                {% for registro in registros %}
+                <tr>
+                    <td>{{ registro.gestor_atual }}</td>
+                    <td>{{ registro.colaborador_movimentado }}</td>
+                    <td>{{ registro.cargo_proposto }}</td>
+                    <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
+                    <td>    
+                        {% if registro.assinatura_diretor %}
+                            <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if registro.assinatura_diretor  %}
+                            {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>    
+                        {% if registro.assinatura_presidente %}
+                            <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if registro.assinatura_presidente %}
+                            {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if registro.assinatura_rh %}
+                            <p>Aprovado pelo RH:</p>
+                            <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                        {% else %}
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                                <input type="hidden" name="tipo_registro" value="movimentacao">
+                                <button type="submit">Aprovar com Assinatura</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if registro.assinatura_rh %}
+                            {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if registro.dias_para_autorizacao_rh is not None %}
+                            {% if registro.dias_para_autorizacao_rh == 0 %}
+                                Aprovado no mesmo dia
+                            {% else %}
+                                {{ registro.dias_para_autorizacao_rh }} dias
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'download_mov_excel' registro.id %}">
+                            <button>Baixar Excel</button>
+                        </a>
+                    </td>
+                </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="12" class="text-center">Nenhum registro encontrado.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="tabela-rodape mt-3">
+                <a href="#">Ver todos <span>&rarr;</span></a>
+            </div>
+        </div>
+    </div>
+
+  <script>
+    function toggleDropdown() {
+      const menu = document.getElementById("userDropdown");
+      const blur = document.getElementById("blur-background");
+      const isOpen = menu.style.display === "block";
+      menu.style.display = isOpen ? "none" : "block";
+      blur.style.display = isOpen ? "none" : "block";
+    }
+
+    document.addEventListener("click", function (e) {
+      const dropdown = document.getElementById("userDropdown");
+      const icon = document.querySelector(".dropdown-icon");
+      const blur = document.getElementById("blur-background");
+
+      if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+        dropdown.style.display = "none";
+        blur.style.display = "none";
+      }
+    });
+  </script>
+
+  <script src="{% static 'conexaorh/js/tema.js' %}"></script>
 </body>
 </html>

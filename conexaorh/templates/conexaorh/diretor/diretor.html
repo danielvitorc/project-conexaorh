@@ -112,30 +112,30 @@
   </div>
 
 </div>
-<script>
-  function toggleDropdown() {
-    const menu = document.getElementById("userDropdown");
-    const blur = document.getElementById("blur-background");
+  <script>
+    function toggleDropdown() {
+      const menu = document.getElementById("userDropdown");
+      const blur = document.getElementById("blur-background");
 
-    const isOpen = menu.style.display === "block";
-    menu.style.display = isOpen ? "none" : "block";
-    blur.style.display = isOpen ? "none" : "block";
-  }
-
-  document.addEventListener("click", function (e) {
-    const dropdown = document.getElementById("userDropdown");
-    const icon = document.querySelector(".dropdown-icon");
-    const blur = document.getElementById("blur-background");
-
-    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
-      dropdown.style.display = "none";
-      blur.style.display = "none";
+      const isOpen = menu.style.display === "block";
+      menu.style.display = isOpen ? "none" : "block";
+      blur.style.display = isOpen ? "none" : "block";
     }
-  });
-</script>
 
-<script src="{% static 'conexaorh/js/tema.js' %}"></script>
+    document.addEventListener("click", function (e) {
+      const dropdown = document.getElementById("userDropdown");
+      const icon = document.querySelector(".dropdown-icon");
+      const blur = document.getElementById("blur-background");
 
-</body>
+      if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+        dropdown.style.display = "none";
+        blur.style.display = "none";
+      }
+    });
+  </script>
 
-</html>
+  <script src="{% static 'conexaorh/js/tema.js' %}"></script>
+
+  </body>
+
+  </html>

@@ -25,6 +25,7 @@ urlpatterns = [
     path("rh/rd/", rh.rh_rd, name="rh_rd"),
     path('registros_rh/', rh.registros_rh, name='registros_rh'),
     path('complice/', complice.complice_page, name='complice_page'),
+    path('registros_complice/', complice.registros_complice, name='registros_complice'),
     path('download_rp/<int:registro_id>/', excel_rp.download_rp_excel, name='download_rp_excel'),
     path('download_mov/<int:registro_id>/', excel_mov.download_mov_excel, name='download_mov_excel'),
     path('download_rd/<int:registro_id>/', excel_rd.download_rd_excel, name='download_rd_excel'),

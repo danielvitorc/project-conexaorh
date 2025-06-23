@@ -26,6 +26,18 @@
                 <span>Relatórios</span>
             </a>
             {% endif %}
+            {% if complice %}
+                <a href="{% url 'complice_page' %}" 
+                class="{% if request.resolver_match.url_name == 'complice_page' %}active{% endif %}">
+                    <i class="fa fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{% url 'registros_complice' %}" 
+                class="{% if request.resolver_match.url_name == 'registros_complice' %}active{% endif %}">
+                    <i class="fas fa-tasks"></i>
+                    <span>Registros Pendentes</span>
+                </a>
+            {% endif %}
             {% if diretor %}
                 <!-- Menu de Navegação do Diretor -->
                 <a href="{% url 'diretor_page' %}" 
@@ -47,6 +59,54 @@
 
                 <a href="{% url 'diretor_rd' %}" 
                 class="{% if request.resolver_match.url_name == 'diretor_rd' %}active{% endif %}">
+                    <i class="fas fa-user-times"></i>
+                    <span>Desligamento</span>
+                </a>
+            {% endif %}
+            {% if presidente %}
+                <a href="{% url 'presidente_page' %}" 
+                class="{% if request.resolver_match.url_name == 'presidente_page' %}active{% endif %}">
+                    <i class="fa fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{% url 'presidente_rp' %}" 
+                class="{% if request.resolver_match.url_name == 'presidente_rp' %}active{% endif %}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Requisição de Pessoal</span>
+                </a>
+
+                <a href="{% url 'presidente_mov' %}" 
+                class="{% if request.resolver_match.url_name == 'presidente_mov' %}active{% endif %}">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Movimentação de Pessoal</span>
+                </a>
+
+                <a href="{% url 'presidente_rd' %}" 
+                class="{% if request.resolver_match.url_name == 'presidente_rd' %}active{% endif %}">
+                    <i class="fas fa-user-times"></i>
+                    <span>Desligamento</span>
+                </a>
+            {% endif %}
+            {% if rh %}
+                <a href="{% url 'rh_page' %}" 
+                class="{% if request.resolver_match.url_name == 'rh_page' %}active{% endif %}">
+                    <i class="fa fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{% url 'rh_rp' %}" 
+                class="{% if request.resolver_match.url_name == 'rh_rp' %}active{% endif %}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Requisição de Pessoal</span>
+                </a>
+
+                <a href="{% url 'rh_mov' %}" 
+                class="{% if request.resolver_match.url_name == 'rh_mov' %}active{% endif %}">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Movimentação de Pessoal</span>
+                </a>
+
+                <a href="{% url 'rh_rd' %}" 
+                class="{% if request.resolver_match.url_name == 'rh_rd' %}active{% endif %}">
                     <i class="fas fa-user-times"></i>
                     <span>Desligamento</span>
                 </a>

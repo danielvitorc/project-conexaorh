@@ -2,8 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from itertools import chain
+from django.db.models import Q
 from ..forms import  CompliceApprovalForm
-from ..models import MovimentacaoPessoal
+from ..models import MovimentacaoPessoal, RequisicaoDesligamento, RequisicaoPessoal
 
 @login_required
 def complice_page(request):
@@ -37,4 +39,15 @@ def complice_page(request):
         'movimentacao': movimentacao,
         'usuario': request.user,
         'form': form
+    })
+
+@login_required
+def registros_complice(request):
+    mov = MovimentacaoPessoal.objects.filter(
+        ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
+    
+    return render(request, "conexaorh/complice/registros_complice.html", {
+        "mov": mov,
+        "usuario": request.user
     })
