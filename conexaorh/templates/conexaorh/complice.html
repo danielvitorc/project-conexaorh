@@ -26,7 +26,7 @@
             <td>
                 {% if registro.assinatura_complice %}
                     <p>Aprovado pelo Complice:</p>
-                    <img src="{{ registro.assinatura_complice.url }}" alt="Assinatura Complice" style="height: 100px;">
+                    <img src="{{ registro.imagem_assinatura_complice.url }}" alt="Assinatura Complice" style="height: 100px;">
                 {% else %}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}

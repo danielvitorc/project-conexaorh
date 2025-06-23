@@ -163,7 +163,6 @@ class RequisicaoPessoalForm(forms.ModelForm):
         img = Image.new('RGBA', (img_width, img_height), color=(255, 255, 255, 0))
         draw = ImageDraw.Draw(img)
 
-        
         # Desenhar o texto centralizado verticalmente
         draw.text((padding, padding), name, font=font, fill=(0, 0, 0, 255))
         
@@ -216,7 +215,6 @@ class RequisicaoPessoalForm(forms.ModelForm):
 
 
 class DiretorForm(forms.ModelForm):
-
     assinar_como_diretor = forms.BooleanField(
         required=False,
         label="Assinar como Diretor",
@@ -224,6 +222,86 @@ class DiretorForm(forms.ModelForm):
     )
     class Meta:
         model = RequisicaoPessoal
+        fields = ["assinatura_diretor"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Oculta o campo assinatura_diretor
+        self.fields["assinatura_diretor"].widget = forms.HiddenInput()
+
+    def save(self, commit=True, user=None):
+        instance = super().save(commit=False)
+
+        if user:
+            instance.assinatura_diretor = user
+            instance.data_autorizacao_diretor = timezone.now()
+
+            if instance.data_solicitacao:
+                instance.dias_para_autorizacao_diretor = (
+                    instance.data_autorizacao_diretor.date()
+                    - instance.data_solicitacao.date()
+                ).days
+
+            # Gera imagem da assinatura se desejar
+            assinatura_img = RequisicaoPessoalForm.generate_signature_image(
+                str(user.get_full_name() or user.username or "USUÁRIO")
+            )
+            instance.imagem_assinatura_diretor.save(
+                assinatura_img.name, assinatura_img, save=False
+            )
+
+        if commit:
+            instance.save()
+        return instance
+
+class DiretorFormRD(forms.ModelForm):
+    assinar_como_diretor = forms.BooleanField(
+        required=False,
+        label="Assinar como Diretor",
+        help_text="Marque esta opção para assinar este formulário como gestor.",
+    )
+    class Meta:
+        model = RequisicaoDesligamento
+        fields = ["assinatura_diretor"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Oculta o campo assinatura_diretor
+        self.fields["assinatura_diretor"].widget = forms.HiddenInput()
+
+    def save(self, commit=True, user=None):
+        instance = super().save(commit=False)
+
+        if user:
+            instance.assinatura_diretor = user
+            instance.data_autorizacao_diretor = timezone.now()
+
+            if instance.data_solicitacao:
+                instance.dias_para_autorizacao_diretor = (
+                    instance.data_autorizacao_diretor.date()
+                    - instance.data_solicitacao.date()
+                ).days
+
+            # Gera imagem da assinatura se desejar
+            assinatura_img = RequisicaoPessoalForm.generate_signature_image(
+                str(user.get_full_name() or user.username or "USUÁRIO")
+            )
+            instance.imagem_assinatura_diretor.save(
+                assinatura_img.name, assinatura_img, save=False
+            )
+
+        if commit:
+            instance.save()
+        return instance
+
+class DiretorFormMOV(forms.ModelForm):
+    assinar_como_diretor = forms.BooleanField(
+        required=False,
+        label="Assinar como Diretor",
+        help_text="Marque esta opção para assinar este formulário como Diretor.",
+    )
+    class Meta:
+        model = MovimentacaoPessoal
         fields = ["assinatura_diretor"]
 
     def __init__(self, *args, **kwargs):
@@ -298,13 +376,100 @@ class PresidenteForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+class PresidenteFormRD(forms.ModelForm):
+
+    assinar_como_presidente = forms.BooleanField(
+        required=False,
+        label="Assinar como Presidente",
+        help_text="Marque esta opção para assinar este formulário como Presidente.",
+    )
+
+    class Meta:
+        model = RequisicaoDesligamento
+        fields = ["assinatura_presidente"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Oculta o campo assinatura_diretor
+        self.fields["assinatura_presidente"].widget = forms.HiddenInput()
+
+
+    def save(self, commit=True, user=None):
+        instance = super().save(commit=False)
+
+        if user:
+            instance.assinatura_presidente = user
+            instance.data_autorizacao_presidente = timezone.now()
+
+            if instance.data_solicitacao:
+                instance.dias_para_autorizacao_presidente = (
+                    instance.data_autorizacao_presidente.date()
+                    - instance.data_solicitacao.date()
+                ).days
+
+            # Gera imagem da assinatura se desejar
+            assinatura_img = RequisicaoPessoalForm.generate_signature_image(
+                str(user.get_full_name() or user.username or "USUÁRIO")
+            )
+            instance.imagem_assinatura_presidente.save(
+                assinatura_img.name, assinatura_img, save=False
+            )
+
+        if commit:
+            instance.save()
+        return instance
+    
+
+class PresidenteFormMOV(forms.ModelForm):
+
+    assinar_como_presidente = forms.BooleanField(
+        required=False,
+        label="Assinar como Presidente",
+        help_text="Marque esta opção para assinar este formulário como Presidente.",
+    )
+
+    class Meta:
+        model = MovimentacaoPessoal
+        fields = ["assinatura_presidente"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Oculta o campo assinatura_diretor
+        self.fields["assinatura_presidente"].widget = forms.HiddenInput()
+
+
+    def save(self, commit=True, user=None):
+        instance = super().save(commit=False)
+
+        if user:
+            instance.assinatura_presidente = user
+            instance.data_autorizacao_presidente = timezone.now()
+
+            if instance.data_solicitacao:
+                instance.dias_para_autorizacao_presidente = (
+                    instance.data_autorizacao_presidente.date()
+                    - instance.data_solicitacao.date()
+                ).days
+
+            # Gera imagem da assinatura se desejar
+            assinatura_img = RequisicaoPessoalForm.generate_signature_image(
+                str(user.get_full_name() or user.username or "USUÁRIO")
+            )
+            instance.imagem_assinatura_presidente.save(
+                assinatura_img.name, assinatura_img, save=False
+            )
+
+        if commit:
+            instance.save()
+        return instance
         
 class RHForm(forms.ModelForm):
 
     assinar_como_rh = forms.BooleanField(
         required=False,
         label="Assinar como RH",
-        help_text="Marque esta opção para assinar este formulário como gestor.",
+        help_text="Marque esta opção para assinar este formulário como RH/DP.",
     )
 
     class Meta:
@@ -341,15 +506,171 @@ class RHForm(forms.ModelForm):
             instance.save()
         return instance
 
+class RHFormRD(forms.ModelForm):
+
+    assinar_como_rh = forms.BooleanField(
+        required=False,
+        label="Assinar como RH",
+        help_text="Marque esta opção para assinar este formulário como RH/DP.",
+    )
+
+    class Meta:
+        model = RequisicaoDesligamento
+        fields = ["assinatura_rh"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Oculta o campo assinatura_diretor
+        self.fields["assinatura_rh"].widget = forms.HiddenInput()
+
+    def save(self, commit=True, user=None):
+        instance = super().save(commit=False)
+
+        if user:
+            instance.assinatura_rh = user
+            instance.data_autorizacao_rh = timezone.now()
+
+            if instance.data_solicitacao:
+                instance.dias_para_autorizacao_rh = (
+                    instance.data_autorizacao_rh.date()
+                    - instance.data_solicitacao.date()
+                ).days
+
+            # Gera imagem da assinatura se desejar
+            assinatura_img = RequisicaoPessoalForm.generate_signature_image(
+                str(user.get_full_name() or user.username or "USUÁRIO")
+            )
+            instance.imagem_assinatura_rh.save(
+                assinatura_img.name, assinatura_img, save=False
+            )
+
+        if commit:
+            instance.save()
+        return instance
+
+class RHFormMOV(forms.ModelForm):
+
+    assinar_como_rh = forms.BooleanField(
+        required=False,
+        label="Assinar como RH",
+        help_text="Marque esta opção para assinar este formulário como RH/DP.",
+    )
+
+    class Meta:
+        model = MovimentacaoPessoal
+        fields = ["assinatura_rh"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Oculta o campo assinatura_diretor
+        self.fields["assinatura_rh"].widget = forms.HiddenInput()
+
+    def save(self, commit=True, user=None):
+        instance = super().save(commit=False)
+
+        if user:
+            instance.assinatura_rh = user
+            instance.data_autorizacao_rh = timezone.now()
+
+            if instance.data_solicitacao:
+                instance.dias_para_autorizacao_rh = (
+                    instance.data_autorizacao_rh.date()
+                    - instance.data_solicitacao.date()
+                ).days
+
+            # Gera imagem da assinatura se desejar
+            assinatura_img = RequisicaoPessoalForm.generate_signature_image(
+                str(user.get_full_name() or user.username or "USUÁRIO")
+            )
+            instance.imagem_assinatura_rh.save(
+                assinatura_img.name, assinatura_img, save=False
+            )
+
+        if commit:
+            instance.save()
+        return instance
+
 class CompliceApprovalForm(forms.ModelForm):
+
+    assinar_como_complice = forms.BooleanField(
+        required=False,
+        label="Assinar como Complice",
+        help_text="Marque esta opção para assinar este formulário como Complice",
+    )
     class Meta:
         model = MovimentacaoPessoal
         fields = ['assinatura_complice']
 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Oculta o campo assinatura_diretor
+        self.fields["assinatura_complice"].widget = forms.HiddenInput()
+
+    def save(self, commit=True, user=None):
+        instance = super().save(commit=False)
+
+        if user:
+            instance.assinatura_complice = user
+            instance.data_autorizacao_complice = timezone.now()
+
+            if instance.data_solicitacao:
+                instance.dias_para_autorizacao_complice = (
+                    instance.data_autorizacao_complice.date()
+                    - instance.data_solicitacao.date()
+                ).days
+
+            # Gera imagem da assinatura se desejar
+            assinatura_img = RequisicaoPessoalForm.generate_signature_image(
+                str(user.get_full_name() or user.username or "USUÁRIO")
+            )
+            instance.imagem_assinatura_complice.save(
+                assinatura_img.name, assinatura_img, save=False
+            )
+
+        if commit:
+            instance.save()
+        return instance
+
 class GestorPropostoApprovalForm(forms.ModelForm):
+    assinar_como_gestor_proposto = forms.BooleanField(
+        required=False,
+        label="Assinar como Gestor Proposto",
+        help_text="Marque esta opção para assinar este formulário como Gestor Proposto",
+    )
     class Meta:
         model = MovimentacaoPessoal
         fields = ['assinatura_gestor_proposto']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Oculta o campo assinatura_diretor
+        self.fields["assinatura_gestor_proposto"].widget = forms.HiddenInput()
+
+    def save(self, commit=True, user=None, gestor_role="proposto"):
+        instance = super().save(commit=False)
+
+        if user.user_type == "gestor" and gestor_role == "proposto":
+            instance.assinatura_gestor_proposto = user
+            instance.data_autorizacao_gestor_proposto = timezone.now()
+
+            if instance.data_solicitacao:
+                instance.dias_para_autorizacao_gestor_proposto = (
+                    instance.data_autorizacao_gestor_proposto.date()
+                    - instance.data_solicitacao.date()
+                ).days
+
+            # Gera imagem da assinatura se desejar
+            assinatura_img = MovimentacaoPessoalForm.generate_signature_image(
+                str(user.get_full_name() or user.username or "USUÁRIO")
+            )
+            instance.imagem_assinatura_gestor_proposto.save(
+                assinatura_img.name, assinatura_img, save=False
+            )
+
+        if commit:
+            instance.save()
+        return instance
 
 class MovimentacaoPessoalForm(forms.ModelForm):
 
@@ -407,6 +728,11 @@ class MovimentacaoPessoalForm(forms.ModelForm):
         required = False,
         label = 'SERÁ NECESSÁRIO SUBSTITUIÇÃO?'
     )
+    assinar_como_gestor_atual = forms.BooleanField(
+        required=False,
+        label="Assinar como Gestor Atual",
+        help_text="Marque esta opção para assinar este formulário como gestor atual.",
+    )
 
     class Meta:
         model = MovimentacaoPessoal
@@ -428,8 +754,14 @@ class MovimentacaoPessoalForm(forms.ModelForm):
             'dias_para_autorizacao_diretor',
             'dias_para_autorizacao_presidente',
             'dias_para_autorizacao_rh',
-            'usuario'
-            
+            'usuario',
+            'assinatura_gestor_atual',
+            'imagem_assinatura_gestor_atual',
+            'imagem_assinatura_complice',
+            'imagem_assinatura_gestor_proposto',
+            'imagem_assinatura_diretor',
+            'imagem_assinatura_presidente',
+            'imagem_assinatura_rh',
         ]
 
         widgets = {
@@ -446,7 +778,45 @@ class MovimentacaoPessoalForm(forms.ModelForm):
         ]
         self.fields['gestor_proposto'].choices = choices
 
-    def save(self, commit=True):
+    @staticmethod
+    def generate_signature_image(name: str) -> ContentFile:
+        """Gera uma imagem com o nome do usuário como se fosse uma assinatura."""
+        # Tamanho da imagem
+        print("Gerando assinatura para:", name)
+
+        # Fonte padrão (ou use uma .ttf customizada)
+        try:
+            font = ImageFont.truetype("BRADHITC.TTF", 40)
+            print("Fonte carregada com sucesso.")
+        except IOError:
+            print("Fonte não encontrada, usando padrão.")
+            font = ImageFont.load_default()
+        
+        # Calcular tamanho necessário do texto
+        dummy_img = Image.new('RGBA', (1, 1))
+        draw_dummy = ImageDraw.Draw(dummy_img)
+        bbox = draw_dummy.textbbox((0, 0), name, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+ 
+        padding = 20
+        img_width = text_width + padding * 2
+        img_height = text_height + padding * 2
+
+        img = Image.new('RGBA', (img_width, img_height), color=(255, 255, 255, 0))
+        draw = ImageDraw.Draw(img)
+
+        # Desenhar o texto centralizado verticalmente
+        draw.text((padding, padding), name, font=font, fill=(0, 0, 0, 255))
+        
+
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+
+        filename = f"assinatura_{name.lower().replace(' ', '_')}.png"
+        return ContentFile(buffer.getvalue(), name=filename)
+    
+    def save(self, commit=True, user=None, gestor_role=None):
         instance = super().save(commit=False)
 
         # Lista de campos que NÃO devem ser convertidos para maiúsculas
@@ -463,6 +833,48 @@ class MovimentacaoPessoalForm(forms.ModelForm):
         instance.jutificativa_movimentacao = ", ".join(self.cleaned_data.get('jutificativa_movimentacao', []))
         instance.tipo_adicional = ", ".join(self.cleaned_data.get('tipo_adicional', []))
         instance.substituicao = ", ".join(self.cleaned_data.get('substituicao', []))
+
+        if user:
+            instance.usuario = user
+            nome_usuario = str(user.get_full_name() or user.username or "USUÁRIO")
+            assinatura_img = self.generate_signature_image(nome_usuario)
+
+        
+        # Assinatura automática com base no tipo de usuário
+        if user.user_type == "gestor":
+            if gestor_role == "atual":
+                instance.assinatura_gestor_atual = user
+                instance.data_autorizacao_gestor_atual = timezone.now()
+                instance.imagem_assinatura_gestor_atual.save(
+                    assinatura_img.name, assinatura_img, save=False
+                )
+            elif gestor_role == "proposto":
+                instance.assinatura_gestor_proposto = user
+                instance.data_autorizacao_gestor_proposto = timezone.now()
+                instance.imagem_assinatura_gestor_proposto.save(
+                    assinatura_img.name, assinatura_img, save=False
+                )
+
+        elif user.user_type == "complice":
+            instance.assinatura_complice = user
+            instance.data_autorizacao_complice = timezone.now()
+            instance.imagem_assinatura_complice.save(assinatura_img.name, assinatura_img, save=False)
+
+
+        elif user.user_type == "diretor":
+            instance.assinatura_diretor = user
+            instance.data_autorizacao_diretor = timezone.now()
+            instance.imagem_assinatura_diretor.save(assinatura_img.name, assinatura_img, save=False)
+
+        elif user.user_type == "presidente":
+            instance.assinatura_presidente = user
+            instance.data_autorizacao_presidente = timezone.now()
+            instance.imagem_assinatura_presidente.save(assinatura_img.name, assinatura_img, save=False)
+
+        elif user.user_type == "rh":
+            instance.assinatura_rh = user
+            instance.data_autorizacao_rh = timezone.now()
+            instance.imagem_assinatura_rh.save(assinatura_img.name, assinatura_img, save=False)
         
         if commit:
             instance.save()
@@ -521,6 +933,11 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
         required = False,
         label = 'SERÁ NECESSÁRIO SUBSTITUIÇÃO?'
     )
+    assinar_como_gestor = forms.BooleanField(
+        required=False,
+        label="Assinar como Gestor",
+        help_text="Marque esta opção para assinar este formulário como gestor.",
+    )
 
     class Meta:
         model = RequisicaoDesligamento
@@ -536,6 +953,11 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
             'dias_para_autorizacao_presidente',
             'dias_para_autorizacao_rh',
             'usuario',
+            'assinatura_gestor',
+            'imagem_assinatura_gestor',
+            'imagem_assinatura_diretor',
+            'imagem_assinatura_presidente',
+            'imagem_assinatura_rh',
         ]
         widgets = {
             'data_desligamento': DateInput(attrs={'type': 'date'}),
@@ -545,7 +967,45 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
             'bloqueio_readmissao': 'Bloqueio de Readmissão'
         }
 
-    def save(self, commit=True):
+    @staticmethod
+    def generate_signature_image(name: str) -> ContentFile:
+        """Gera uma imagem com o nome do usuário como se fosse uma assinatura."""
+        # Tamanho da imagem
+        print("Gerando assinatura para:", name)
+
+        # Fonte padrão (ou use uma .ttf customizada)
+        try:
+            font = ImageFont.truetype("BRADHITC.TTF", 40)
+            print("Fonte carregada com sucesso.")
+        except IOError:
+            print("Fonte não encontrada, usando padrão.")
+            font = ImageFont.load_default()
+        
+        # Calcular tamanho necessário do texto
+        dummy_img = Image.new('RGBA', (1, 1))
+        draw_dummy = ImageDraw.Draw(dummy_img)
+        bbox = draw_dummy.textbbox((0, 0), name, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+ 
+        padding = 20
+        img_width = text_width + padding * 2
+        img_height = text_height + padding * 2
+
+        img = Image.new('RGBA', (img_width, img_height), color=(255, 255, 255, 0))
+        draw = ImageDraw.Draw(img)
+
+        # Desenhar o texto centralizado verticalmente
+        draw.text((padding, padding), name, font=font, fill=(0, 0, 0, 255))
+        
+
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+
+        filename = f"assinatura_{name.lower().replace(' ', '_')}.png"
+        return ContentFile(buffer.getvalue(), name=filename)
+
+    def save(self, commit=True, user=None):
         instance = super().save(commit=False)
 
         # Converte todos os campos CharField e TextField para maiúsculas
@@ -558,6 +1018,32 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
         instance.tipo_desligamento = ", ".join(self.cleaned_data.get('tipo_desligamento', []))
         instance.motivo_desligamento = ", ".join(self.cleaned_data.get('motivo_desligamento', []))
         instance.tipo_aviso = ", ".join(self.cleaned_data.get('tipo_aviso', []))
+
+        if user:
+            instance.usuario = user
+            nome_usuario = str(user.get_full_name() or user.username or "USUÁRIO")
+            assinatura_img = self.generate_signature_image(nome_usuario)    
+                
+                # Assinatura automática com base no tipo de usuário
+        if user.user_type == "gestor":
+            instance.assinatura_gestor = user
+            instance.data_autorizacao_gestor = timezone.now()
+            instance.imagem_assinatura_gestor.save(assinatura_img.name, assinatura_img, save=False)
+
+        elif user.user_type == "diretor":
+            instance.assinatura_diretor = user
+            instance.data_autorizacao_diretor = timezone.now()
+            instance.imagem_assinatura_diretor.save(assinatura_img.name, assinatura_img, save=False)
+
+        elif user.user_type == "presidente":
+            instance.assinatura_presidente = user
+            instance.data_autorizacao_presidente = timezone.now()
+            instance.imagem_assinatura_presidente.save(assinatura_img.name, assinatura_img, save=False)
+
+        elif user.user_type == "rh":
+            instance.assinatura_rh = user
+            instance.data_autorizacao_rh = timezone.now()
+            instance.imagem_assinatura_rh.save(assinatura_img.name, assinatura_img, save=False)
         
         if commit:
             instance.save()

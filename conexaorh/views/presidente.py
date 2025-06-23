@@ -4,7 +4,7 @@ from django.utils.timezone import now
 from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from itertools import chain
-from ..forms import PresidenteForm
+from ..forms import PresidenteForm, PresidenteFormRD, PresidenteFormMOV
 from ..models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 
 @login_required
@@ -13,8 +13,8 @@ def presidente_page(request):
         return HttpResponseForbidden("Acesso negado! Apenas presidentes podem acessar esta página.")
 
     rp = RequisicaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True))
-    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
-    rd = RequisicaoDesligamento.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
+    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True))
+    rd = RequisicaoDesligamento.objects.filter(~Q(assinatura_diretor__isnull=True))
 
     form = PresidenteForm()
     if request.method == "POST":
@@ -85,16 +85,17 @@ def presidente_mov(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso Negado!")
     
-    registros = MovimentacaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
-    form = PresidenteForm()
+    registros = MovimentacaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True))
+    form = PresidenteFormMOV()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-        form = PresidenteForm(request.POST, request.FILES, instance=registro)
+        form = PresidenteFormMOV(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_presidente and registro.data_autorizacao_presidente is None:
                 registro.data_autorizacao_presidente = now()
@@ -112,16 +113,17 @@ def presidente_rd(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso Negado!")
     
-    registros = RequisicaoDesligamento.objects.filter(~Q(assinatura_diretor__isnull=True), ~Q(assinatura_diretor=""))
-    form = PresidenteForm()
+    registros = RequisicaoDesligamento.objects.filter(~Q(assinatura_diretor__isnull=True))
+    form = PresidenteFormRD()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(RequisicaoDesligamento, id=registro_id)
-        form = PresidenteForm(request.POST, request.FILES, instance=registro)
+        form = PresidenteFormRD(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_presidente and registro.data_autorizacao_presidente is None:
                 registro.data_autorizacao_presidente = now()

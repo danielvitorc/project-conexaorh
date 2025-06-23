@@ -19,7 +19,6 @@ def gestor_page(request):
    
     movimentacao = MovimentacaoPessoal.objects.filter(
         ~Q(assinatura_complice__isnull=True),
-        ~Q(assinatura_complice=""),
         gestor_proposto=request.user.username
     )
     form = GestorPropostoApprovalForm()
@@ -34,9 +33,7 @@ def gestor_page(request):
         elif "submit_movimentacao" in request.POST:
             form_movimentacao = MovimentacaoPessoalForm(request.POST, request.FILES)
             if form_movimentacao.is_valid():
-                movimentacao = form_movimentacao.save(commit=False)
-                movimentacao.usuario = request.user
-                movimentacao.save()
+                form_movimentacao.save(user=request.user, gestor_role="atual")
                 return redirect("gestor_page")
         
         if "submit_aprovacao_mov" in request.POST:
@@ -48,6 +45,7 @@ def gestor_page(request):
             form = GestorPropostoApprovalForm(request.POST, request.FILES, instance=registro)
 
             if form.is_valid():
+                form.save(user=request.user, gestor_role="proposto")
                 assinatura = form.cleaned_data['assinatura_gestor_proposto']
                 if assinatura:
                     registro.assinatura_gestor_proposto = assinatura
@@ -56,15 +54,12 @@ def gestor_page(request):
                         registro.dias_para_autorizacao_gestor_proposto = (
                             now().date() - registro.data_solicitacao.date()
                         ).days
-                    registro.save()
             return redirect("gestor_page")
             
         elif "submit_rd" in request.POST:
             form_rd = RequisicaoDesligamentoForm(request.POST, request.FILES)
             if form_rd.is_valid():
-                rd = form_rd.save(commit=False)
-                rd.usuario = request.user
-                rd.save()
+                form_rd.save(user=request.user)
                 return redirect("gestor_page")
             
 

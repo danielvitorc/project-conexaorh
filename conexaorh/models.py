@@ -185,106 +185,81 @@ class MovimentacaoPessoal(models.Model):
     substituicao = models.CharField(max_length=100)
     comentarios = models.TextField()
 
-    assinatura_gestor_atual =  models.ImageField(upload_to="assinaturas/gestor/MovimentacaoPessoal/", null=True, blank=True)
-    data_autorizacao_gestor_atual = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    # Assinatura do Gestor Atual
+    assinatura_gestor_atual = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
+        related_name='movimentacoes_assinadas_como_gestor_atual')
+    data_autorizacao_gestor_atual = models.DateTimeField(null=True, blank=True, auto_now_add=True)    
+    imagem_assinatura_gestor_atual = models.ImageField(upload_to="assinaturas/gestor/MovimentacaoPessoal", null=True, blank=True)
 
-    assinatura_complice = models.ImageField(upload_to="assinaturas/complice/MovimentacaoPessoal/")
-    data_autorizacao_complice = models.DateTimeField(null=True, blank=True)
-    dias_para_autorizacao_complice = models.IntegerField(null=True, blank=True)
+    # Assinatura do Complice
+    assinatura_complice = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
+        related_name='movimentacoes_assinadas_como_complice')
+    data_autorizacao_complice = models.DateTimeField(null=True, blank=True, auto_now_add=True)    
+    imagem_assinatura_complice = models.ImageField(upload_to="assinaturas/complice/MovimentacaoPessoal", null=True, blank=True)
 
-    assinatura_gestor_proposto = models.ImageField(upload_to="assinaturas/gestor/MovimentacaoPessoal/")
-    data_autorizacao_gestor_proposto = models.DateTimeField(null=True, blank=True)
-    dias_para_autorizacao_gestor_proposto = models.IntegerField(null=True, blank=True)
+    # Assinatura do Gestor Proposto
+    assinatura_gestor_proposto = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
+        related_name='movimentacoes_assinadas_como_gestor_proposto')
+    data_autorizacao_gestor_proposto = models.DateTimeField(null=True, blank=True, auto_now_add=True)    
+    imagem_assinatura_gestor_proposto = models.ImageField(upload_to="assinaturas/gestor/MovimentacaoPessoal", null=True, blank=True)
 
-    assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/MovimentacaoPessoal/")
+    # Assinatura do Diretor
+    assinatura_diretor = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
+        related_name='movimentacoes_assinadas_como_diretor')
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
-    dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
+    imagem_assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/MovimentacaoPessoal", null=True, blank=True)
 
-    assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/MovimentacaoPessoal/")
+    # Assinatura do presidente
+    assinatura_presidente = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
+        related_name='movimentacoes_assinadas_como_presidente')
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
-    dias_para_autorizacao_presidente = models.IntegerField(null=True, blank=True)
+    imagem_assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/MovimentacaoPessoal", null=True, blank=True)
 
-    assinatura_rh = models.ImageField(upload_to="assinaturas/rh/MovimentacaoPessoal/", null=True, blank=True)
+    # Assinatura do RH
+    assinatura_rh = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
+        related_name='movimentacoes_assinadas_como_rh')
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
+    imagem_assinatura_rh = models.ImageField(upload_to="assinaturas/rh/MovimentacaoPessoal", null=True, blank=True)
+
+    dias_para_autorizacao_complice = models.IntegerField(null=True, blank=True)
+    dias_para_autorizacao_gestor_proposto = models.IntegerField(null=True, blank=True)
+    dias_para_autorizacao_diretor = models.IntegerField(null=True, blank=True)
+    dias_para_autorizacao_presidente = models.IntegerField(null=True, blank=True)
     dias_para_autorizacao_rh = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"Movimentação: {self.colaborador_movimentado} ({self.tipo_movimentacao}) - {self.data_solicitacao.strftime('%d/%m/%Y')}"
-    
-    def clean(self):
-        super().clean()
 
-     # Validação da assinatura do Gestor Atual
-        if self.assinatura_gestor_atual and hasattr(self.assinatura_gestor_atual, 'file'):
-            try:
-                self.assinatura_gestor_atual.seek(0)
-                hash_gestor_atual = hashlib.sha256(self.assinatura_gestor_atual.file.read()).hexdigest()
-                self.assinatura_gestor_atual.seek(0)
-            except Exception:
-                raise ValidationError("Não foi possível processar o arquivo de assinatura do gestor atual")
-    
-            if hash_gestor_atual not in HASHES_ASSINATURAS_GESTORES:
-                raise ValidationError({"assinatura_gestor_atual": "Arquivo de assinatura do Gestor Atual inválido."})
+    def assinar_gestor_atual(self, user):
+        self.assinatura_gestor_atual = user
+        self.data_assinatura_gestor_atual = timezone.now()
+        self.save()
 
-     # Validação da assinatura do Complice
-        if self.assinatura_complice and hasattr(self.assinatura_complice, 'file'):
-            try:
-                self.assinatura_complice.seek(0)
-                hash_complice = hashlib.sha256(self.assinatura_complice.file.read()).hexdigest()
-                self.assinatura_complice.seek(0)
-            except Exception:
-                raise ValidationError("Não foi possível processar o arquivo de assinatura do Complice.")
-    
-            if hash_complice not in HASHES_ASSINATURAS_COMPLICE:
-                raise ValidationError({"assinatura_complice": "Arquivo de assinatura do Complice inválido."})
-             
-     # Validação da assinatura do Gestor Proposto
-        if self.assinatura_gestor_proposto and hasattr(self.assinatura_gestor_proposto, 'file'):
-            try:
-                self.assinatura_gestor_proposto.seek(0)
-                hash_gestor= hashlib.sha256(self.assinatura_gestor_proposto.read()).hexdigest()
-                self.assinatura_gestor_proposto.seek(0)
-            except Exception:
-                raise ValidationError("Não foi possível processar o arquivo de assinatura do Gestor Proposto")
-            
-            if hash_gestor not in HASHES_ASSINATURAS_GESTORES:
-                 raise ValidationError({"assinatura_gestor_proposto": "Arquivo de assinatura do Gestor Proposto inválido."})
-            
-     # Validação da assinatura do diretor
-        if self.assinatura_diretor and hasattr(self.assinatura_diretor, 'file'):
-            try:
-                self.assinatura_diretor.file.seek(0)
-                hash_diretor = hashlib.sha256(self.assinatura_diretor.file.read()).hexdigest()
-                self.assinatura_diretor.file.seek(0)
-            except Exception:
-                raise ValidationError("Não foi possível processar o arquivo de assinatura do diretor.")
-            
-            if hash_diretor not in HASH_ASSINATURAS_DIRETORES:
-                raise ValidationError("Arquivo de assinatura do diretor inválido.")
+    def assinar_complice(self, user):
+        self.assinatura_complice = user
+        self.data_assinatura_complice = timezone.now()
+        self.save()
 
-    # Validação da assinatura do presidente
-        if self.assinatura_presidente and hasattr(self.assinatura_presidente, 'file'):
-            try:
-                self.assinatura_presidente.file.seek(0)
-                hash_presidente = hashlib.sha256(self.assinatura_presidente.file.read()).hexdigest()
-                self.assinatura_presidente.file.seek(0)
-            except Exception:
-                raise ValidationError("Não foi possível processar o arquivo de assinatura do presidente.")
-            
-            if hash_presidente not in HASHES_ASSINATURAS_PRESIDENTE:
-                raise ValidationError("Arquivo de assinatura do presidente inválido.")
-            
-     # Validação da assinatura do RH       
-        if self.assinatura_rh and hasattr(self.assinatura_rh, 'file'):
-            try:
-                self.assinatura_rh.file.seek(0)
-                hash_rh = hashlib.sha256(self.assinatura_rh.file.read()).hexdigest()
-                self.assinatura_rh.file.seek(0)
-            except Exception:
-                raise ValidationError("Não foi possível processar o arquivo de assinatura do rh.")
-            
-            if hash_rh not in HASHES_ASSINATURAS_RH:
-                raise ValidationError("Arquivo de assinatura do rh inválido.")
+    def assinar_gestor_proposto(self, user):
+        self.assinatura_gestor_proposto = user
+        self.data_assinatura_gestor_proposto = timezone.now()
+        self.save()
+
+    def assinar_diretor(self, user):
+        self.assinatura_diretor = user
+        self.data_assinatura_diretor = timezone.now()
+        self.save()
+
+    def assinar_presidente(self, user):
+        self.assinatura_presidente = user
+        self.data_assinatura_presidente = timezone.now()
+        self.save()
+
+    def assinar_rh(self, user):
+        self.assinatura_rh = user
+        self.data_assinatura_rh = timezone.now()
+        self.save()
+
 
     
     

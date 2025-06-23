@@ -4,7 +4,7 @@ from django.utils.timezone import now
 from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from itertools import chain
-from ..forms import  RHForm
+from ..forms import  RHForm, RHFormRD, RHFormMOV
 from ..models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 
 @login_required
@@ -14,8 +14,8 @@ def rh_page(request):
 
     # Buscar registros dos dois modelos que já foram aprovados pelo presidente
     rp = RequisicaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))
-    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True), ~Q(assinatura_presidente=""))
-    rd = RequisicaoDesligamento.objects.filter(~Q(assinatura_presidente__isnull=True), ~Q(assinatura_presidente=""))
+    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))   
+    rd = RequisicaoDesligamento.objects.filter(~Q(assinatura_presidente__isnull=True))
 
     form = RHForm()
 
@@ -115,16 +115,17 @@ def rh_mov(request):
     if request.user.user_type != "rh":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = MovimentacaoPessoal.objects.all()
-    form = RHForm()
+    registros = MovimentacaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))   
+    form = RHFormMOV()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-        form = RHForm(request.POST, request.FILES, instance=registro)
+        form = RHFormMOV(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_rh and registro.data_autorizacao_rh is None:
                 registro.data_autorizacao_rh = now()
@@ -143,15 +144,16 @@ def rh_rd(request):
         return HttpResponseForbidden("Acesso negado!")
 
     registros = RequisicaoDesligamento.objects.all()
-    form = RHForm()
+    form = RHFormRD()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(RequisicaoDesligamento, id=registro_id)
-        form = RHForm(request.POST, request.FILES, instance=registro)
+        form = RHFormRD(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_rh and registro.data_autorizacao_rh is None:
                 registro.data_autorizacao_rh = now()

@@ -4,7 +4,7 @@ from django.utils.timezone import now
 from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from itertools import chain
-from ..forms import DiretorForm
+from ..forms import DiretorForm, DiretorFormRD, DiretorFormMOV
 from ..models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 
 @login_required
@@ -13,11 +13,9 @@ def diretor_page(request):
         return HttpResponseForbidden("Acesso negado! Apenas diretores podem acessar esta página.")
 
     rp = RequisicaoPessoal.objects.all()
-    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_gestor_proposto__isnull=True), ~Q(assinatura_gestor_proposto=""))
+    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_gestor_proposto__isnull=True))
     rd = RequisicaoDesligamento.objects.all()
-
-
-    form = DiretorForm()
+    form = None
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
@@ -25,14 +23,16 @@ def diretor_page(request):
 
         if tipo_registro == "rp":
             registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
+            form_class = DiretorForm
         elif tipo_registro == "movimentacao":
             registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
         elif tipo_registro == "rd":
             registro = get_object_or_404(RequisicaoDesligamento, id=registro_id)
+            form_class = DiretorFormRD
         else:
             return HttpResponseBadRequest("Tipo de registro inválido.")
 
-        form = DiretorForm(request.POST, request.FILES, instance=registro)
+        form = form_class(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
@@ -83,17 +83,18 @@ def diretor_mov(request):
         return HttpResponseForbidden("Acesso negado!")
 
     registros = MovimentacaoPessoal.objects.filter(
-        ~Q(assinatura_gestor_proposto__isnull=True), ~Q(assinatura_gestor_proposto="")
+        ~Q(assinatura_gestor_proposto__isnull=True)
     )
-    form = DiretorForm()
+    form = DiretorFormMOV()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-        form = DiretorForm(request.POST, request.FILES, instance=registro)
+        form = DiretorFormMOV(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
                 registro.data_autorizacao_diretor = now()
                 registro.dias_para_autorizacao_diretor = (
@@ -110,15 +111,16 @@ def diretor_rd(request):
         return HttpResponseForbidden("Acesso negado!")
 
     registros = RequisicaoDesligamento.objects.all()
-    form = DiretorForm()
+    form = DiretorFormRD()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(RequisicaoDesligamento, id=registro_id)
-        form = DiretorForm(request.POST, request.FILES, instance=registro)
+        form = DiretorFormRD(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
                 registro.data_autorizacao_diretor = now()
                 registro.dias_para_autorizacao_diretor = (

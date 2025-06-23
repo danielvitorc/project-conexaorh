@@ -30,7 +30,7 @@ def complice_page(request):
                     registro.data_autorizacao_complice.date()
                     - registro.data_solicitacao.date()
                 ).days
-            registro.save()
+            form.save(user=request.user)
             return redirect('complice_page')
 
     return render(request, 'conexaorh/complice.html', {

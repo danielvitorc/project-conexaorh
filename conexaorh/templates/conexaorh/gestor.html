@@ -31,7 +31,7 @@
             <td>
                 {% if registro.assinatura_gestor_proposto %}
                     <p>Aprovado pelo Gestor:</p>
-                    <img src="{{ registro.assinatura_gestor_proposto.url }}" alt="Assinatura Gestor" style="height: 100px;">
+                    <img src="{{ registro.imagem_assinatura_gestor_proposto.url }}" alt="Assinatura Gestor" style="height: 100px;">
                 {% else %}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
