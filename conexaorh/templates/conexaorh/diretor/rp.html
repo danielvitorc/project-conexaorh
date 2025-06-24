@@ -91,13 +91,8 @@
                 <!-- Assinatura Diretor -->
                 <td>
                 {% if registro.assinatura_diretor %}
-<<<<<<< HEAD
                     <p>Aprovado pelo Diretor:</p>
                     <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
-=======
-                    <img src="{{ registro.assinatura_diretor.url }}" alt="Diretor" class="assinatura-img">
-                    <br><small>{{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}</small>
->>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
                 {% else %}
                     <form method="post" enctype="multipart/form-data" style="margin: 0;">
                     {% csrf_token %}
@@ -112,12 +107,7 @@
                 <!-- Assinatura Presidente -->
                 <td>
                 {% if registro.assinatura_presidente %}
-<<<<<<< HEAD
                     <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
-=======
-                    <img src="{{ registro.assinatura_presidente.url }}" alt="Presidente" class="assinatura-img">
-                    <br><small>{{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}</small>
->>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
                 {% else %}
                     -
                 {% endif %}
@@ -126,12 +116,7 @@
                 <!-- Assinatura RH -->
                 <td>
                 {% if registro.assinatura_rh %}
-<<<<<<< HEAD
                     <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
-=======
-                    <img src="{{ registro.assinatura_rh.url }}" alt="RH" class="assinatura-img">
-                    <br><small>{{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}</small>
->>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
                 {% else %}
                     -
                 {% endif %}

@@ -1,6 +1,6 @@
 :root {
   --primary-color: #134BF2;
-  --secondary-color: #B8BBBF;
+  --secondary-color: #000000;
   --accent-color: #0C87F2;
   --highlight-color: #1BA0F2;
   --bg-color: #e2e2e2;
@@ -58,7 +58,7 @@ h1 {
 }
 
 p {
-  color: var(--secondary-color);
+  color: var(--secondary-color) !important;
 }
 
 .card-welcome {
@@ -171,6 +171,7 @@ p {
   padding: 2rem;
   margin-top: 2rem;
   transition: var(--transition);
+  overflow: auto;
 }
 
 .tabela-header {

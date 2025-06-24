@@ -1,6 +1,6 @@
 :root {
   --primary-color: #134BF2;
-  --secondary-color: #B8BBBF;
+  --secondary-color: #000000;
   --accent-color: #0C87F2;
   --highlight-color: #1BA0F2;
   --bg-color: #F2F2F2;
@@ -460,6 +460,7 @@ a {
   padding: 2rem;
   margin-top: 2rem;
   transition: var(--transition);
+  overflow: auto;
 }
 
 .tabela-header {
@@ -612,6 +613,5 @@ a {
   display: block;
 }
 .text-muted {
-  color: var(--text-color);
-  opacity: 0.8;
+  color: var(--text-color) !important;
 }

@@ -84,15 +84,9 @@ def diretor_mov(request):
         return HttpResponseForbidden("Acesso negado!")
 
     registros = MovimentacaoPessoal.objects.filter(
-<<<<<<< HEAD
         ~Q(assinatura_gestor_proposto__isnull=True)
     )
     form = DiretorFormMOV()
-=======
-        ~Q(assinatura_gestor_proposto__isnull=True), ~Q(assinatura_gestor_proposto="")
-    ).select_related("usuario")
-    form = DiretorForm()
->>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
@@ -118,13 +112,8 @@ def diretor_rd(request):
     if request.user.user_type != "diretor":
         return HttpResponseForbidden("Acesso negado!")
 
-<<<<<<< HEAD
     registros = RequisicaoDesligamento.objects.all()
     form = DiretorFormRD()
-=======
-    registros = RequisicaoDesligamento.objects.all().select_related("usuario")
-    form = DiretorForm()
->>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")

@@ -24,94 +24,6 @@
     <link rel="stylesheet" href="{% static 'conexaorh/css/presidente.css' %}">
 </head>
 <body>
-<<<<<<< HEAD
-   <h2>Movimentação de Pessoal para Aprovação</h2>
-    <table border="1">
-        <tr>
-            <th>Gestor Atual</th>
-            <th>Colaborador a ser movimentado</th>
-            <th>Cargo Proposto</th>
-            <th>Data de Solicitação</th>
-            <th>Assinatura Diretor</th>
-            <th>Data Aprovação Diretor</th>
-            <th>Assinatura Presidente</th>
-            <th>Data Aprovação Presidente</th>
-            <th>Assinatura RH</th>
-            <th>Data Aprovação RH</th>
-            <th>Tempo para Aprovação (dias)</th>
-        </tr>
-        <!-- Registros do OutroRegistro -->
-        {% for registro in registros %}
-        <tr>
-            <td>{{ registro.gestor_atual }}</td>
-            <td>{{ registro.colaborador_movimentado }}</td>
-            <td>{{ registro.cargo_proposto }}</td>
-            <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
-            <td>    
-                {% if registro.assinatura_diretor %}
-                    <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_diretor  %}
-                    {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_presidente %}
-                    <p>Aprovado pelo Presidente:</p>
-                    <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
-                {% else %}
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="movimentacao">
-                        <button type="submit">Aprovar com Assinatura</button>
-                    </form>
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_presidente %}
-                    {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>    
-                {% if registro.assinatura_rh %}
-                    <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_rh %}
-                    {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            
-            <td>
-                {% if registro.dias_para_autorizacao_presidente is not None %}
-                    {% if registro.dias_para_autorizacao_presidente == 0 %}
-                        Aprovado no mesmo dia
-                    {% else %}
-                        {{ registro.dias_para_autorizacao_presidente }} dias
-                    {% endif %}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-=======
     {% include 'conexaorh/include/navbar.html' with pagina_ativa='presidente_page' presidente=True %}
     <div class="main-content">
         <!-- Header com perfil -->
@@ -154,8 +66,6 @@
                         <th>Data Aprovação RH</th>
                         <th>Tempo para Aprovação (dias)</th>
                     </tr>
-                </thead>
-                <tbody>
                     <!-- Registros do OutroRegistro -->
                     {% for registro in registros %}
                     <tr>
@@ -165,7 +75,7 @@
                         <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
                         <td>    
                             {% if registro.assinatura_diretor %}
-                                <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                                <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
                             {% else %}
                                 -
                             {% endif %}
@@ -180,7 +90,7 @@
                         <td>
                             {% if registro.assinatura_presidente %}
                                 <p>Aprovado pelo Presidente:</p>
-                                <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                                <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
                             {% else %}
                                 <form method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
@@ -200,7 +110,7 @@
                         </td>
                         <td>    
                             {% if registro.assinatura_rh %}
-                                <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                                <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
                             {% else %}
                                 -
                             {% endif %}
@@ -255,6 +165,5 @@
   </script>
 
   <script src="{% static 'conexaorh/js/tema.js' %}"></script>
->>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
 </body>
 </html>

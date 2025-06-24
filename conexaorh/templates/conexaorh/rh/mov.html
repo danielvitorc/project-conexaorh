@@ -24,98 +24,6 @@
     <link rel="stylesheet" href="{% static 'conexaorh/css/rh.css' %}">
 </head>
 <body>
-<<<<<<< HEAD
-       <h2>Movimentação de Pessoal para Aprovação</h2>
-    <table border="1">
-        <tr>
-            <th>Gestor Atual</th>
-            <th>Colaborador a ser movimentado</th>
-            <th>Cargo Proposto</th>
-            <th>Data de Solicitação</th>
-            <th>Assinatura Diretor</th>
-            <th>Data Aprovação Diretor</th>
-            <th>Assinatura Presidente</th>
-            <th>Data Aprovação Presidente</th>
-            <th>Assinatura RH</th>
-            <th>Data Aprovação RH</th>
-            <th>Tempo para Aprovação (dias)</th>
-            <th>Download Excel</th>
-        </tr>
-        {% for registro in registros %}
-        <tr>
-            <td>{{ registro.gestor_atual }}</td>
-            <td>{{ registro.colaborador_movimentado }}</td>
-            <td>{{ registro.cargo_proposto }}</td>
-            <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
-            <td>    
-                {% if registro.assinatura_diretor %}
-                    <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_diretor  %}
-                    {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>    
-                {% if registro.assinatura_presidente %}
-                    <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_presidente %}
-                    {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_rh %}
-                    <p>Aprovado pelo RH:</p>
-                    <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
-                {% else %}
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="movimentacao">
-                        <button type="submit">Aprovar com Assinatura</button>
-                    </form>
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_rh %}
-                    {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.dias_para_autorizacao_rh is not None %}
-                    {% if registro.dias_para_autorizacao_rh == 0 %}
-                        Aprovado no mesmo dia
-                    {% else %}
-                        {{ registro.dias_para_autorizacao_rh }} dias
-                    {% endif %}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-            <td>
-                <a href="{% url 'download_mov_excel' registro.id %}">
-                    <button>Baixar Excel</button>
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-=======
 
     {% include 'conexaorh/include/navbar.html' with pagina_ativa='rh_page' rh=True %}
     <div class="main-content">
@@ -168,7 +76,7 @@
                     <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
                     <td>    
                         {% if registro.assinatura_diretor %}
-                            <img src="{{ registro.assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                            <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
                         {% else %}
                             -
                         {% endif %}
@@ -182,7 +90,7 @@
                     </td>
                     <td>    
                         {% if registro.assinatura_presidente %}
-                            <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                            <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
                         {% else %}
                             -
                         {% endif %}
@@ -197,7 +105,7 @@
                     <td>
                         {% if registro.assinatura_rh %}
                             <p>Aprovado pelo RH:</p>
-                            <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                            <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
                         {% else %}
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
@@ -267,6 +175,5 @@
   </script>
 
   <script src="{% static 'conexaorh/js/tema.js' %}"></script>
->>>>>>> 773a0d0442f4655bd2eb68979b247f7934683229
 </body>
 </html>

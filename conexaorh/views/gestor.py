@@ -140,15 +140,3 @@ def registros_gestor(request):
         "registros": registros,
         "usuario": request.user  # opcional: para usar dados diretamente no template
     })
-
-@login_required
-def assinar_requisicao_gestor(request, requisicao_id):
-    requisicao = get_object_or_404(RequisicaoPessoal, id=requisicao_id)
-
-    if requisicao.assinatura_gestor:
-        messages.warning(request, "Esta requisição já foi assinada.")
-    else:
-        requisicao.assinar_gestor(request.user)
-        messages.success(request, "Requisição assinada com sucesso.")
-
-    return redirect('pagina_requisicao', requisicao_id=requisicao.id)  # redirecione para onde preferir
