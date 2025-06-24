@@ -80,7 +80,7 @@
             <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
             <td>    
                 {% if registro.assinatura_diretor %}
-                    <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     -
                 {% endif %}
@@ -94,20 +94,20 @@
             </td>
             <td>    
                 {% if registro.assinatura_presidente %}
-                    <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     -
                 {% endif %}
             </td>
             <td>
               {% if registro.assinatura_presidente %}
-                <img src="{{ registro.assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                <i class="fa-solid fa-check" style="color: green;">Assinado</i>
               {% else %}-{% endif %}
             </td>
             <td>
                 {% if registro.assinatura_rh %}
                     <p>Aprovado pelo RH:</p>
-                    <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -117,20 +117,6 @@
                         <button type="submit">Aprovar com Assinatura</button>
                     </form>
                 {% endif %}
-            </td>
-            <td>
-              {% if registro.assinatura_rh %}
-                <p>Aprovado pelo RH:</p>
-                <img src="{{ registro.assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
-              {% else %}
-                <form method="post" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  {{ form.as_p }}
-                  <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                  <input type="hidden" name="tipo_registro" value="rd">
-                  <button type="submit">Aprovar com Assinatura</button>
-                </form>
-              {% endif %}
             </td>
             <td>
               {% if registro.assinatura_rh %}

@@ -86,19 +86,19 @@
                             <td>
                                 {% if registro.tipo == 'RP' %}
                                 <a href="{% url 'download_rp_excel' registro.id %}">
-                                    <button>Baixar Excel</button>
+                                    <button class="btn btn-sm btn-success">Baixar Excel</button>
                                 </a>
                                 {% endif %}
 
                                 {% if registro.tipo == 'MOV' %}
                                 <a href="{% url 'download_mov_excel' registro.id %}">
-                                    <button>Baixar Excel</button>
+                                    <button class="btn btn-sm btn-success">Baixar Excel</button>
                                 </a>
                                 {% endif %}
 
                                 {% if registro.tipo == 'RD' %}
                                 <a href="{% url 'download_rd_excel' registro.id %}">
-                                    <button>Baixar Excel</button>
+                                    <button class="btn btn-sm btn-success">Baixar Excel</button>
                                 </a>
                                 {% endif %}
                             </td>

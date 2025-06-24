@@ -126,7 +126,7 @@
                   <td>
                     {% if registro.assinatura_gestor_proposto %}
                     <p class="mb-1">Aprovado pelo Gestor:</p>
-                    <img src="{{ registro.assinatura_gestor_proposto.url }}" alt="Assinatura Gestor" style="height: 80px;">
+                   <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                     {% else %}
                     <form method="post" enctype="multipart/form-data" class="d-flex flex-column align-items-start">
                       {% csrf_token %}

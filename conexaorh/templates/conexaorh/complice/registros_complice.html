@@ -89,15 +89,15 @@
               <td>
                 {% if registro.tipo == 'RP' %}
                   <a href="{% url 'download_rp_excel' registro.id %}" class="btn btn-download btn-sm">
-                    <i class="fas fa-download me-1"></i>Excel
+                    <button class="btn btn-sm btn-success">Baixar Excel</button>
                   </a>
                 {% elif registro.tipo == 'MOV' %}
                   <a href="{% url 'download_mov_excel' registro.id %}" class="btn btn-download btn-sm">
-                    <i class="fas fa-download me-1"></i>Excel
+                    <button class="btn btn-sm btn-success">Baixar Excel</button>
                   </a>
                 {% elif registro.tipo == 'RD' %}
                   <a href="{% url 'download_rd_excel' registro.id %}" class="btn btn-download btn-sm">
-                    <i class="fas fa-download me-1"></i>Excel
+                    <button class="btn btn-sm btn-success">Baixar Excel</button>
                   </a>
                 {% endif %}
               </td>

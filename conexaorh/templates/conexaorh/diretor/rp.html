@@ -92,7 +92,7 @@
                 <td>
                 {% if registro.assinatura_diretor %}
                     <p>Aprovado pelo Diretor:</p>
-                    <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     <form method="post" enctype="multipart/form-data" style="margin: 0;">
                     {% csrf_token %}
@@ -107,7 +107,7 @@
                 <!-- Assinatura Presidente -->
                 <td>
                 {% if registro.assinatura_presidente %}
-                    <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     -
                 {% endif %}
@@ -116,7 +116,7 @@
                 <!-- Assinatura RH -->
                 <td>
                 {% if registro.assinatura_rh %}
-                    <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     -
                 {% endif %}

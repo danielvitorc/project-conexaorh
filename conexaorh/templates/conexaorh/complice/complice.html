@@ -85,13 +85,13 @@
                             <td>
                                 {% if registro.assinatura_complice %}
                                     <p>Aprovado pelo Complice:</p>
-                                    <img src="{{ registro.assinatura_complice.url }}" alt="Assinatura Complice" style="height: 100px;">
+                                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                                 {% else %}
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         {{ form.as_p }}
                                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                                        <button type="submit">Aprovar com Assinatura</button>
+                                        <button type="submit" class="botao-aprovar">Aprovar</button>
                                     </form>
                                 {% endif %}
                             </td>

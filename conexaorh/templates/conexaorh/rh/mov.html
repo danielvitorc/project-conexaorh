@@ -76,7 +76,7 @@
                     <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
                     <td>    
                         {% if registro.assinatura_diretor %}
-                            <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 100px;">
+                           <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                         {% else %}
                             -
                         {% endif %}
@@ -90,7 +90,7 @@
                     </td>
                     <td>    
                         {% if registro.assinatura_presidente %}
-                            <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 100px;">
+                            <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                         {% else %}
                             -
                         {% endif %}
@@ -105,7 +105,7 @@
                     <td>
                         {% if registro.assinatura_rh %}
                             <p>Aprovado pelo RH:</p>
-                            <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 100px;">
+                            <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                         {% else %}
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}

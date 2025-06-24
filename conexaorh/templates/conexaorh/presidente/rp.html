@@ -67,11 +67,12 @@
             <td>{{ registro.base }}</td>
             <td>    
                 {% if registro.assinatura_diretor %}
-                    <img src="{{ registro.imagem_assinatura_diretor.url }}" alt="Assinatura Diretor" style="height: 50px;">
+                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     -
                 {% endif %}
             </td>
+
             <td>
               {% if registro.assinatura_diretor %}
                 {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
@@ -81,7 +82,7 @@
             <!-- Assinatura Presidente -->
             <td>
               {% if registro.assinatura_presidente %}
-                <img src="{{ registro.assinatura_presidente.url }}" alt="Presidente" class="assinatura-img">
+               <i class="fa-solid fa-check" style="color: green;">Assinado</i>
               {% else %}
                 <form method="post" enctype="multipart/form-data" style="margin: 0;">
                   {% csrf_token %}
@@ -94,20 +95,6 @@
             </td>
             <td>
                 {% if registro.assinatura_presidente %}
-                    <p>Aprovado pelo Presidente:</p>
-                    <img src="{{ registro.imagem_assinatura_presidente.url }}" alt="Assinatura Presidente" style="height: 50px;">
-                {% else %}
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                        <input type="hidden" name="tipo_registro" value="rp">
-                        <button type="submit">Aprovar com Assinatura</button>
-                    </form>
-                {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_presidente %}
                     {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
                 {% else %}
                     -
@@ -115,7 +102,7 @@
             </td>
             <td>    
                 {% if registro.assinatura_rh %}
-                    <img src="{{ registro.imagem_assinatura_rh.url }}" alt="Assinatura RH" style="height: 50px;">
+                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     -
                 {% endif %}
