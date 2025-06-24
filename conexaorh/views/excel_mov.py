@@ -125,12 +125,12 @@ def preencher_excel_mov(mov):
     
 
     # Inserção das assinaturas
-    adicionar_imagem_excel(ws, mov.assinatura_complice, "A56")
-    adicionar_imagem_excel(ws, mov.assinatura_gestor_proposto, "J68")
-    adicionar_imagem_excel(ws, mov.assinatura_diretor, "S68")
-    adicionar_imagem_excel(ws, mov.assinatura_presidente, "AB68")
-    adicionar_imagem_excel(ws, mov.assinatura_rh, "S56")
-    adicionar_imagem_excel(ws,mov.assinatura_gestor_atual, "A68")
+    adicionar_imagem_excel(ws, mov.imagem_assinatura_complice, "A56")
+    adicionar_imagem_excel(ws, mov.imagem_assinatura_gestor_proposto, "J68")
+    adicionar_imagem_excel(ws, mov.imagem_assinatura_diretor, "S68")
+    adicionar_imagem_excel(ws, mov.imagem_assinatura_presidente, "AB68")
+    adicionar_imagem_excel(ws, mov.imagem_assinatura_rh, "S56")
+    adicionar_imagem_excel(ws,mov.imagem_assinatura_gestor_atual, "A68")
 
 
     buffer = io.BytesIO()

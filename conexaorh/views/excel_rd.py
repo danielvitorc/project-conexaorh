@@ -100,10 +100,10 @@ def preencher_excel_rd(rd):
     
 
     # Inserção das assinaturas
-    adicionar_imagem_excel(ws, rd.assinatura_diretor, "K55")
-    adicionar_imagem_excel(ws, rd.assinatura_presidente, "T55")
-    adicionar_imagem_excel(ws, rd.assinatura_rh, "AC55")
-    adicionar_imagem_excel(ws, rd.assinatura_gestor, "B55")
+    adicionar_imagem_excel(ws, rd.imagem_assinatura_diretor, "K55")
+    adicionar_imagem_excel(ws, rd.imagem_assinatura_presidente, "T55")
+    adicionar_imagem_excel(ws, rd.imagem_assinatura_rh, "AC55")
+    adicionar_imagem_excel(ws, rd.imagem_assinatura_gestor, "B55")
 
     
     buffer = io.BytesIO()

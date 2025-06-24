@@ -79,7 +79,17 @@
           <tbody>
             {% for registro in registros %}
             <tr>
-              <td>{{ registro.tipo }}</td>
+              <td>
+                {% if registro.tipo == "RP" %}
+                  Requisição Pessoal
+                {% elif registro.tipo == "MOV" %}
+                  Movimentação Pessoal
+                {% elif registro.tipo == "RD" %}
+                  Requisição de Desligamento
+                {% else %}
+                  Tipo desconhecido
+                {% endif %}
+              </td>
               <td>
                 {% if registro.tipo == "RP" %}{{ registro.n_rp }}
                 {% elif registro.tipo == "MOV" %}{{ registro.n_mov }}

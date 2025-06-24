@@ -72,7 +72,7 @@
             <thead>
                 <tr>
                     <th>Tipo</th>
-                    <th>Nº</th>
+                    <th>Requisitante</th>
                     <th>Data de Solicitação</th>
                     <th>Baixar excel</th>
                 </tr>
@@ -81,16 +81,8 @@
                     {% for registro in registros %}
                         <tr>
                             <td>{{ registro.tipo }}</td>
-                            <td>
-                                {% if registro.tipo == "RP" %}
-                                    {{ registro.n_rp }}
-                                {% elif registro.tipo == "MOV" %}
-                                    {{ registro.n_mov }}
-                                {% else %}
-                                    RD
-                                {% endif %}
-                            </td> 
-                            <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
+                            <td>{{ registro.usuario.get_full_name }}</td>
+                            <td>{{ registro.data_solicitacao|date:"d/m/Y - H:i" }}</td>
                             <td>
                                 {% if registro.tipo == 'RP' %}
                                 <a href="{% url 'download_rp_excel' registro.id %}">

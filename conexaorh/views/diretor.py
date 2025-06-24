@@ -12,42 +12,35 @@ def diretor_page(request):
     if request.user.user_type != "diretor":
         return HttpResponseForbidden("Acesso negado! Apenas diretores podem acessar esta página.")
 
-    rp = RequisicaoPessoal.objects.all()
-    movimentacao = MovimentacaoPessoal.objects.filter(~Q(assinatura_gestor_proposto__isnull=True))
-    rd = RequisicaoDesligamento.objects.all()
-    form = None
+    rp = RequisicaoPessoal.objects.filter(
+        ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
+    for r in rp:
+        r.tipo = "RP"
 
-    if request.method == "POST":
-        registro_id = request.POST.get("registro_id")
-        tipo_registro = request.POST.get("tipo_registro")  # Identifica o tipo
+    mov = MovimentacaoPessoal.objects.filter(
+        ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
+    for m in mov:
+        m.tipo = "MOV"
+    
+    rd = RequisicaoDesligamento.objects.filter(
+        ~Q(assinatura_rh__isnull=True)
+    ).select_related("usuario")
+    for d in rd:
+        d.tipo = "RD"
 
-        if tipo_registro == "rp":
-            registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
-            form_class = DiretorForm
-        elif tipo_registro == "movimentacao":
-            registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-        elif tipo_registro == "rd":
-            registro = get_object_or_404(RequisicaoDesligamento, id=registro_id)
-            form_class = DiretorFormRD
-        else:
-            return HttpResponseBadRequest("Tipo de registro inválido.")
+    registros = sorted(
+        chain(rp, mov, rd),
+        key=lambda x: x.data_solicitacao,
+        reverse=True
+    )
 
-        form = form_class(request.POST, request.FILES, instance=registro)
+    return render(request, "conexaorh/diretor/diretor.html", {
+        "registros": registros,
+        "usuario": request.user 
+    })
 
-        if form.is_valid():
-            registro = form.save(commit=False)
-            form.save(user=request.user)
-            # se acabou de assinar
-            if registro.assinatura_diretor and registro.data_autorizacao_diretor is None:
-                registro.data_autorizacao_diretor = now()
-                registro.dias_para_autorizacao_diretor = (
-                    registro.data_autorizacao_diretor.date()
-                    - registro.data_solicitacao.date()
-                ).days
-            registro.save()
-            return redirect("diretor_page")
-
-    return render(request, "conexaorh/diretor/diretor.html", {"rp": rp, "movimentacao": movimentacao, "rd": rd, "usuario": request.user, "form": form})
 
 @login_required
 def diretor_rp(request):
@@ -134,33 +127,3 @@ def diretor_rd(request):
     return render(request, "conexaorh/diretor/rd.html", {"registros": registros, "form": form, "usuario": request.user})
 
 
-@login_required
-def registros_diretor(request):
-    rp = RequisicaoPessoal.objects.filter(
-        ~Q(assinatura_rh__isnull=True)
-    ).select_related("usuario")
-    for r in rp:
-        r.tipo = "RP"
-
-    mov = MovimentacaoPessoal.objects.filter(
-        ~Q(assinatura_rh__isnull=True)
-    ).select_related("usuario")
-    for m in mov:
-        m.tipo = "MOV"
-    
-    rd = RequisicaoDesligamento.objects.filter(
-        ~Q(assinatura_rh__isnull=True)
-    ).select_related("usuario")
-    for d in rd:
-        d.tipo = "RD"
-
-    registros = sorted(
-        chain(rp, mov, rd),
-        key=lambda x: x.data_solicitacao,
-        reverse=True
-    )
-
-    return render(request, "conexaorh/diretor/registros_diretor.html", {
-        "registros": registros,
-        "usuario": request.user
-    })
