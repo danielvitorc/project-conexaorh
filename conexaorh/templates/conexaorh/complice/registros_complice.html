@@ -70,36 +70,24 @@
         <table class="tabela-moderninha display nowrap w-100" id="tabela-moderninha">
           <thead>
             <tr>
-              <th>Tipo</th>
-              <th>Nº</th>
-              <th>Data de Solicitação</th>
+            <th>Gestor Atual</th>
+            <th>Colaborador</th>
+            <th>Cargo Proposto</th>
+            <th>Solicitado em</th>
               <th>Baixar Excel</th>
             </tr>
           </thead>
           <tbody>
-            {% for registro in registros %}
+            {% for registro in mov %}
             <tr>
-              <td>{{ registro.tipo }}</td>
-              <td>
-                {% if registro.tipo == "RP" %}{{ registro.n_rp }}
-                {% elif registro.tipo == "MOV" %}{{ registro.n_mov }}
-                {% else %}RD{% endif %}
-              </td>
+              <td>{{ registro.gestor_atual }}</td>
+              <td>{{ registro.colaborador_movimentado }}</td>
+              <td>{{ registro.cargo_proposto }}</td>
               <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
               <td>
-                {% if registro.tipo == 'RP' %}
-                  <a href="{% url 'download_rp_excel' registro.id %}" class="btn btn-download btn-sm">
-                    <button class="btn btn-sm btn-success">Baixar Excel</button>
-                  </a>
-                {% elif registro.tipo == 'MOV' %}
                   <a href="{% url 'download_mov_excel' registro.id %}" class="btn btn-download btn-sm">
                     <button class="btn btn-sm btn-success">Baixar Excel</button>
                   </a>
-                {% elif registro.tipo == 'RD' %}
-                  <a href="{% url 'download_rd_excel' registro.id %}" class="btn btn-download btn-sm">
-                    <button class="btn btn-sm btn-success">Baixar Excel</button>
-                  </a>
-                {% endif %}
               </td>
             </tr>
             {% empty %}
