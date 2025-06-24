@@ -109,18 +109,6 @@
                 {% endif %}
             </td>
             <td>
-              {% if registro.assinatura_presidente %}
-                {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
-              {% else %}-{% endif %}
-            </td>
-
-            <!-- RH -->
-            <td>
-              {% if registro.assinatura_rh %}
-                <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-              {% else %}-{% endif %}
-            </td>
-            <td>
               {% if registro.assinatura_rh %}
                 {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
               {% else %}-{% endif %}
