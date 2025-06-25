@@ -60,7 +60,7 @@ h1 {
 }
 
 p {
-  color: var(--secondary-color) !important;
+  color: var(--secondary-color);
 }
 
 .card-welcome {

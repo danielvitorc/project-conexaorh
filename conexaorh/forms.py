@@ -15,6 +15,14 @@ SIMNAO_CHOICES = [
         ('NÃO', 'NÃO'),
 ]
 
+AUTORIZACAO_CHOICES = [
+        ('', 'Selecionar'),
+        ('AUTORIZADO', 'Autorizar'),
+        ('NÃO AUTORIZADO', 'Não autorizar'),
+]
+
+
+
 class RequisicaoPessoalForm(forms.ModelForm):
     BENEFICIOS_CHOICES = [
         ('Plano Unimed CNU', 'Plano Unimed CNU'),
@@ -95,6 +103,9 @@ class RequisicaoPessoalForm(forms.ModelForm):
             'imagem_assinatura_diretor',
             'imagem_assinatura_presidente',
             'imagem_assinatura_rh',
+            'diretor_aprovacao',
+            'presidente_aprovacao',
+            'rh_aprovacao',
         ]
         widgets = {
             'horario_trabalho_inicio': TimeInput(attrs={'type': 'time'}),
@@ -218,11 +229,18 @@ class DiretorForm(forms.ModelForm):
     assinar_como_diretor = forms.BooleanField(
         required=False,
         label="Assinar como Diretor",
-        help_text="Marque esta opção para assinar este formulário como gestor.",
+        help_text="Marque esta opção para assinar este formulário como diretor.",
     )
+
+    diretor_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do Diretor',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = RequisicaoPessoal
-        fields = ["assinatura_diretor"]
+        fields = ["assinatura_diretor", "diretor_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -342,9 +360,15 @@ class PresidenteForm(forms.ModelForm):
         help_text="Marque esta opção para assinar este formulário como gestor.",
     )
 
+    presidente_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do Presidente',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = RequisicaoPessoal
-        fields = ["assinatura_presidente"]
+        fields = ["assinatura_presidente", "presidente_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -468,13 +492,19 @@ class RHForm(forms.ModelForm):
 
     assinar_como_rh = forms.BooleanField(
         required=False,
-        label="Assinar como RH",
+        label="Assinar como RH/DP",
         help_text="Marque esta opção para assinar este formulário como RH/DP.",
+    )
+
+    rh_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do RH/DP',
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     class Meta:
         model = RequisicaoPessoal
-        fields = ["assinatura_rh"]
+        fields = ["assinatura_rh", "rh_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

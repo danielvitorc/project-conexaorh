@@ -54,97 +54,99 @@
             </div>
             <table class="tabela-moderninha">
                 <thead>
-                <tr>
-                    <th>Gestor Atual</th>
-                    <th>Colaborador a ser movimentado</th>
-                    <th>Cargo Proposto</th>
-                    <th>Data de Solicitação</th>
-                    <th>Assinatura Diretor</th>
-                    <th>Data Aprovação Diretor</th>
-                    <th>Assinatura Presidente</th>
-                    <th>Data Aprovação Presidente</th>
-                    <th>Assinatura RH</th>
-                    <th>Data Aprovação RH</th>
-                    <th>Tempo para Aprovação (dias)</th>
-                    <th>Download Excel</th>
-                </tr>
-                {% for registro in registros %}
-                <tr>
-                    <td>{{ registro.gestor_atual }}</td>
-                    <td>{{ registro.colaborador_movimentado }}</td>
-                    <td>{{ registro.cargo_proposto }}</td>
-                    <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
-                    <td>    
-                        {% if registro.assinatura_diretor %}
-                           <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if registro.assinatura_diretor  %}
-                            {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>    
-                        {% if registro.assinatura_presidente %}
+                    <tr>
+                        <th>Gestor Atual</th>
+                        <th>Colaborador a ser movimentado</th>
+                        <th>Cargo Proposto</th>
+                        <th>Data de Solicitação</th>
+                        <th>Assinatura Diretor</th>
+                        <th>Data Aprovação Diretor</th>
+                        <th>Assinatura Presidente</th>
+                        <th>Data Aprovação Presidente</th>
+                        <th>Assinatura RH</th>
+                        <th>Data Aprovação RH</th>
+                        <th>Tempo para Aprovação (dias)</th>
+                        <th>Download Excel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros %}
+                    <tr>
+                        <td>{{ registro.gestor_atual }}</td>
+                        <td>{{ registro.colaborador_movimentado }}</td>
+                        <td>{{ registro.cargo_proposto }}</td>
+                        <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
+                        <td>    
+                            {% if registro.assinatura_diretor %}
                             <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if registro.assinatura_presidente %}
-                            {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if registro.assinatura_rh %}
-                            <p>Aprovado pelo RH:</p>
-                            <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-                        {% else %}
-                            <form method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                                <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                                <input type="hidden" name="tipo_registro" value="movimentacao">
-                                <button type="submit">Aprovar com Assinatura</button>
-                            </form>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if registro.assinatura_rh %}
-                            {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if registro.dias_para_autorizacao_rh is not None %}
-                            {% if registro.dias_para_autorizacao_rh == 0 %}
-                                Aprovado no mesmo dia
                             {% else %}
-                                {{ registro.dias_para_autorizacao_rh }} dias
+                                -
                             {% endif %}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{% url 'download_mov_excel' registro.id %}">
-                            <button class="btn btn-sm btn-success">Baixar Excel</button>
-                        </a>
-                    </td>
-                </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="12" class="text-center">Nenhum registro encontrado.</td>
-                        </tr>
-                    {% endfor %}
+                        </td>
+                        <td>
+                            {% if registro.assinatura_diretor  %}
+                                {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>    
+                            {% if registro.assinatura_presidente %}
+                                <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if registro.assinatura_presidente %}
+                                {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if registro.assinatura_rh %}
+                                <p>Aprovado pelo RH:</p>
+                                <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                            {% else %}
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                                    <input type="hidden" name="tipo_registro" value="movimentacao">
+                                    <button type="submit" class="botao-aprovar">Aprovar</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if registro.assinatura_rh %}
+                                {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if registro.dias_para_autorizacao_rh is not None %}
+                                {% if registro.dias_para_autorizacao_rh == 0 %}
+                                    Aprovado no mesmo dia
+                                {% else %}
+                                    {{ registro.dias_para_autorizacao_rh }} dias
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'download_mov_excel' registro.id %}">
+                                <button class="btn btn-sm btn-success">Baixar Excel</button>
+                            </a>
+                        </td>
+                    </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="12" class="text-center">Nenhum registro encontrado.</td>
+                            </tr>
+                        {% endfor %}
                 </tbody>
             </table>
             <div class="tabela-rodape mt-3">
