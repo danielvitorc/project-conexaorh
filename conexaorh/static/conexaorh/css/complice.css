@@ -308,7 +308,19 @@ h1, h2 {
   border-bottom: 1px solid #eaeaea;
   color: var(--text-color);
 }
-
+.botao-aprovar {
+  background-color: var(--primary-color);
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.botao-aprovar:hover {
+  background-color: var(--highlight-color);
+}
 .botao-baixar {
   background-color: var(--highlight-color);
   color: white;

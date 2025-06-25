@@ -21,7 +21,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- CSS próprio -->
-    <link rel="stylesheet" href="{% static 'conexaorh/css/presidente.css' %}">
+    <link rel="stylesheet" href="{% static 'conexaorh/css/presidente.css' %}"/>
 </head>
 <body>
     {% include 'conexaorh/include/navbar.html' with pagina_ativa='presidente_page' presidente=True %}
@@ -51,6 +51,7 @@
             <div class="tabela-header">
                 <h3>Registros de Movimentação</h3>
             </div>
+
             <table class="tabela-moderninha">
                 <thead>
                     <tr>
@@ -66,6 +67,8 @@
                         <th>Data Aprovação RH</th>
                         <th>Tempo para Aprovação (dias)</th>
                     </tr>
+                </thead>
+                <tbody>
                     <!-- Registros do OutroRegistro -->
                     {% for registro in registros %}
                     <tr>
@@ -97,7 +100,7 @@
                                     {{ form.as_p }}
                                     <input type="hidden" name="registro_id" value="{{ registro.id }}">
                                     <input type="hidden" name="tipo_registro" value="movimentacao">
-                                    <button type="submit">Aprovar com Assinatura</button>
+                                    <button type="submit" class="botao-aprovar">Aprovar</button>
                                 </form>
                             {% endif %}
                         </td>

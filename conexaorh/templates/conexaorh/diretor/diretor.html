@@ -60,11 +60,11 @@
     <div class="tabela-header">
       <h3>Registros Recentes</h3>
       <div class="tabela-filtro">
-        <select>
-          <option>Todos</option>
-          <option>RP</option>
-          <option>MOV</option>
-          <option>RD</option>
+        <select id="filtroTipo">
+            <option value="Todos">Todos</option>
+            <option value="RP">RP</option>
+            <option value="MOV">MOV</option>
+            <option value="RD">RD</option>
         </select>
       </div>
     </div>
@@ -104,6 +104,22 @@
   </div>
 
 </div>
+  <script>
+      document.getElementById("filtroTipo").addEventListener("change", function () {
+          const tipoSelecionado = this.value;
+          const linhas = document.querySelectorAll(".tabela-moderninha tbody tr");
+
+          linhas.forEach(linha => {
+              const tipo = linha.children[0]?.textContent.trim();
+
+              if (tipoSelecionado === "Todos" || tipo === tipoSelecionado) {
+                  linha.style.display = "";
+              } else {
+                  linha.style.display = "none";
+              }
+          });
+      });
+  </script>
   <script>
     function toggleDropdown() {
       const menu = document.getElementById("userDropdown");
