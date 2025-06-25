@@ -96,18 +96,21 @@ class RequisicaoPessoal(models.Model):
     imagem_assinatura_gestor = models.ImageField(upload_to="assinaturas/gestor/RequisicaoPessoal", null=True, blank=True)
 
     # Assinatura do Diretor
+    diretor_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_diretor = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='requisicoes_assinadas_como_diretor')
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     imagem_assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/RequisicaoPessoal", null=True, blank=True)
 
     # Assinatura do presidente
+    presidente_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_presidente = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='requisicoes_assinadas_como_presidente')
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
     imagem_assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/RequisicaoPessoal", null=True, blank=True)
 
     # Assinatura do RH
+    rh_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_rh = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='requisicoes_assinadas_como_rh')
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)

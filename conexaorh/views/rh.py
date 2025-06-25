@@ -73,7 +73,7 @@ def rh_rp(request):
     if request.user.user_type != "rh":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = MovimentacaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))  
+    registros = RequisicaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))  
     form = RHForm()
 
     if request.method == "POST":
@@ -101,7 +101,7 @@ def rh_mov(request):
     if request.user.user_type != "rh":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = MovimentacaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))   
+    registros = RequisicaoDesligamento.objects.filter(~Q(assinatura_presidente__isnull=True))   
     form = RHFormMOV()
 
     if request.method == "POST":
