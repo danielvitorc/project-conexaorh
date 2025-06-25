@@ -55,6 +55,55 @@
     </div>
 
     <div class="linha-amarela"></div>
+    <!-- NOVA TABELA PARA VOCÊS ESTILIZAREM-->
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Nº</th>
+          <th>Data de Solicitação</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for registro in registros_pendentes %}
+        <tr>
+          <td>
+              {% if registro.tipo == "RP" %}
+                Requisição Pessoal
+              {% elif registro.tipo == "MOV" %}
+                Movimentação Pessoal
+              {% elif registro.tipo == "RD" %}
+                Requisição de Desligamento
+              {% else %}
+                Tipo desconhecido
+              {% endif %}
+          </td>
+          <td>
+            {% if registro.tipo == "RP" %}{{ registro.n_rp }}
+            {% elif registro.tipo == "MOV" %}{{ registro.n_mov }}
+            {% else %}RD{% endif %}
+          </td>
+          <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
+          <td>
+            {% if registro.complice_aprovacao == "PENDENTE"  %} 
+              AUTORIZAÇÃO DE COMPLICE PENDENTE 
+            {% elif registro.gestor_proposto_aprovacao == "PENDENTE"  %}
+            {% elif registro.diretor_aprovacao == "PENDENTE"  %}
+              AUTORIZAÇÃO DE DIRETOR PENDENTE
+            {% elif registro.presidente_aprovacao == "PENDENTE" %}
+              AUTORIZAÇÃO DE PRESIDENTE PENDENTE
+            {% elif registro.rh_aprovacao == "PENDENTE" %}
+              AUTORIZAÇÃO DE RH/DP PENDENTE
+            {% else %}
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        {% endfor %}
+      </tbody>
+
+    </table>
 
     <!-- Tabela estilizada de Registros do Gestor -->
     <div class="card-tabela-estilizada">
@@ -97,18 +146,22 @@
               </td>
               <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
               <td>
-                {% if registro.tipo == 'RP' %}
-                  <a href="{% url 'download_rp_excel' registro.id %}" class="btn btn-download btn-sm">
-                   <button class="btn btn-sm btn-success">Baixar Excel</button>
-                  </a>
-                {% elif registro.tipo == 'MOV' %}
-                  <a href="{% url 'download_mov_excel' registro.id %}" class="btn btn-download btn-sm">
+                {% if registro.rh_aprovacao == 'AUTORIZADO' %}
+                  {% if registro.tipo == 'RP' %}
+                    <a href="{% url 'download_rp_excel' registro.id %}" class="btn btn-download btn-sm">
                     <button class="btn btn-sm btn-success">Baixar Excel</button>
-                  </a>
-                {% elif registro.tipo == 'RD' %}
-                  <a href="{% url 'download_rd_excel' registro.id %}" class="btn btn-download btn-sm">
-                    <button class="btn btn-sm btn-success">Baixar Excel</button>
-                  </a>
+                    </a>
+                  {% elif registro.tipo == 'MOV' %}
+                    <a href="{% url 'download_mov_excel' registro.id %}" class="btn btn-download btn-sm">
+                      <button class="btn btn-sm btn-success">Baixar Excel</button>
+                    </a>
+                  {% elif registro.tipo == 'RD' %}
+                    <a href="{% url 'download_rd_excel' registro.id %}" class="btn btn-download btn-sm">
+                      <button class="btn btn-sm btn-success">Baixar Excel</button>
+                    </a>
+                  {% endif %}
+                {% else %}
+                    ⛔ Não Autorizado
                 {% endif %}
               </td>
             </tr>

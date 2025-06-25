@@ -84,10 +84,12 @@
           <td>{{ registro.tipo }}</td>
           <td>{{ registro.usuario.get_full_name }}</td>
           <td>{{ registro.data_solicitacao|date:"d/m/Y - H:i" }}</td>
-          <td>
-            <a href="{% url 'download_'|add:registro.tipo|lower|add:'_excel' registro.id %}" class="btn btn-sm btn-success">
-              Baixar Excel
-            </a>
+          <td>                                
+            {% if registro.rh_aprovacao == 'AUTORIZADO' %}                   
+              <a href="{% url 'download_'|add:registro.tipo|lower|add:'_excel' registro.id %}" class="btn btn-sm btn-success">
+                Baixar Excel
+              </a>
+             {% endif %}
           </td>
         </tr>
         {% empty %}

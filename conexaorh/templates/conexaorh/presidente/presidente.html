@@ -84,22 +84,22 @@
                             <td>{{ registro.usuario.get_full_name }}</td>
                             <td>{{ registro.data_solicitacao|date:"d/m/Y - H:i" }}</td>
                             <td>
-                                {% if registro.tipo == 'RP' %}
-                                <a href="{% url 'download_rp_excel' registro.id %}">
-                                    <button class="btn btn-sm btn-success">Baixar Excel</button>
-                                </a>
-                                {% endif %}
-
-                                {% if registro.tipo == 'MOV' %}
-                                <a href="{% url 'download_mov_excel' registro.id %}">
-                                    <button class="btn btn-sm btn-success">Baixar Excel</button>
-                                </a>
-                                {% endif %}
-
-                                {% if registro.tipo == 'RD' %}
-                                <a href="{% url 'download_rd_excel' registro.id %}">
-                                    <button class="btn btn-sm btn-success">Baixar Excel</button>
-                                </a>
+                                {% if registro.rh_aprovacao == 'AUTORIZADO' %}
+                                    {% if registro.tipo == 'RP' %}
+                                        <a href="{% url 'download_rp_excel' registro.id %}">
+                                            <button class="btn btn-sm btn-success">Baixar Excel</button>
+                                        </a>
+                                    {% elif registro.tipo == 'MOV' %}
+                                        <a href="{% url 'download_mov_excel' registro.id %}">
+                                            <button class="btn btn-sm btn-success">Baixar Excel</button>
+                                        </a>
+                                    {% elif registro.tipo == 'RD' %}
+                                        <a href="{% url 'download_rd_excel' registro.id %}">
+                                            <button class="btn btn-sm btn-success">Baixar Excel</button>
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                        Não Completo
                                 {% endif %}
                             </td>
                         </tr>

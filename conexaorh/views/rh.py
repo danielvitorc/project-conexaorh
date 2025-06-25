@@ -46,7 +46,7 @@ def rh_rp(request):
     if request.user.user_type != "rh":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = RequisicaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))
+    registros = RequisicaoPessoal.objects.filter(presidente_aprovacao="AUTORIZADO").order_by('-data_solicitacao')
     form = RHForm()
 
     if request.method == "POST":
@@ -56,34 +56,6 @@ def rh_rp(request):
 
         if form.is_valid():
             registro = form.save(commit=False)
-            # se acabou de assinar
-            if registro.assinatura_rh and registro.data_autorizacao_rh is None:
-                registro.data_autorizacao_rh = now()
-                registro.dias_para_autorizacao_rh = (
-                    registro.data_autorizacao_rh.date()
-                    - registro.data_solicitacao.date()
-                ).days
-            registro.save()
-            return redirect("rh_rp")
-
-    return render(request, "conexaorh/rh/rp.html", {"registros": registros,"usuario": request.user, "form": form})
-
-@login_required
-def rh_rp(request):
-    if request.user.user_type != "rh":
-        return HttpResponseForbidden("Acesso negado!")
-
-    registros = RequisicaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))  
-    form = RHForm()
-
-    if request.method == "POST":
-        registro_id = request.POST.get("registro_id")
-        registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
-        form = RHForm(request.POST, request.FILES, instance=registro)
-
-        if form.is_valid():
-            registro = form.save(commit=False)
-            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_rh and registro.data_autorizacao_rh is None:
                 registro.data_autorizacao_rh = now()
@@ -101,7 +73,7 @@ def rh_mov(request):
     if request.user.user_type != "rh":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = RequisicaoDesligamento.objects.filter(~Q(assinatura_presidente__isnull=True))   
+    registros = MovimentacaoPessoal.objects.filter(presidente_aprovacao="AUTORIZADO").order_by('-data_solicitacao')
     form = RHFormMOV()
 
     if request.method == "POST":
@@ -129,7 +101,7 @@ def rh_rd(request):
     if request.user.user_type != "rh":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = RequisicaoDesligamento.objects.filter(~Q(assinatura_presidente__isnull=True))  
+    registros = RequisicaoDesligamento.objects.filter(presidente_aprovacao="AUTORIZADO").order_by('-data_solicitacao')  
     form = RHFormRD()
 
     if request.method == "POST":

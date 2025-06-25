@@ -268,6 +268,11 @@ class DiretorForm(forms.ModelForm):
                 assinatura_img.name, assinatura_img, save=False
             )
 
+        # Lógica para atribuir "NÃO APLICÁVEL" caso reprovado
+        if instance.diretor_aprovacao == "NÃO AUTORIZADO":
+            instance.presidente_aprovacao = "NÃO APLICÁVEL"
+            instance.rh_aprovacao = "NÃO APLICÁVEL"
+
         if commit:
             instance.save()
         return instance
@@ -278,9 +283,16 @@ class DiretorFormRD(forms.ModelForm):
         label="Assinar como Diretor",
         help_text="Marque esta opção para assinar este formulário como gestor.",
     )
+
+    diretor_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do Diretor',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = RequisicaoDesligamento
-        fields = ["assinatura_diretor"]
+        fields = ["assinatura_diretor", "diretor_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -318,9 +330,15 @@ class DiretorFormMOV(forms.ModelForm):
         label="Assinar como Diretor",
         help_text="Marque esta opção para assinar este formulário como Diretor.",
     )
+
+    diretor_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do Diretor',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     class Meta:
         model = MovimentacaoPessoal
-        fields = ["assinatura_diretor"]
+        fields = ["assinatura_diretor", "diretor_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -357,7 +375,7 @@ class PresidenteForm(forms.ModelForm):
     assinar_como_presidente = forms.BooleanField(
         required=False,
         label="Assinar como Presidente",
-        help_text="Marque esta opção para assinar este formulário como gestor.",
+        help_text="Marque esta opção para assinar este formulário como presidente.",
     )
 
     presidente_aprovacao = forms.ChoiceField(
@@ -396,6 +414,9 @@ class PresidenteForm(forms.ModelForm):
             instance.imagem_assinatura_presidente.save(
                 assinatura_img.name, assinatura_img, save=False
             )
+        # Lógica para atribuir "NÃO APLICÁVEL" caso reprovado
+        if instance.presidente_aprovacao == "NÃO AUTORIZADO":
+            instance.rh_aprovacao = "NÃO APLICÁVEL"
 
         if commit:
             instance.save()
@@ -409,9 +430,15 @@ class PresidenteFormRD(forms.ModelForm):
         help_text="Marque esta opção para assinar este formulário como Presidente.",
     )
 
+    presidente_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do Presidente',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = RequisicaoDesligamento
-        fields = ["assinatura_presidente"]
+        fields = ["assinatura_presidente","presidente_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -453,9 +480,15 @@ class PresidenteFormMOV(forms.ModelForm):
         help_text="Marque esta opção para assinar este formulário como Presidente.",
     )
 
+    presidente_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do Presidente',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = MovimentacaoPessoal
-        fields = ["assinatura_presidente"]
+        fields = ["assinatura_presidente", "presidente_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -544,9 +577,15 @@ class RHFormRD(forms.ModelForm):
         help_text="Marque esta opção para assinar este formulário como RH/DP.",
     )
 
+    rh_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do RH/DP',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = RequisicaoDesligamento
-        fields = ["assinatura_rh"]
+        fields = ["assinatura_rh", "rh_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -586,9 +625,15 @@ class RHFormMOV(forms.ModelForm):
         help_text="Marque esta opção para assinar este formulário como RH/DP.",
     )
 
+    rh_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do RH/DP',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = MovimentacaoPessoal
-        fields = ["assinatura_rh"]
+        fields = ["assinatura_rh", "rh_aprovacao"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -627,9 +672,15 @@ class CompliceApprovalForm(forms.ModelForm):
         label="Assinar como Complice",
         help_text="Marque esta opção para assinar este formulário como Complice",
     )
+
+    complice_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do Complice',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     class Meta:
         model = MovimentacaoPessoal
-        fields = ['assinatura_complice']
+        fields = ['assinatura_complice', 'complice_aprovacao']
 
 
     def __init__(self, *args, **kwargs):
@@ -668,9 +719,15 @@ class GestorPropostoApprovalForm(forms.ModelForm):
         label="Assinar como Gestor Proposto",
         help_text="Marque esta opção para assinar este formulário como Gestor Proposto",
     )
+
+    gestor_proposto_aprovacao = forms.ChoiceField(
+        choices=AUTORIZACAO_CHOICES,
+        label='Avaliação do Gestor Proposto',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     class Meta:
         model = MovimentacaoPessoal
-        fields = ['assinatura_gestor_proposto']
+        fields = ['assinatura_gestor_proposto', 'gestor_proposto_aprovacao']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -792,6 +849,11 @@ class MovimentacaoPessoalForm(forms.ModelForm):
             'imagem_assinatura_diretor',
             'imagem_assinatura_presidente',
             'imagem_assinatura_rh',
+            'complice_aprovacao',
+            'gestor_proposto_aprovacao',
+            'diretor_aprovacao',
+            'presidente_aprovacao',
+            'rh_aprovacao'
         ]
 
         widgets = {
@@ -988,6 +1050,9 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
             'imagem_assinatura_diretor',
             'imagem_assinatura_presidente',
             'imagem_assinatura_rh',
+            'diretor_aprovacao',
+            'presidente_aprovacao',
+            'rh_aprovacao',
         ]
         widgets = {
             'data_desligamento': DateInput(attrs={'type': 'date'}),

@@ -18,7 +18,7 @@ def gestor_page(request):
     form_rd = RequisicaoDesligamentoForm()
    
     movimentacao = MovimentacaoPessoal.objects.filter(
-        ~Q(assinatura_complice__isnull=True),
+        complice_aprovacao="AUTORIZADO",
         gestor_proposto=request.user.username
     )
     form = GestorPropostoApprovalForm()
@@ -113,7 +113,7 @@ def movimentacoes_pendentes(request):
 @login_required
 def registros_gestor(request):
     rp = RequisicaoPessoal.objects.filter(
-        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True)
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True) | ~Q(rh_aprovacao__iexact="PENDENTE")
     ).select_related("usuario")
     for r in rp:
         r.tipo = "RP"
@@ -125,7 +125,7 @@ def registros_gestor(request):
         m.tipo = "MOV"
 
     rd = RequisicaoDesligamento.objects.filter(
-        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True)
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=True) 
     ).select_related("usuario")
     for d in rd:
         d.tipo = "RD"
@@ -135,8 +135,31 @@ def registros_gestor(request):
         key=lambda x: x.data_solicitacao,
         reverse=True
     )
+    rp_pendente = RequisicaoPessoal.objects.filter(
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=False) & Q(rh_aprovacao__iexact="PENDENTE")
+    ).select_related("usuario")
+    for r in rp_pendente:
+        r.tipo = "RP"
 
+    mov_pendente = MovimentacaoPessoal.objects.filter(
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=False) & Q(rh_aprovacao__iexact="PENDENTE")
+    ).select_related("usuario")
+    for m in mov_pendente:
+        m.tipo = "MOV"
+
+    rd_pendente = RequisicaoDesligamento.objects.filter(
+        Q(usuario=request.user) & ~Q(assinatura_rh__isnull=False) & Q(rh_aprovacao__iexact="PENDENTE")
+    ).select_related("usuario")
+    for d in rd_pendente:
+        d.tipo = "RD"
+
+    registros_pendentes = sorted (
+        chain(rp_pendente, mov_pendente, rd_pendente),
+        key = lambda x: x.data_solicitacao,
+        reverse=True
+    )
     return render(request, "conexaorh/gestor/registros_gestor.html", {
         "registros": registros,
+        "registros_pendentes": registros_pendentes,
         "usuario": request.user  # opcional: para usar dados diretamente no template
     })

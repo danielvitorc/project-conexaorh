@@ -44,7 +44,7 @@ def presidente_rp(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso Negado!")
     
-    registros = RequisicaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True))
+    registros = RequisicaoPessoal.objects.filter(diretor_aprovacao="AUTORIZADO").order_by('-data_solicitacao')
     form = PresidenteForm()
 
     if request.method == "POST":
@@ -73,7 +73,7 @@ def presidente_mov(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso Negado!")
     
-    registros = MovimentacaoPessoal.objects.filter(~Q(assinatura_diretor__isnull=True))
+    registros = MovimentacaoPessoal.objects.filter(diretor_aprovacao="AUTORIZADO").order_by('-data_solicitacao')
     form = PresidenteFormMOV()
 
     if request.method == "POST":
@@ -101,7 +101,7 @@ def presidente_rd(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso Negado!")
     
-    registros = RequisicaoDesligamento.objects.filter(~Q(assinatura_diretor__isnull=True))
+    registros = RequisicaoDesligamento.objects.filter(diretor_aprovacao="AUTORIZADO").order_by('-data_solicitacao')
     form = PresidenteFormRD()
 
     if request.method == "POST":

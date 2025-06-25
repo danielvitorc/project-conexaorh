@@ -195,30 +195,35 @@ class MovimentacaoPessoal(models.Model):
     imagem_assinatura_gestor_atual = models.ImageField(upload_to="assinaturas/gestor/MovimentacaoPessoal", null=True, blank=True)
 
     # Assinatura do Complice
+    complice_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_complice = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='movimentacoes_assinadas_como_complice')
     data_autorizacao_complice = models.DateTimeField(null=True, blank=True, auto_now_add=True)    
     imagem_assinatura_complice = models.ImageField(upload_to="assinaturas/complice/MovimentacaoPessoal", null=True, blank=True)
 
     # Assinatura do Gestor Proposto
+    gestor_proposto_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_gestor_proposto = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='movimentacoes_assinadas_como_gestor_proposto')
     data_autorizacao_gestor_proposto = models.DateTimeField(null=True, blank=True, auto_now_add=True)    
     imagem_assinatura_gestor_proposto = models.ImageField(upload_to="assinaturas/gestor/MovimentacaoPessoal", null=True, blank=True)
 
     # Assinatura do Diretor
+    diretor_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_diretor = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='movimentacoes_assinadas_como_diretor')
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     imagem_assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/MovimentacaoPessoal", null=True, blank=True)
 
     # Assinatura do presidente
+    presidente_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_presidente = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='movimentacoes_assinadas_como_presidente')
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
     imagem_assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/MovimentacaoPessoal", null=True, blank=True)
 
     # Assinatura do RH
+    rh_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_rh = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='movimentacoes_assinadas_como_rh')
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
@@ -295,18 +300,21 @@ class RequisicaoDesligamento(models.Model):
     imagem_assinatura_gestor = models.ImageField(upload_to="assinaturas/gestor/RequisicaoDesligamento", null=True, blank=True)
 
     # Assinatura do Diretor
+    diretor_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_diretor = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='requisicoes_desligamento_como_diretor')
     data_autorizacao_diretor = models.DateTimeField(null=True, blank=True)
     imagem_assinatura_diretor = models.ImageField(upload_to="assinaturas/diretor/RequisicaoDesligamento", null=True, blank=True)
 
     # Assinatura do presidente
+    presidente_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_presidente = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='requisicoes_desligamento_como_presidente')
     data_autorizacao_presidente = models.DateTimeField(null=True, blank=True)
     imagem_assinatura_presidente = models.ImageField(upload_to="assinaturas/presidente/RequisicaoDesligamento", null=True, blank=True)
 
     # Assinatura do RH
+    rh_aprovacao = models.CharField(default="PENDENTE", max_length=50, null=True, blank=True)
     assinatura_rh = models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_NULL,
         related_name='requisicoes_desligamento_como_rh')
     data_autorizacao_rh = models.DateTimeField(null=True, blank=True)
