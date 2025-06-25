@@ -10,6 +10,7 @@
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   --transition: all 0.3s ease-in-out;
   --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --cor-linha-table: #021B33;
 }
 
 [data-theme="dark"] {
@@ -22,6 +23,7 @@
   --card-bg: #1c1c1c;
   --dourado-nort: #FFD700;
   --shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+  --cor-linha-table: #FFD700;
 }
 
 body {
@@ -400,12 +402,6 @@ a {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.tabela-moderninha th, .tabela-moderninha td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #eaeaea;
-  color: var(--text-color);
-}
 
 .botao-baixar {
   background-color: var(--highlight-color);
@@ -495,10 +491,9 @@ a {
 }
 
 .tabela-moderninha th, .tabela-moderninha td {
-  border-radius: 20px;
   padding: 1rem;
   text-align: left;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 2px solid var(--cor-linha-table);
   color: var(--text-color);
 }
 

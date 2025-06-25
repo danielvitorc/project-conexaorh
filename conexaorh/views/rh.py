@@ -129,7 +129,7 @@ def rh_rd(request):
     if request.user.user_type != "rh":
         return HttpResponseForbidden("Acesso negado!")
 
-    registros = MovimentacaoPessoal.objects.filter(~Q(assinatura_presidente__isnull=True))  
+    registros = RequisicaoDesligamento.objects.filter(~Q(assinatura_presidente__isnull=True))  
     form = RHFormRD()
 
     if request.method == "POST":
