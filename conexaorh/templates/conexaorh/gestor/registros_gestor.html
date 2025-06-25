@@ -56,59 +56,63 @@
 
     <div class="linha-amarela"></div>
     <!-- NOVA TABELA PARA VOCÊS ESTILIZAREM-->
-    <table>
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Nº</th>
-          <th>Data de Solicitação</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for registro in registros_pendentes %}
-        <tr>
-          <td>
-              {% if registro.tipo == "RP" %}
-                Requisição Pessoal
-              {% elif registro.tipo == "MOV" %}
-                Movimentação Pessoal
-              {% elif registro.tipo == "RD" %}
-                Requisição de Desligamento
-              {% else %}
-                Tipo desconhecido
-              {% endif %}
-          </td>
-          <td>
-            {% if registro.tipo == "RP" %}{{ registro.n_rp }}
-            {% elif registro.tipo == "MOV" %}{{ registro.n_mov }}
-            {% else %}RD{% endif %}
-          </td>
-          <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
-          <td>
-            {% if registro.complice_aprovacao == "PENDENTE"  %} 
-              AUTORIZAÇÃO DE COMPLICE PENDENTE 
-            {% elif registro.gestor_proposto_aprovacao == "PENDENTE"  %}
-            {% elif registro.diretor_aprovacao == "PENDENTE"  %}
-              AUTORIZAÇÃO DE DIRETOR PENDENTE
-            {% elif registro.presidente_aprovacao == "PENDENTE" %}
-              AUTORIZAÇÃO DE PRESIDENTE PENDENTE
-            {% elif registro.rh_aprovacao == "PENDENTE" %}
-              AUTORIZAÇÃO DE RH/DP PENDENTE
-            {% else %}
-            {% endif %}
-          </td>
-        </tr>
-        {% empty %}
-        {% endfor %}
-      </tbody>
+    <div class="card-tabela-estilizada2">
+      <div class="tabela-header2">
+        <h3><i class="fas fa-folder-open text-warning me-2"></i>Registros Pendente</h3>
+      </div>
 
-    </table>
+      <table class="tabela-moderninha2">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Nº</th>
+            <th>Data de Solicitação</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for registro in registros_pendentes %}
+          <tr>
+            <td>
+              {% if registro.tipo == "RP" %} Requisição Pessoal
+              {% elif registro.tipo == "MOV" %} Movimentação Pessoal
+              {% elif registro.tipo == "RD" %} Requisição de Desligamento
+              {% else %} Tipo desconhecido {% endif %}
+            </td>
+            <td>
+              {% if registro.tipo == "RP" %}{{ registro.n_rp }}
+              {% elif registro.tipo == "MOV" %}{{ registro.n_mov }}
+              {% else %}RD{% endif %}
+            </td>
+            <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
+            <td>
+              {% if registro.complice_aprovacao == "PENDENTE" %}
+                <span class="status2 status-warning2">Complice</span>
+              {% elif registro.diretor_aprovacao == "PENDENTE" %}
+                <span class="status2 status-warning2">Diretor</span>
+              {% elif registro.presidente_aprovacao == "PENDENTE" %}
+                <span class="status2 status-warning2">Presidente</span>
+              {% elif registro.rh_aprovacao == "PENDENTE" %}
+                <span class="status2 status-warning2">RH/DP</span>
+              {% else %}
+                <span class="status2 status-success2">Aprovado</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center2">Nenhum registro encontrado.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
 
     <!-- Tabela estilizada de Registros do Gestor -->
-    <div class="card-tabela-estilizada">
-      <div class="tabela-header">
-        <h3><i class="fas fa-folder-open text-warning me-2"></i>Registros do Gestor</h3>
+    <div class="card-tabela-estilizada2">
+      <div class="tabela-header2">
+        <h3><i class="fas fa-folder text-warning me-2"></i>Registros do Gestor</h3>
       </div>
 
       <div class="tabela-filtro p-3">
@@ -116,7 +120,7 @@
       </div>
 
       <div class="table-responsive">
-        <table class="tabela-moderninha display nowrap w-100" id="tabela-moderninha">
+        <table class="tabela-moderninha2 display nowrap w-100" id="tabela-moderninha">
           <thead>
             <tr>
               <th>Tipo</th>

@@ -531,17 +531,6 @@ a {
   transition: var(--transition);
 }
 
-.blur-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.3);
-  backdrop-filter: blur(3px);
-  z-index: 999;
-  display: none;
-}
 
 
 /* Entrada suave dos cards */
@@ -609,4 +598,75 @@ a {
 }
 .text-muted {
   color: var(--text-color) !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.card-tabela-estilizada2 {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  margin-top: 20px;
+}
+
+.tabela-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.tabela-moderninha2 {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-moderninha2 thead {
+  background-color: #f9fafb;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+.tabela-moderninha2 th, .tabela-moderninha2 td {
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.tabela-moderninha2 tr:hover {
+  background-color: #f7fafc;
+}
+
+.status2 {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+}
+
+.status-warning2 {
+  background-color: #f6ad55; /* laranja */
+}
+
+.status-success2 {
+  background-color: #48bb78; /* verde */
+}
+
+.text-center2 {
+  text-align: center;
 }
