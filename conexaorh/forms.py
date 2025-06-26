@@ -320,6 +320,11 @@ class DiretorFormRD(forms.ModelForm):
                 assinatura_img.name, assinatura_img, save=False
             )
 
+        # Lógica para atribuir "NÃO APLICÁVEL" caso reprovado
+        if instance.diretor_aprovacao == "NÃO AUTORIZADO":
+            instance.presidente_aprovacao = "NÃO APLICÁVEL"
+            instance.rh_aprovacao = "NÃO APLICÁVEL"
+
         if commit:
             instance.save()
         return instance
@@ -365,6 +370,11 @@ class DiretorFormMOV(forms.ModelForm):
             instance.imagem_assinatura_diretor.save(
                 assinatura_img.name, assinatura_img, save=False
             )
+
+         # Lógica para atribuir "NÃO APLICÁVEL" caso reprovado
+        if instance.diretor_aprovacao == "NÃO AUTORIZADO":
+            instance.presidente_aprovacao = "NÃO APLICÁVEL"
+            instance.rh_aprovacao = "NÃO APLICÁVEL"
 
         if commit:
             instance.save()
@@ -466,6 +476,9 @@ class PresidenteFormRD(forms.ModelForm):
             instance.imagem_assinatura_presidente.save(
                 assinatura_img.name, assinatura_img, save=False
             )
+        # Lógica para atribuir "NÃO APLICÁVEL" caso reprovado
+        if instance.presidente_aprovacao == "NÃO AUTORIZADO":
+            instance.rh_aprovacao = "NÃO APLICÁVEL"
 
         if commit:
             instance.save()
@@ -516,6 +529,10 @@ class PresidenteFormMOV(forms.ModelForm):
             instance.imagem_assinatura_presidente.save(
                 assinatura_img.name, assinatura_img, save=False
             )
+
+        # Lógica para atribuir "NÃO APLICÁVEL" caso reprovado
+        if instance.presidente_aprovacao == "NÃO AUTORIZADO":
+            instance.rh_aprovacao = "NÃO APLICÁVEL"
 
         if commit:
             instance.save()
@@ -709,6 +726,13 @@ class CompliceApprovalForm(forms.ModelForm):
                 assinatura_img.name, assinatura_img, save=False
             )
 
+        # Lógica para atribuir "NÃO APLICÁVEL" caso reprovado
+        if instance.complice_aprovacao == "NÃO AUTORIZADO":
+            instance.gestor_proposto_aprovacao == "NÃO APLICÁVEL"
+            instance.diretor_aprovacao == "NÃO APLICÁVEL"
+            instance.presidente_aprovacao = "NÃO APLICÁVEL"
+            instance.rh_aprovacao = "NÃO APLICÁVEL"
+
         if commit:
             instance.save()
         return instance
@@ -755,6 +779,11 @@ class GestorPropostoApprovalForm(forms.ModelForm):
                 assinatura_img.name, assinatura_img, save=False
             )
 
+        # Lógica para atribuir "NÃO APLICÁVEL" caso reprovado
+        if instance.gestor_proposto_aprovacao == "NÃO AUTORIZADO":
+            instance.diretor_aprovacao == "NÃO APLICÁVEL"
+            instance.presidente_aprovacao = "NÃO APLICÁVEL"
+            instance.rh_aprovacao = "NÃO APLICÁVEL"
         if commit:
             instance.save()
         return instance
@@ -823,6 +852,9 @@ class MovimentacaoPessoalForm(forms.ModelForm):
 
     class Meta:
         model = MovimentacaoPessoal
+        labels  = {
+            "outro_tipo": "Outro Tipo",
+            "outro_info" : "Outras Informações "}
         exclude = [
             'data_solicitacao',
             'n_rp',
@@ -1143,4 +1175,3 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
-

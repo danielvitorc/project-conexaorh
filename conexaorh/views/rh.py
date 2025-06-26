@@ -56,6 +56,7 @@ def rh_rp(request):
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)  # ou só form.save()
             # se acabou de assinar
             if registro.assinatura_rh and registro.data_autorizacao_rh is None:
                 registro.data_autorizacao_rh = now()
