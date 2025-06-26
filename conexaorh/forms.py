@@ -852,6 +852,9 @@ class MovimentacaoPessoalForm(forms.ModelForm):
 
     class Meta:
         model = MovimentacaoPessoal
+        labels  = {
+            "outro_tipo": "Outro Tipo",
+            "outro_info" : "Outras Informações "}
         exclude = [
             'data_solicitacao',
             'n_rp',
