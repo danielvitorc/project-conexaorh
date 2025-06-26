@@ -56,12 +56,12 @@
 
     <div class="linha-amarela"></div>
     <!-- NOVA TABELA PARA VOCÊS ESTILIZAREM-->
-    <div class="card-tabela-estilizada2">
-      <div class="tabela-header2">
+    <div class="card-tabela-estilizada">
+      <div class="tabela-header">
         <h3><i class="fas fa-folder-open text-warning me-2"></i>Registros Pendente</h3>
       </div>
 
-      <table class="tabela-moderninha2">
+      <table class="tabela-moderninha">
         <thead>
           <tr>
             <th>Tipo</th>
@@ -87,21 +87,21 @@
             <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
             <td>
               {% if registro.complice_aprovacao == "PENDENTE" %}
-                <span class="status2 status-warning2">Complice</span>
+                <span class="status status-warning">Complice</span>
               {% elif registro.diretor_aprovacao == "PENDENTE" %}
-                <span class="status2 status-warning2">Diretor</span>
+                <span class="status status-warning">Diretor</span>
               {% elif registro.presidente_aprovacao == "PENDENTE" %}
-                <span class="status2 status-warning2">Presidente</span>
+                <span class="status status-warning">Presidente</span>
               {% elif registro.rh_aprovacao == "PENDENTE" %}
-                <span class="status2 status-warning2">RH/DP</span>
+                <span class="status status-warning">RH/DP</span>
               {% else %}
-                <span class="status2 status-success2">Aprovado</span>
+                <span class="status status-success">Aprovado</span>
               {% endif %}
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="4" class="text-center2">Nenhum registro encontrado.</td>
+            <td colspan="4" class="text-center">Nenhum registro encontrado.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -110,17 +110,17 @@
 
 
     <!-- Tabela estilizada de Registros do Gestor -->
-    <div class="card-tabela-estilizada2">
-      <div class="tabela-header2">
+    <div class="card-tabela-estilizada">
+      <div class="tabela-header">
         <h3><i class="fas fa-folder text-warning me-2"></i>Registros do Gestor</h3>
       </div>
 
-      <div class="tabela-filtro p-3">
-        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar..." onkeyup="searchTable()">
+      <div class="tabela-filtro text-end pe-3">
+        <input type="text" id="searchInput" class="form-control d-inline-block" style="width: 250px;" placeholder="Pesquisar..." onkeyup="searchTable()">
       </div>
 
       <div class="table-responsive">
-        <table class="tabela-moderninha2 display nowrap w-100" id="tabela-moderninha">
+        <table class="tabela-moderninha display nowrap w-100" id="tabela-moderninha">
           <thead>
             <tr>
               <th>Tipo</th>
@@ -132,14 +132,18 @@
           <tbody>
             {% for registro in registros %}
             <tr>
-              <td>
+              <td class="d-flex align-items-center gap-2">
                 {% if registro.tipo == "RP" %}
+                  <img src="{% static 'icons/icon_rp.png' %}" alt="RP" width="20" height="20">
                   Requisição Pessoal
                 {% elif registro.tipo == "MOV" %}
+                  <img src="{% static 'icons/icon_mov.png' %}" alt="MOV" width="20" height="20">
                   Movimentação Pessoal
                 {% elif registro.tipo == "RD" %}
+                  <img src="{% static 'icons/icon_rd.png' %}" alt="RD" width="20" height="20">
                   Requisição de Desligamento
                 {% else %}
+                  <img src="{% static 'icons/icon_default.png' %}" alt="Tipo" width="20" height="20">
                   Tipo desconhecido
                 {% endif %}
               </td>
@@ -191,7 +195,7 @@
     function searchTable() {
       let input = document.getElementById("searchInput");
       let filter = input.value.toLowerCase();
-      let table = document.getElementById("registrosTable");
+      let table = document.getElementById("tabela-moderninha");
       let tr = table.getElementsByTagName("tr");
 
       for (let i = 1; i < tr.length; i++) {
