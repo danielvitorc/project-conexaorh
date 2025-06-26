@@ -34,7 +34,7 @@ def gestor_page(request):
             form_movimentacao = MovimentacaoPessoalForm(request.POST, request.FILES)
             if form_movimentacao.is_valid():
                 form_movimentacao.save(user=request.user, gestor_role="atual")
-                return redirect("gestor_page")
+                return redirect("/gestor/?confirmacao=1")
         
         if "submit_aprovacao_mov" in request.POST:
             registro_id = request.POST.get("registro_id")
@@ -60,17 +60,22 @@ def gestor_page(request):
             form_rd = RequisicaoDesligamentoForm(request.POST, request.FILES)
             if form_rd.is_valid():
                 form_rd.save(user=request.user)
-                return redirect("gestor_page")
+                return redirect("/gestor/?confirmacao=1")
             
 
-    return render(request, "conexaorh/gestor/gestor.html", {
+    context = {
         "form_rp": form_rp,
         "form_movimentacao": form_movimentacao,
         "form_rd": form_rd,
         "movimentacao": movimentacao,
         "form": form,
         "usuario": request.user,
-    })
+    }
+
+    if request.GET.get("confirmacao") == "1":
+        context["abrir_confirmacao"] = True
+
+    return render(request, "conexaorh/gestor/gestor.html", context)
 
 @login_required
 def movimentacoes_pendentes(request):

@@ -270,6 +270,16 @@
     </div>
 </div>
 
+<!-- Modal de Confirmação -->
+<div id="modalConfirmacao" class="modal">
+    <div class="modal-content-custom">
+        <span class="close" onclick="closeModal('modalConfirmacao')">&times;</span>
+        <h3>Deseja realizar também fazer Requisição de Pessoal?</h3>
+        <button class="btn btn-primary" onclick="confirmarRequisicao()">Sim</button>
+        <button class="btn btn-secondary" onclick="closeModal('modalConfirmacao')">Não</button>
+    </div>
+</div>
+
 <script>
   function toggleDropdown() {
     const menu = document.getElementById("userDropdown");
@@ -309,6 +319,41 @@
 </script>
 
 <script src="{% static 'conexaorh/js/tema.js' %}"></script>
+
+<script>
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) modal.style.display = "block";
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) modal.style.display = "none";
+    }
+
+    function confirmarRequisicao() {
+        closeModal('modalConfirmacao');
+        openModal('modalRp');
+    }
+
+    const abrirConfirmacao = "{{ abrir_confirmacao|default:'false' }}" === "True";
+
+    window.onload = function () {
+        if (abrirConfirmacao) {
+            openModal('modalConfirmacao');
+
+            // 🔧 Remove ?confirmacao=1 da URL sem recarregar a página
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('confirmacao');
+                window.history.replaceState({}, document.title, url.pathname + url.search);
+            }
+        }
+    };
+</script>
+
+
+
 
 
 </body>
