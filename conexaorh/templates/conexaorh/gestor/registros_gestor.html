@@ -16,9 +16,16 @@
 
 
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap JS (essencial para funcionamento do modal) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 
 
 
@@ -56,63 +63,69 @@
 
     <div class="linha-amarela"></div>
     <!-- NOVA TABELA PARA VOCÊS ESTILIZAREM-->
-    <table>
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Nº</th>
-          <th>Data de Solicitação</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for registro in registros_pendentes %}
-        <tr>
-          <td>
-              {% if registro.tipo == "RP" %}
-                Requisição Pessoal
-              {% elif registro.tipo == "MOV" %}
-                Movimentação Pessoal
-              {% elif registro.tipo == "RD" %}
-                Requisição de Desligamento
-              {% else %}
-                Tipo desconhecido
-              {% endif %}
-          </td>
-          <td>
-            {% if registro.tipo == "RP" %}{{ registro.n_rp }}
-            {% elif registro.tipo == "MOV" %}{{ registro.n_mov }}
-            {% else %}RD{% endif %}
-          </td>
-          <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
-          <td>
-            {% if registro.complice_aprovacao == "PENDENTE"  %} 
-              AUTORIZAÇÃO DE COMPLICE PENDENTE 
-            {% elif registro.gestor_proposto_aprovacao == "PENDENTE"  %}
-            {% elif registro.diretor_aprovacao == "PENDENTE"  %}
-              AUTORIZAÇÃO DE DIRETOR PENDENTE
-            {% elif registro.presidente_aprovacao == "PENDENTE" %}
-              AUTORIZAÇÃO DE PRESIDENTE PENDENTE
-            {% elif registro.rh_aprovacao == "PENDENTE" %}
-              AUTORIZAÇÃO DE RH/DP PENDENTE
-            {% else %}
-            {% endif %}
-          </td>
-        </tr>
-        {% empty %}
-        {% endfor %}
-      </tbody>
+    <div class="card-tabela-estilizada">
+      <div class="tabela-header">
+        <h3><i class="fas fa-folder-open text-warning me-2"></i>Registros Pendente</h3>
+      </div>
 
-    </table>
+      <table class="tabela-moderninha">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Nº</th>
+            <th>Data de Solicitação</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for registro in registros_pendentes %}
+          <tr>
+            <td class="">
+              {% if registro.tipo == "RP" %}
+                <i class="bi bi-person-plus-fill text-primary"></i> <strong>RP</strong> – Requisição Pessoal
+              {% elif registro.tipo == "MOV" %}
+                <i class="bi bi-arrow-left-right text-warning"></i> <strong>MOV</strong> – Movimentação Pessoal
+              {% elif registro.tipo == "RD" %}
+                <i class="bi bi-door-closed-fill text-danger"></i> <strong>RD</strong> – Requisição de Desligamento
+              {% endif %}
+            </td>
+            <td>
+              {% if registro.tipo == "RP" %}{{ registro.n_rp }}
+              {% elif registro.tipo == "MOV" %}{{ registro.n_mov }}
+              {% else %}RD{% endif %}
+            </td>
+            <td>{{ registro.data_solicitacao|date:"d/m/Y" }}</td>
+            <td>
+              {% if registro.complice_aprovacao == "PENDENTE" %}
+                <span class="status status-warning">Complice</span>
+              {% elif registro.diretor_aprovacao == "PENDENTE" %}
+                <span class="status status-warning">Diretor</span>
+              {% elif registro.presidente_aprovacao == "PENDENTE" %}
+                <span class="status status-warning">Presidente</span>
+              {% elif registro.rh_aprovacao == "PENDENTE" %}
+                <span class="status status-warning">RH/DP</span>
+              {% else %}
+                <span class="status status-success">Aprovado</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center">Nenhum registro encontrado.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
     <!-- Tabela estilizada de Registros do Gestor -->
     <div class="card-tabela-estilizada">
       <div class="tabela-header">
-        <h3><i class="fas fa-folder-open text-warning me-2"></i>Registros do Gestor</h3>
+        <h3><i class="fas fa-folder text-warning me-2"></i>Registros do Gestor</h3>
       </div>
 
-      <div class="tabela-filtro p-3">
-        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar..." onkeyup="searchTable()">
+      <div class="tabela-filtro text-end pe-3">
+        <input type="text" id="searchInput" class="form-control d-inline-block" style="width: 250px;" placeholder="Pesquisar..." onkeyup="searchTable()">
       </div>
 
       <div class="table-responsive">
@@ -128,15 +141,13 @@
           <tbody>
             {% for registro in registros %}
             <tr>
-              <td>
+              <td class="">
                 {% if registro.tipo == "RP" %}
-                  Requisição Pessoal
+                  <i class="bi bi-person-plus-fill text-primary"></i> <strong>RP</strong> – Requisição Pessoal
                 {% elif registro.tipo == "MOV" %}
-                  Movimentação Pessoal
+                  <i class="bi bi-arrow-left-right text-warning"></i> <strong>MOV</strong> – Movimentação Pessoal
                 {% elif registro.tipo == "RD" %}
-                  Requisição de Desligamento
-                {% else %}
-                  Tipo desconhecido
+                  <i class="bi bi-door-closed-fill text-danger"></i> <strong>RD</strong> – Requisição de Desligamento
                 {% endif %}
               </td>
               <td>
@@ -167,14 +178,25 @@
                   <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalRP{{ registro.id }}">
                     Detalhes
                   </button>
+                  <a href="{% url 'exportar_requisicao_pdf' %}?requisicao={{ registro.id }}" class="btn btn-primary btn-sm">
+                      Exportar PDF
+                  </a>
                 {% elif registro.tipo == 'MOV' %}
                   <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalMOV{{ registro.id }}">
                     Detalhes
                   </button>
+                  <a href="{% url 'exportar_movimentacao_pdf' %}?movimentacao={{ registro.id }}" class="btn btn-primary btn-sm">
+                      Exportar PDF
+                  </a>
+
                 {% elif registro.tipo == 'RD' %}
                   <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalRD{{ registro.id }}">
                     Detalhes
                   </button>
+                  <a href="{% url 'exportar_desligamento_pdf' %}?desligamento={{ registro.id }}" class="btn btn-primary btn-sm" target="_blank">
+                    Exportar PDF
+                  </a>
+
                 {% endif %}
 
               </td>
@@ -188,13 +210,19 @@
         </table>
       </div>
 
-    {% for registro in registros %}
+
+
+      <div class="tabela-rodape">
+        <a href="#">Ver todos <span>&rarr;</span></a>
+      </div>
+    </div>
+        {% for registro in registros %}
       {% if registro.tipo == "RP" %}
-        <div class="modal fade" id="modalRP{{ registro.id }}" tabindex="-1" aria-labelledby="modalLabel{{ registro.id }}" aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal" id="modalRP{{ registro.id }}" tabindex="-1" aria-labelledby="modalLabel{{ registro.id }}" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
               <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="modalLabel{{ registro.id }}">Detalhes da Requisição Pessoal Nº {{ registro.n_rp }}</h5>
+                <h5 class="modal-title">Detalhes da Requisição Pessoal Nº 1</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
               </div>
               <div class="modal-body">
@@ -236,8 +264,8 @@
         </div>
       {% elif registro.tipo == "MOV" %}
         <div class="modal fade" id="modalMOV{{ registro.id }}" tabindex="-1" aria-labelledby="modalMovLabel{{ registro.id }}" aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
+          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content bg-light text-dark">
               <div class="modal-header bg-warning text-dark">
                 <h5 class="modal-title" id="modalMovLabel{{ registro.id }}">Detalhes da Movimentação Nº {{ registro.n_mov }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -276,8 +304,8 @@
         </div>
       {% elif registro.tipo == "RD" %}
         <div class="modal fade" id="modalRD{{ registro.id }}" tabindex="-1" aria-labelledby="modalRDLabel{{ registro.id }}" aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
+          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content bg-light text-dark">
               <div class="modal-header bg-warning text-dark">
                 <h5 class="modal-title" id="modalRDLabel{{ registro.id }}">Detalhes da Requisição de Desligamento</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -310,15 +338,19 @@
       {% endif %}
     {% endfor %}
 
-      <div class="tabela-rodape">
-        <a href="#">Ver todos <span>&rarr;</span></a>
-      </div>
-    </div>
 
 
 </div>
   <!-- Bootstrap JS (opcional) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const modalEl = document.getElementById('modalRP1');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  });
+</script>
+
   <script>
     function searchTable() {
       let input = document.getElementById("searchInput");

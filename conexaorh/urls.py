@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .views import pdf_rp, pdf_mov, pdf_rd
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -27,4 +28,10 @@ urlpatterns = [
     path('download_rp/<int:registro_id>/', excel_rp.download_rp_excel, name='download_rp_excel'),
     path('download_mov/<int:registro_id>/', excel_mov.download_mov_excel, name='download_mov_excel'),
     path('download_rd/<int:registro_id>/', excel_rd.download_rd_excel, name='download_rd_excel'),
+    path("exportar_requisicao_pdf/", pdf_rp.exportar_requisicao_pdf, name="exportar_requisicao_pdf"),
+    path("exportar_movimentacao_pdf/", pdf_mov.exportar_movimentacao_pdf, name="exportar_movimentacao_pdf"),
+    path("exportar_desligamento_pdf/", pdf_rd.exportar_desligamento_pdf, name="exportar_desligamento_pdf"),
+
+
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

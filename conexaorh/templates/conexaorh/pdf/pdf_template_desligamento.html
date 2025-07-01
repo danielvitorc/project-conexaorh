@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .campo {
+      margin-bottom: 8px;
+    }
+    .label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>REQUISIÇÃO DE DESLIGAMENTO</h1>
+
+  <div class="campo"><span class="label">Requisitante:</span> {{ desligamento.requisitante }}</div>
+  <div class="campo"><span class="label">Colaborador:</span> {{ desligamento.colaborador_desligado }}</div>
+  <div class="campo"><span class="label">Matrícula:</span> {{ desligamento.matricula }}</div>
+  <div class="campo"><span class="label">Função:</span> {{ desligamento.funcao }}</div>
+  <div class="campo"><span class="label">Salário:</span> R$ {{ desligamento.salario }}</div>
+  <div class="campo"><span class="label">Centro de Custo:</span> {{ desligamento.centro_custo }}</div>
+  <div class="campo"><span class="label">Localidade:</span> {{ desligamento.localidade }}</div>
+  <div class="campo"><span class="label">Data Admissão:</span> {{ desligamento.data_admissao }}</div>
+  <div class="campo"><span class="label">Data Desligamento:</span> {{ desligamento.data_desligamento }}</div>
+  <div class="campo"><span class="label">Tipo de Desligamento:</span> {{ desligamento.tipo_desligamento }}</div>
+  <div class="campo"><span class="label">Motivo:</span> {{ desligamento.motivo_desligamento }}</div>
+  {% if desligamento.outro_motivo %}
+  <div class="campo"><span class="label">Outro Motivo:</span> {{ desligamento.outro_motivo }}</div>
+  {% endif %}
+  <div class="campo"><span class="label">Justificativa Desligamento:</span> {{ desligamento.justificativa_desligamento }}</div>
+  <div class="campo"><span class="label">Tipo Aviso:</span> {{ desligamento.tipo_aviso }}</div>
+  <div class="campo"><span class="label">Justificativa Aviso:</span> {{ desligamento.justificativa_aviso }}</div>
+  <div class="campo"><span class="label">Substituição:</span> {{ desligamento.substituicao }}</div>
+  <div class="campo"><span class="label">Bloqueio de Readmissão:</span> {{ desligamento.bloqueio_readmissao|yesno:"Sim,Não" }}</div>
+
+  <hr>
+  <div class="campo"><span class="label">Gerado em:</span> {{ now|date:"d/m/Y H:i" }}</div>
+</body>
+</html>

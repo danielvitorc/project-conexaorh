@@ -19,6 +19,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <!-- CSS próprio -->
     <link rel="stylesheet" href="{% static 'conexaorh/css/presidente.css' %}">
@@ -62,9 +63,9 @@
                 <div class="tabela-filtro">
                     <select id="filtroTipo">
                         <option value="Todos">Todos</option>
-                        <option value="RP">RP</option>
-                        <option value="MOV">MOV</option>
-                        <option value="RD">RD</option>
+                        <option value="RP – Requisição Pessoal">RP</option>
+                        <option value="MOV – Movimentação Pessoal">MOV</option>
+                        <option value="RD – Requisição de Desligamento">RD</option>
                     </select>
                 </div>
             </div>
@@ -80,7 +81,15 @@
                 <tbody>
                     {% for registro in registros %}
                         <tr>
-                            <td>{{ registro.tipo }}</td>
+                            <td class="">
+                                {% if registro.tipo == "RP" %}
+                                    <i class="bi bi-person-plus-fill text-primary"></i> <strong>RP</strong> – Requisição Pessoal
+                                {% elif registro.tipo == "MOV" %}
+                                    <i class="bi bi-arrow-left-right text-warning"></i> <strong>MOV</strong> – Movimentação Pessoal
+                                {% elif registro.tipo == "RD" %}
+                                    <i class="bi bi-door-closed-fill text-danger"></i> <strong>RD</strong> – Requisição de Desligamento
+                                {% endif %}
+                            </td>
                             <td>{{ registro.usuario.get_full_name }}</td>
                             <td>{{ registro.data_solicitacao|date:"d/m/Y - H:i" }}</td>
                             <td>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Movimentação de Pessoal</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 10px; margin: 20px; }
+        .header-table, .data-table, .signatures-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .header-table td, .data-table td, .signatures-table td { border: 1px solid #000; padding: 5px; vertical-align: top; }
+        .header-table .title { text-align: center; font-size: 14px; font-weight: bold; }
+        .section-title { background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 5px; border: 1px solid #000; }
+        .signature-box { height: 50px; border-bottom: 1px solid #000; margin-top: 30px; }
+        .signature-label { text-align: center; font-size: 9px; }
+        .footer { text-align: right; font-size: 9px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <table class="header-table">
+        <tr>
+            <td style="width: 20%;">CÓDIGO:<br>F.PRO.RH.01.02</td>
+            <td style="width: 20%;">REVISÃO:<br>01</td>
+            <td class="title" colspan="2">MOVIMENTAÇÃO DE PESSOAL</td>
+            <td style="width: 20%;">DATA:<br>{{ now|date:"d/m/Y" }}</td>
+        </tr>
+        <tr>
+            <td colspan="5">DATA DA SOLICITAÇÃO: {{ movimentacao.data_solicitacao|date:"d/m/Y" }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">TIPO DE MOVIMENTAÇÃO</div>
+    <table class="data-table">
+        <tr>
+            <td colspan="4">{{ movimentacao.tipo_movimentacao }}</td>
+        </tr>
+        <tr>
+            <td colspan="4">OUTRO (CITAR):<br>{{ movimentacao.outro_tipo|default:"N/A" }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">COLABORADOR A SER MOVIMENTADO</div>
+    <table class="data-table">
+        <tr>
+            <td style="width: 25%;">MATRÍCULA:<br>{{ movimentacao.matricula }}</td>
+            <td style="width: 25%;">DATA DE ADMISSÃO:<br>{{ movimentacao.data_admissao|date:"d/m/Y" }}</td>
+            <td style="width: 25%;">CARGO ATUAL:<br>{{ movimentacao.cargo_atual }}</td>
+            <td style="width: 25%;">SALÁRIO ATUAL:<br>R$ {{ movimentacao.salario_atual|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td>LOCALIDADE ATUAL:<br>{{ movimentacao.localidade_atual }}</td>
+            <td>DEPARTAMENTO ATUAL:<br>{{ movimentacao.departamento_atual }}</td>
+            <td>GESTOR ATUAL:<br>{{ movimentacao.gestor_atual }}</td>
+            <td>CENTRO DE CUSTO:<br>{{ movimentacao.centro_custo_atual }}</td>
+        </tr>
+        <tr>
+            <td>LOCALIDADE PROPOSTA:<br>{{ movimentacao.localidade_proposta }}</td>
+            <td>CARGO PROPOSTO:<br>{{ movimentacao.cargo_proposto }}</td>
+            <td>DEPARTAMENTO PROPOSTO:<br>{{ movimentacao.departamento_proposto }}</td>
+            <td>SALÁRIO PROPOSTO:<br>R$ {{ movimentacao.salario_proposto|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td>GESTOR PROPOSTO:<br>{{ movimentacao.gestor_proposto }}</td>
+            <td>CENTRO DE CUSTO:<br>{{ movimentacao.centro_custo_proposto }}</td>
+            <td>DATA DA MOVIMENTAÇÃO:<br>{{ movimentacao.data_movimentacao|date:"d/m/Y" }}</td>
+            <td>TIPO DE AJUDA DE CUSTO:<br>{{ movimentacao.tipo_ajuda_custo }}</td>
+        </tr>
+        <tr>
+            <td>VALOR R$:<br>R$ {{ movimentacao.valor_ajuda|floatformat:2 }}</td>
+            <td>PERÍODO:<br>{{ movimentacao.periodo }}</td>
+            <td>PERICULOSIDADE:<br>{% if movimentacao.periculosidade %}SIM{% else %}NÃO{% endif %}</td>
+            <td>INSALUBRIDADE:<br>{% if movimentacao.insalubridade %}SIM{% else %}NÃO{% endif %}</td>
+        </tr>
+        <tr>
+            <td colspan="4">ADICIONAL:<br>{{ movimentacao.adicional|default:"N/A" }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">JUSTIFICATIVA PARA MOVIMENTAÇÃO</div>
+    <table class="data-table">
+        <tr>
+            <td style="width: 50%;">REESTRUTURAÇÃO DO DEPARTAMENTO (EMPRESA/UNIDADE):<br>{% if movimentacao.justificativa_movimentacao == 'REESTRUTURAÇÃO DO DEPARTAMENTO (EMPRESA/UNIDADE)' %}X{% endif %}</td>
+            <td style="width: 50%;">INADEQUAÇÃO À ATIVIDADE DO DEPARTAMENTO:<br>{% if movimentacao.justificativa_movimentacao == 'INADEQUAÇÃO À ATIVIDADE DO DEPARTAMENTO' %}X{% endif %}</td>
+        </tr>
+        <tr>
+            <td>OPORTUNIDADE DE ASCENSÃO PROFISSIONAL:<br>{% if movimentacao.justificativa_movimentacao == 'OPORTUNIDADE DE ASCENSÃO PROFISSIONAL' %}X{% endif %}</td>
+            <td>OUTRO (CITAR):<br>{{ movimentacao.outro_justificativa|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">SERÁ NECESSÁRIO SUBSTITUIÇÃO:<br>{% if movimentacao.substituicao %}SIM{% else %}NÃO{% endif %}</td>
+        </tr>
+        <tr>
+            <td colspan="2">COMENTÁRIOS / JUSTIFICATIVAS:<br>{{ movimentacao.comentarios }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">ESPAÇO RESERVADO A GESTÃO DE PESSOAS</div>
+    <table class="signatures-table">
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">ASSINATURA DO COORD. GESTÃO DE PESSOAS</div>
+                <div class="signature-label">
+                    {% if movimentacao.assinatura_gestao_pessoas %}
+                        {{ movimentacao.assinatura_gestao_pessoas.get_full_name }}
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if movimentacao.data_assinatura_gestao_pessoas %}
+                        {{ movimentacao.data_assinatura_gestao_pessoas|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">AVALIAÇÃO COMPLIANCE</div>
+                <div class="signature-label">
+                    {% if assinatura_complice_url %}
+                        <img src="{{ assinatura_complice_url }}" alt="Assinatura Complice" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if movimentacao.data_assinatura_complice %}
+                        {{ movimentacao.data_assinatura_complice|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">RH</div>
+                <div class="signature-label">
+                    {% if assinatura_rh_url %}
+                        <img src="{{ assinatura_rh_url }}" alt="Assinatura RH" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if movimentacao.data_autorizacao_rh %}
+                        {{ movimentacao.data_autorizacao_rh|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">AVALIAÇÃO RH</div>
+                <div class="signature-label">
+                    {% if movimentacao.avaliacao_rh %}
+                        {{ movimentacao.avaliacao_rh.get_full_name }}
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if movimentacao.data_avaliacao_rh %}
+                        {{ movimentacao.data_avaliacao_rh|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">AUTORIZAÇÕES</div>
+    <table class="signatures-table">
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">GESTOR ATUAL</div>
+                <div class="signature-label">
+                    {% if assinatura_gestor_url %}
+                        <img src="{{ assinatura_gestor_url }}" alt="Assinatura Gestor" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if movimentacao.data_autorizacao_gestor_atual %}
+                        {{ movimentacao.data_autorizacao_gestor_atual|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">GESTOR PROPOSTO</div>
+                <div class="signature-label">
+                    {% if assinatura_gestor_proposto_url %}
+                        <img src="{{ assinatura_gestor_proposto_url }}" alt="Assinatura Gestor Proposto" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if movimentacao.data_autorizacao_gestor_proposto %}
+                        {{ movimentacao.data_autorizacao_gestor_proposto|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">DIRETORIA DA ÁREA</div>
+                <div class="signature-label">
+                    {% if assinatura_diretor_url %}
+                        <img src="{{ assinatura_diretor_url }}" alt="Assinatura Diretor" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if movimentacao.data_autorizacao_diretor %}
+                        {{ movimentacao.data_autorizacao_diretor|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">PRESIDENTE</div>
+                <div class="signature-label">
+                    {% if assinatura_presidente_url %}
+                        <img src="{{ assinatura_presidente_url }}" alt="Assinatura Presidente" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if movimentacao.data_autorizacao_presidente %}
+                        {{ movimentacao.data_autorizacao_presidente|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+<div class="footer">Gerado em: {{ now|date:"d/m/Y H:i" }}</div>
+
+</body>
+</html>
+

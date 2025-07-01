@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Requisição de Pessoal</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 10px; margin: 20px; }
+        .header-table, .data-table, .profile-table, .signatures-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .header-table td, .data-table td, .profile-table td, .signatures-table td { border: 1px solid #000; padding: 5px; vertical-align: top; }
+        .header-table .title { text-align: center; font-size: 14px; font-weight: bold; }
+        .section-title { background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 5px; border: 1px solid #000; }
+        .signature-box { height: 50px; border-bottom: 1px solid #000; margin-top: 30px; }
+        .signature-label { text-align: center; font-size: 9px; }
+        .footer { text-align: right; font-size: 9px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <table class="header-table">
+        <tr>
+            <td style="width: 20%;">CÓDIGO:<br>F.PRO.RH.01.01</td>
+            <td style="width: 20%;">REVISÃO:<br>03</td>
+            <td class="title" colspan="2">REQUISIÇÃO DE PESSOAL</td>
+            <td style="width: 20%;">DATA:<br>{{ now|date:"d/m/Y" }}</td>
+        </tr>
+        <tr>
+            <td colspan="5">DATA DA SOLICITAÇÃO: {{ requisicao.data_solicitacao|date:"d/m/Y" }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">DADOS DA VAGA EM ABERTO</div>
+    <table class="data-table">
+        <tr>
+            <td style="width: 25%;">REQUISITANTE:<br>{{ requisicao.requisitante }}</td>
+            <td style="width: 25%;">SALÁRIO:<br>R$ {{ requisicao.salario|floatformat:2 }}</td>
+            <td style="width: 25%;">HORÁRIO DE TRABALHO:<br>{{ requisicao.horario_trabalho_inicio|time:"H:i" }} - {{ requisicao.horario_trabaho_fim|time:"H:i" }}</td>
+            <td style="width: 25%;">TIPO DE PONTO:<br>{{ requisicao.tipo_ponto }}</td>
+        </tr>
+        <tr>
+            <td>INÍCIO DO CONTRATO:<br>{{ requisicao.inicio_contrato|date:"d/m/Y" }}</td>
+            <td>MOTIVO DA CONTRATAÇÃO:<br>{{ requisicao.motivo_contracao }}</td>
+            <td>BENEFÍCIOS:<br>{{ requisicao.beneficios }}</td>
+            <td>CARGO:<br>{{ requisicao.cargo }}</td>
+        </tr>
+        <tr>
+            <td>QUANTIDADE DE VAGAS:<br>{{ requisicao.quantidade_vagas }}</td>
+            <td>TÉRMINO DO CONTRATO:<br>{{ requisicao.termino_contrato|date:"d/m/Y" }}</td>
+            <td>TIPO DE CONTRATAÇÃO:<br>{{ requisicao.tipo_contratacao }}</td>
+            <td>ADICIONAIS:<br>{{ requisicao.adicionais|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td>EM SUBSTITUIÇÃO À:<br>{{ requisicao.subtituicao }}</td>
+            <td>MATRÍCULA:<br>{{ requisicao.matricula }}</td>
+            <td colspan="2">JUSTIFICATIVA DA SUBSTITUIÇÃO:<br>{{ requisicao.justificativa_substituicao }}</td>
+        </tr>
+        <tr>
+            <td colspan="4">OUTROS (CITAR):<br>{{ requisicao.justificativa_outros|default:"N/A" }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">PERFIL E REQUISITOS DA VAGA</div>
+    <table class="profile-table">
+        <tr>
+            <td style="width: 25%;">PROCESSO SELETIVO:<br>{{ requisicao.processo_seletivo }}</td>
+            <td style="width: 25%;">FAIXA DE ETÁRIA:<br>{{ requisicao.faixa_etaria_inicio|default:"" }} - {{ requisicao.faixa_etaria_fim|default:"" }}</td>
+            <td style="width: 25%;">CNH:<br>{{ requisicao.cnh }}</td>
+            <td style="width: 25%;">TIPO CNH:<br>{{ requisicao.tipo_cnh|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td>DEPARTAMENTO:<br>{{ requisicao.departamento }}</td>
+            <td>SEXO:<br>{{ requisicao.sexo }}</td>
+            <td>BASE:<br>{{ requisicao.base }}</td>
+            <td>EXIGE VIAGEM:<br>{{ requisicao.exige_viagem }}</td>
+        </tr>
+        <tr>
+            <td>GESTOR IMEDIATO:<br>{{ requisicao.gestor_imediato }}</td>
+            <td>LOCALIDADE:<br>{{ requisicao.localidade }}</td>
+            <td>ESCOLARIDADE:<br>{{ requisicao.escolaridade }}</td>
+            <td>CENTRO DE CUSTO:<br>{{ requisicao.centro_custo }}</td>
+        </tr>
+        <tr>
+            <td colspan="4">CURSOS IMPRESCINDÍVEIS OU DESEJÁVEL:<br>{{ requisicao.cursos }}</td>
+        </tr>
+        <tr>
+            <td colspan="4">EXPERIÊNCIAS DESEJADAS:<br>{{ requisicao.experiencias }}</td>
+        </tr>
+        <tr>
+            <td colspan="4">HABILIDADES COMPORTAMENTAIS:<br>{{ requisicao.habilidades_comportamentais }}</td>
+        </tr>
+        <tr>
+            <td colspan="4">PRINCIPAIS ATRIBUIÇÕES/RESPONSABILIDADE:<br>{{ requisicao.principais_atribuicoes }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">ORIENTAÇÕES SOBRE ADMISSÃO:</div>
+    <p>
+        1. PROCESSO SELETIVO INICIA 24 (DIA UTIL) APÓS A ENTREGA DA RP AO RH, DESDE QUE O PREENCHIMENTO RP ESTEJA CORRETO;<br>
+        2. A RESPONSABILIDADE DE DADOS PREENCHIDOS INCORRETOS NA RP É DO SETOR SOLICITANTE;<br>
+        3. RH NECESSITA NO MÁXIMO DE 30 DIAS ÚTEIS PARA FINALIZAR O PROCESSO SELETIVO (EXCETO PARA MOBILIZAÇÃO);<br>
+        4. RP TERÁ VALIDADE DE 2 MESES A PARTIR DA DATA DE ENTREGA;<br>
+        5. TODA RP DE NOVA VAGA O GESTOR SOLICITANTE JUNTAMENTE COM O SETOR DE RH, DEVE ELABORAR A DESCRIÇÃO DE CARGO;<br>
+        6. FLUXO: RP -> PROCESSO SELETIVO -> PROCESSO ADMISSIONAL -> ADMISSÃO/INTEGRAÇÃO -> INICIO DAS ATIVIDADES.
+    </p>
+
+    <div class="section-title">AUTORIZAÇÕES</div>
+    <table class="signatures-table">
+        <tr>
+            <td style="width: 25%;">Nº RP:<br>{{ requisicao.n_rp }}</td>
+            <td style="width: 25%;">CANDIDATO APROVADO:<br>{{ requisicao.candidato_aprovado }}</td>
+            <td style="width: 25%;"></td>
+            <td style="width: 25%;"></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">RH</div>
+                <div class="signature-label">
+                    {% if assinatura_rh_url %}
+                        <img src="{{ assinatura_rh_url }}" alt="Assinatura rh" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">
+                    DATA: {% if requisicao.data_autorizacao_rh %}
+                        {{ requisicao.data_autorizacao_rh|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">REQUISITANTE</div>
+                <div class="signature-label">
+                    {% if assinatura_gestor_url %}
+                        <img src="{{ assinatura_gestor_url }}" alt="Assinatura Gestor" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">
+                    DATA: {% if requisicao.data_autorizacao_gestor %}
+                        {{ requisicao.data_autorizacao_gestor|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">DIRETORIA DA ÁREA</div>
+                <div class="signature-label">
+                    {% if assinatura_diretor_url%}
+                        <img src="{{ assinatura_diretor_url }}" alt="Assinatura Diretor" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">
+                    DATA: {% if requisicao.data_autorizacao_diretor %}
+                        {{ requisicao.data_autorizacao_diretor|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">PRESIDENTE</div>
+                <div class="signature-label">
+                    {% if assinatura_presidente_url %}
+                        <img src="{{ assinatura_presidente_url }}" alt="Assinatura Presidente" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">
+                    DATA: {% if requisicao.data_autorizacao_presidente %}
+                        {{ requisicao.data_autorizacao_presidente|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+
+
+        </tr>
+    </table>
+
+    <div class="footer">Gerado em: {{ now|date:"d/m/Y H:i" }}</div>
+</body>
+</html>
+
