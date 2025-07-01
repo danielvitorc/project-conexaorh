@@ -74,7 +74,7 @@
             <th>Colaborador</th>
             <th>Cargo Proposto</th>
             <th>Solicitado em</th>
-              <th>Baixar Excel</th>
+            <th>Ação</th>
             </tr>
           </thead>
           <tbody>
@@ -87,6 +87,9 @@
               <td>
                   <a href="{% url 'download_mov_excel' registro.id %}" class="btn btn-download btn-sm">
                     <button class="btn btn-sm btn-success">Baixar Excel</button>
+                  </a>
+                  <a href="{% url 'exportar_movimentacao_pdf' %}?movimentacao={{ registro.id }}" class="btn btn-danger btn-sm">
+                      Exportar PDF
                   </a>
               </td>
             </tr>

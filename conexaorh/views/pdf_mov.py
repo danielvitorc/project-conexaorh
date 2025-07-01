@@ -26,12 +26,13 @@ def exportar_movimentacao_pdf(request):
     context = {
         "movimentacao": movimentacao,
         "now": datetime.now(),
-        "assinatura_rh_url": movimentacao.imagem_assinatura_rh.url if movimentacao.imagem_assinatura_rh else None,
-        "assinatura_gestor_url": movimentacao.imagem_assinatura_gestor_atual.url if movimentacao.imagem_assinatura_gestor_atual else None,
-        "assinatura_gestor_proposto_url": movimentacao.imagem_assinatura_gestor_proposto.url if movimentacao.imagem_assinatura_gestor_proposto else None,
-        "assinatura_diretor_url": movimentacao.imagem_assinatura_diretor.url if movimentacao.imagem_assinatura_diretor else None,
-        "assinatura_presidente_url": movimentacao.imagem_assinatura_presidente.url if movimentacao.imagem_assinatura_presidente else None,
-        "assinatura_complice_url": movimentacao.imagem_assinatura_complice.url if movimentacao.imagem_assinatura_complice else None,
+        "assinatura_rh_url": get_absolute_image_url(movimentacao.imagem_assinatura_rh),
+        "assinatura_gestor_url": get_absolute_image_url(movimentacao.imagem_assinatura_gestor_atual),
+        "assinatura_gestor_proposto_url": get_absolute_image_url(movimentacao.imagem_assinatura_gestor_proposto),
+        "assinatura_diretor_url": get_absolute_image_url(movimentacao.imagem_assinatura_diretor),
+        "assinatura_presidente_url": get_absolute_image_url(movimentacao.imagem_assinatura_presidente),
+        "assinatura_complice_url": get_absolute_image_url(movimentacao.imagem_assinatura_complice),
+
     }
 
     template = get_template("conexaorh/pdf/pdf_template_movimentacao.html")

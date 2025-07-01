@@ -97,23 +97,7 @@
         <tr>
             <td colspan="2">
                 <div class="signature-box"></div>
-                <div class="signature-label">ASSINATURA DO COORD. GESTÃO DE PESSOAS</div>
-                <div class="signature-label">
-                    {% if movimentacao.assinatura_gestao_pessoas %}
-                        {{ movimentacao.assinatura_gestao_pessoas.get_full_name }}
-                    {% else %}
-                        Pendente
-                    {% endif %}
-                </div>
-                <div class="signature-label">DATA:
-                    {% if movimentacao.data_assinatura_gestao_pessoas %}
-                        {{ movimentacao.data_assinatura_gestao_pessoas|date:"d/m/Y" }}
-                    {% endif %}
-                </div>
-            </td>
-            <td colspan="2">
-                <div class="signature-box"></div>
-                <div class="signature-label">AVALIAÇÃO COMPLIANCE</div>
+                <div class="signature-label">ASSINATURA COMPLIANCE</div>
                 <div class="signature-label">
                     {% if assinatura_complice_url %}
                         <img src="{{ assinatura_complice_url }}" alt="Assinatura Complice" width="150">
@@ -125,6 +109,12 @@
                     {% if movimentacao.data_assinatura_complice %}
                         {{ movimentacao.data_assinatura_complice|date:"d/m/Y" }}
                     {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">AVALIAÇÃO COMPLIANCE</div>
+                <div class="signature-label">
                 </div>
             </td>
         </tr>
@@ -149,16 +139,6 @@
                 <div class="signature-box"></div>
                 <div class="signature-label">AVALIAÇÃO RH</div>
                 <div class="signature-label">
-                    {% if movimentacao.avaliacao_rh %}
-                        {{ movimentacao.avaliacao_rh.get_full_name }}
-                    {% else %}
-                        Pendente
-                    {% endif %}
-                </div>
-                <div class="signature-label">DATA:
-                    {% if movimentacao.data_avaliacao_rh %}
-                        {{ movimentacao.data_avaliacao_rh|date:"d/m/Y" }}
-                    {% endif %}
                 </div>
             </td>
         </tr>

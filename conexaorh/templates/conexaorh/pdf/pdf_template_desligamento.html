@@ -1,49 +1,181 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      padding: 30px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .campo {
-      margin-bottom: 8px;
-    }
-    .label {
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Requisição de Desligamento</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 10px; margin: 20px; }
+        .header-table, .data-table, .signatures-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .header-table td, .data-table td, .signatures-table td { border: 1px solid #000; padding: 5px; vertical-align: top; }
+        .header-table .title { text-align: center; font-size: 14px; font-weight: bold; }
+        .section-title { background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 5px; border: 1px solid #000; }
+        .signature-box { height: 50px; border-bottom: 1px solid #000; margin-top: 30px; }
+        .signature-label { text-align: center; font-size: 9px; }
+        .footer { text-align: right; font-size: 9px; margin-top: 20px; }
+    </style>
 </head>
 <body>
-  <h1>REQUISIÇÃO DE DESLIGAMENTO</h1>
+    <table class="header-table">
+        <tr>
+            <td style="width: 20%;">CÓDIGO:<br>F.PRO.DP.05.01</td>
+            <td style="width: 20%;">REVISÃO:<br>01</td>
+            <td class="title" colspan="2">REQUISIÇÃO DE DESLIGAMENTO</td>
+            <td style="width: 20%;">DATA:<br>17/09/2024</td>
+        </tr>
+        <tr>
+            <td colspan="5">DATA DA SOLICITAÇÃO: {{ desligamento.data_solicitacao|date:"d/m/Y" }}</td>
+        </tr>
+    </table>
 
-  <div class="campo"><span class="label">Requisitante:</span> {{ desligamento.requisitante }}</div>
-  <div class="campo"><span class="label">Colaborador:</span> {{ desligamento.colaborador_desligado }}</div>
-  <div class="campo"><span class="label">Matrícula:</span> {{ desligamento.matricula }}</div>
-  <div class="campo"><span class="label">Função:</span> {{ desligamento.funcao }}</div>
-  <div class="campo"><span class="label">Salário:</span> R$ {{ desligamento.salario }}</div>
-  <div class="campo"><span class="label">Centro de Custo:</span> {{ desligamento.centro_custo }}</div>
-  <div class="campo"><span class="label">Localidade:</span> {{ desligamento.localidade }}</div>
-  <div class="campo"><span class="label">Data Admissão:</span> {{ desligamento.data_admissao }}</div>
-  <div class="campo"><span class="label">Data Desligamento:</span> {{ desligamento.data_desligamento }}</div>
-  <div class="campo"><span class="label">Tipo de Desligamento:</span> {{ desligamento.tipo_desligamento }}</div>
-  <div class="campo"><span class="label">Motivo:</span> {{ desligamento.motivo_desligamento }}</div>
-  {% if desligamento.outro_motivo %}
-  <div class="campo"><span class="label">Outro Motivo:</span> {{ desligamento.outro_motivo }}</div>
-  {% endif %}
-  <div class="campo"><span class="label">Justificativa Desligamento:</span> {{ desligamento.justificativa_desligamento }}</div>
-  <div class="campo"><span class="label">Tipo Aviso:</span> {{ desligamento.tipo_aviso }}</div>
-  <div class="campo"><span class="label">Justificativa Aviso:</span> {{ desligamento.justificativa_aviso }}</div>
-  <div class="campo"><span class="label">Substituição:</span> {{ desligamento.substituicao }}</div>
-  <div class="campo"><span class="label">Bloqueio de Readmissão:</span> {{ desligamento.bloqueio_readmissao|yesno:"Sim,Não" }}</div>
+    <div class="section-title">DADOS DO COLABORADOR</div>
+    <table class="data-table">
+        <tr>
+            <td style="width: 25%;">REQUISITANTE:<br>{{ desligamento.requisitante }}</td>
+            <td style="width: 25%;">COLABORADOR A SER DESLIGADO:<br>{{ desligamento.colaborador_desligado }}</td>
+            <td style="width: 25%;">MATRÍCULA:<br>{{ desligamento.matricula }}</td>
+            <td style="width: 25%;">DATA DO DESLIGAMENTO:<br>{{ desligamento.data_desligamento|date:"d/m/Y" }}</td>
+        </tr>
+        <tr>
+            <td>FUNÇÃO:<br>{{ desligamento.funcao }}</td>
+            <td>SALÁRIO:<br>R$ {{ desligamento.salario|floatformat:2 }}</td>
+            <td>DATA DE ADMISSÃO:<br>{{ desligamento.data_admissao|date:"d/m/Y" }}</td>
+            <td>LOCALIDADE:<br>{{ desligamento.localidade }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">CENTRO DE CUSTO:<br>{{ desligamento.centro_custo }}</td>
+            <td colspan="2">TIPO DE DESLIGAMENTO:<br>{{ desligamento.tipo_desligamento }}</td>
+        </tr>
+    </table>
 
-  <hr>
-  <div class="campo"><span class="label">Gerado em:</span> {{ now|date:"d/m/Y H:i" }}</div>
+    <div class="section-title">MOTIVO DO DESLIGAMENTO</div>
+    <table class="data-table">
+        <tr>
+            <td colspan="4">{{ desligamento.motivo_desligamento }}</td>
+        </tr>
+        {% if desligamento.outro_motivo %}
+        <tr>
+            <td colspan="4">OUTRO (CITAR):<br>{{ desligamento.outro_motivo }}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <div class="section-title">JUSTIFICATIVA</div>
+    <table class="data-table">
+        <tr>
+            <td colspan="4">{{ desligamento.justificativa_desligamento }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">AVISO PRÉVIO</div>
+    <table class="data-table">
+        <tr>
+            <td style="width: 50%;">TIPO DE AVISO:<br>{{ desligamento.tipo_aviso }}</td>
+            <td style="width: 50%;">SUBSTITUIÇÃO:<br>{{ desligamento.substituicao }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">JUSTIFICATIVA DO AVISO:<br>{{ desligamento.justificativa_aviso }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">BLOQUEIO DE READMISSÃO:<br>{% if desligamento.bloqueio_readmissao %}SIM{% else %}NÃO{% endif %}</td>
+        </tr>
+        <tr>
+            <td colspan="2">OBS: Caso seja necessária a substituição, providenciar a RP.</td>
+        </tr>
+    </table>
+
+    <div class="section-title">ESPAÇO RESERVADO A GESTÃO DE PESSOAS</div>
+    <table class="signatures-table">
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">RH</div>
+                <div class="signature-label">
+                    {% if assinatura_rh_url %}
+                        <img src="{{ assinatura_rh_url }}" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if desligamento.data_autorizacao_rh %}
+                        {{ desligamento.data_autorizacao_rh|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">AVALIAÇÃO RH</div>
+                <div class="signature-label">
+                    {% if desligamento.rh_aprovacao %}
+                        {{ desligamento.rh_aprovacao }}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">AUTORIZAÇÕES</div>
+    <table class="signatures-table">
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">GESTOR</div>
+                <div class="signature-label">
+                  {% if assinatura_gestor_url %}
+                      <img src="{{ assinatura_gestor_url }}" width="150">
+                  {% else %}
+                      Pendente
+                  {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if desligamento.data_autorizacao_gestor %}
+                        {{ desligamento.data_autorizacao_gestor|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">DIRETORIA DA ÁREA</div>
+                <div class="signature-label">
+                    {% if assinatura_diretor_url %}
+                        <img src="{{ assinatura_diretor_url }}" width="150">
+                    {% else %}
+                        Pendente
+                    {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if desligamento.data_autorizacao_diretor %}
+                        {{ desligamento.data_autorizacao_diretor|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="signature-box"></div>
+                <div class="signature-label">PRESIDENTE</div>
+                <div class="signature-label">
+                      {% if assinatura_presidente_url %}
+                          <img src="{{ assinatura_presidente_url }}" width="150">
+                      {% else %}
+                          Pendente
+                      {% endif %}
+                </div>
+                <div class="signature-label">DATA:
+                    {% if desligamento.data_autorizacao_presidente %}
+                        {{ desligamento.data_autorizacao_presidente|date:"d/m/Y" }}
+                    {% endif %}
+                </div>
+            </td>
+            <td colspan="2">
+                <div style="height: 50px;"></div>
+                <div class="signature-label">ESPAÇO RESERVADO</div>
+            </td>
+        </tr>
+    </table>
+
+<div class="footer">Gerado em: {{ now|date:"d/m/Y H:i" }}</div>
+
 </body>
 </html>
+

@@ -77,7 +77,7 @@
                         <th>Tipo</th>
                         <th>Requisitante</th>
                         <th>Data de Solicitação</th>
-                        <th>Baixar Excel</th>
+                        <th>Ação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,24 +94,49 @@
                             </td>
                             <td>{{ registro.usuario.get_full_name }}</td>
                             <td>{{ registro.data_solicitacao|date:"d/m/Y - H:i" }}</td>
-                            <td>
+                                                        <td>
                                 {% if registro.rh_aprovacao == 'AUTORIZADO' %}
                                     {% if registro.tipo == 'RP' %}
-                                        <a href="{% url 'download_rp_excel' registro.id %}">
-                                            <button class="btn btn-sm btn-success">Baixar Excel</button>
-                                        </a>
+                                    <a href="{% url 'download_rp_excel' registro.id %}" class="btn btn-download btn-sm">
+                                    <button class="btn btn-sm btn-success">Baixar Excel</button>
+                                    </a>
                                     {% elif registro.tipo == 'MOV' %}
-                                        <a href="{% url 'download_mov_excel' registro.id %}">
-                                            <button class="btn btn-sm btn-success">Baixar Excel</button>
-                                        </a>
+                                    <a href="{% url 'download_mov_excel' registro.id %}" class="btn btn-download btn-sm">
+                                        <button class="btn btn-sm btn-success">Baixar Excel</button>
+                                    </a>
                                     {% elif registro.tipo == 'RD' %}
-                                        <a href="{% url 'download_rd_excel' registro.id %}">
-                                            <button class="btn btn-sm btn-success">Baixar Excel</button>
-                                        </a>
+                                    <a href="{% url 'download_rd_excel' registro.id %}" class="btn btn-download btn-sm">
+                                        <button class="btn btn-sm btn-success">Baixar Excel</button>
+                                    </a>
                                     {% endif %}
                                 {% else %}
-                                        Não Completo
+                                    ⛔ Não Autorizado
                                 {% endif %}
+                                {% if registro.tipo == 'RP' %}
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalRP{{ registro.id }}">
+                                    Detalhes
+                                    </button>
+                                    <a href="{% url 'exportar_requisicao_pdf' %}?requisicao={{ registro.id }}" class="btn btn-danger btn-sm">
+                                        Exportar PDF
+                                    </a>
+                                {% elif registro.tipo == 'MOV' %}
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalMOV{{ registro.id }}">
+                                    Detalhes
+                                    </button>
+                                    <a href="{% url 'exportar_movimentacao_pdf' %}?movimentacao={{ registro.id }}" class="btn btn-danger btn-sm">
+                                        Exportar PDF
+                                    </a>
+
+                                {% elif registro.tipo == 'RD' %}
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalRD{{ registro.id }}">
+                                    Detalhes
+                                    </button>
+                                    <a href="{% url 'exportar_desligamento_pdf' %}?desligamento={{ registro.id }}" class="btn btn-danger btn-sm" target="_blank">
+                                    Exportar PDF
+                                    </a>
+
+                                {% endif %}
+
                             </td>
                         </tr>
                     {% empty %}

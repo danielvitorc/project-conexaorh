@@ -14,11 +14,22 @@ def exportar_desligamento_pdf(request):
         return redirect("registros_gestor")
 
     desligamento = get_object_or_404(RequisicaoDesligamento, id=desligamento_id)
-    template = get_template("conexaorh/pdf/pdf_template_desligamento.html")
+
+    def get_absolute_image_url(image_field):
+        if image_field:
+            return request.build_absolute_uri(image_field.url)
+        return None
+
     context = {
         "desligamento": desligamento,
         "now": datetime.now(),
+        "assinatura_gestor_url": get_absolute_image_url(desligamento.imagem_assinatura_gestor),
+        "assinatura_diretor_url": get_absolute_image_url(desligamento.imagem_assinatura_diretor),
+        "assinatura_presidente_url": get_absolute_image_url(desligamento.imagem_assinatura_presidente),
+        "assinatura_rh_url": get_absolute_image_url(desligamento.imagem_assinatura_rh),
     }
+
+    template = get_template("conexaorh/pdf/pdf_template_desligamento.html")
     html = template.render(context)
 
     buffer = BytesIO()
