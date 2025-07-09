@@ -77,7 +77,7 @@
                 <th>Ass. Diretor</th>
                 <th>Ass. Presidente</th>
                 <th>Ass. RH</th>
-                <th>Tempo (dias)</th>
+                <th>Tempo para Autorização do Diretor (dias)</th>
             </tr>
             </thead>
             <tbody>
@@ -90,27 +90,38 @@
 
                 <!-- Assinatura Diretor -->
                 <td>
-                {% if registro.assinatura_diretor %}
-                    <p>Aprovado pelo Diretor:</p>
-                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-                {% else %}
-                    <form method="post" enctype="multipart/form-data" style="margin: 0;">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                    <input type="hidden" name="tipo_registro" value="rp">
-                    <button type="submit" class="botao-aprovar">Aprovar</button>
-                    </form>
-                {% endif %}
+                    {% if registro.diretor_aprovacao == 'AUTORIZADO' %}
+                        <p>Aprovado pelo Diretor:</p>
+                        <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                    {% elif registro.diretor_aprovacao == 'NÃO AUTORIZADO' %}
+                        <p style="color: red;">Reprovado pelo Diretor:</p>
+                        <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                    {% else %}
+                        <form method="post" enctype="multipart/form-data" style="margin: 0;">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                            <input type="hidden" name="tipo_registro" value="rp">
+                            <button type="submit" class="botao-aprovar">Cadastrar</button>
+                        </form>
+                    {% endif %}
                 </td>
 
                 <!-- Assinatura Presidente -->
                 <td>
-                {% if registro.assinatura_presidente %}
-                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-                {% else %}
-                    -
-                {% endif %}
+                    {% if registro.diretor_aprovacao == "PENDENTE" or not registro.diretor_aprovacao %}
+                        <p style="color: orange;">Aguardando Autorização do Diretor</p>
+
+                    {% elif registro.diretor_aprovacao == "NÃO AUTORIZADO" %}
+                        <i class="fa-solid fa-xmark" style="color: red;"></i> Não autorizado
+
+                    {% elif registro.diretor_aprovacao == "AUTORIZADO" %}
+                        {% if registro.assinatura_presidente %}
+                            <i class="fa-solid fa-check" style="color: green;"></i> Assinado
+                        {% else %}
+                            <i class="fa-solid fa-hourglass-half" style="color: orange;"></i> Aguardando assinatura do presidente
+                        {% endif %}
+                    {% endif %}
                 </td>
 
                 <!-- Assinatura RH -->
@@ -118,7 +129,12 @@
                 {% if registro.assinatura_rh %}
                     <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
-                    -
+                    {% if registro.diretor_aprovacao == "NÃO AUTORIZADO" %}
+                        <i class="fa-solid fa-xmark" style="color: red;"></i>
+                    {% endif %}
+                    {% if not registro.diretor_aprovacao %}
+                        -
+                    {% endif %}
                 {% endif %}
                 </td>
 
@@ -126,7 +142,11 @@
                 <td>
                 {% if registro.dias_para_autorizacao_diretor is not None %}
                     {% if registro.dias_para_autorizacao_diretor == 0 %}
-                    <span>Aprovado no mesmo dia</span>
+                        {% if registro.diretor_aprovacao == "AUTORIZADO"%}
+                            <span>Aprovado no mesmo dia</span>
+                        {% elif registro.diretor_aprovacao == "NÃO AUTORIZADO"%}
+                            <span>Reprovado no mesmo dia</span>
+                        {% endif %}
                     {% else %}
                     {{ registro.dias_para_autorizacao_diretor }} dias
                     {% endif %}

@@ -4,8 +4,8 @@ from django.utils.timezone import now
 from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from itertools import chain
-from ..forms import PresidenteForm, PresidenteFormRD, PresidenteFormMOV
-from ..models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
+from conexaorh.forms import PresidenteFormRP, PresidenteFormMOV, PresidenteFormRD
+from conexaorh.models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 
 @login_required
 def presidente_page(request):
@@ -39,18 +39,19 @@ def presidente_page(request):
     return render(request, "conexaorh/presidente/presidente.html", {
         "registros": registros, "usuario": request.user,
     })
+
 @login_required
 def presidente_rp(request):
     if request.user.user_type != "presidente":
         return HttpResponseForbidden("Acesso Negado!")
     
     registros = RequisicaoPessoal.objects.filter(diretor_aprovacao="AUTORIZADO").order_by('-data_solicitacao')
-    form = PresidenteForm()
+    form = PresidenteFormRP()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
-        form = PresidenteForm(request.POST, request.FILES, instance=registro)
+        form = PresidenteFormRP(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
@@ -95,6 +96,7 @@ def presidente_mov(request):
             return redirect("presidente_mov")
 
     return render(request, "conexaorh/presidente/mov.html", {"registros": registros, "usuario": request.user,"form": form})
+
 
 @login_required
 def presidente_rd(request):

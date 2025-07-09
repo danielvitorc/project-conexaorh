@@ -4,8 +4,8 @@ from django.utils.timezone import now
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from itertools import chain
 from django.db.models import Q
-from ..forms import  CompliceApprovalForm
-from ..models import MovimentacaoPessoal, RequisicaoDesligamento, RequisicaoPessoal
+from conexaorh.forms import CompliceFormMOV
+from conexaorh.models import MovimentacaoPessoal
 
 @login_required
 def complice_page(request):
@@ -14,7 +14,7 @@ def complice_page(request):
 
     movimentacao = MovimentacaoPessoal.objects.all()
 
-    form = CompliceApprovalForm()
+    form = CompliceFormMOV()
 
     if request.method == 'POST':
         registro_id = request.POST.get('registro_id')
@@ -22,7 +22,7 @@ def complice_page(request):
             return HttpResponseBadRequest("ID do registro não informado.")
         
         registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-        form = CompliceApprovalForm(request.POST, request.FILES, instance=registro)
+        form = CompliceFormMOV(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)

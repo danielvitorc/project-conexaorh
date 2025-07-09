@@ -2,10 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.db.models import Q
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden
 from itertools import chain
-from ..forms import DiretorForm, DiretorFormRD, DiretorFormMOV
-from ..models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
+from conexaorh.forms import DiretorFormRP, DiretorFormMOV, DiretorFormRD
+from conexaorh.models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
+
 
 @login_required
 def diretor_page(request):
@@ -48,12 +49,12 @@ def diretor_rp(request):
         return HttpResponseForbidden("Acesso negado!")
 
     registros = RequisicaoPessoal.objects.all().select_related("usuario").order_by('-data_solicitacao')
-    form = DiretorForm()
+    form = DiretorFormRP()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
-        form = DiretorForm(request.POST, request.FILES, instance=registro)
+        form = DiretorFormRP(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
@@ -122,5 +123,4 @@ def diretor_rd(request):
             return redirect("diretor_rd")
 
     return render(request, "conexaorh/diretor/rd.html", {"registros": registros, "form": form, "usuario": request.user})
-
 

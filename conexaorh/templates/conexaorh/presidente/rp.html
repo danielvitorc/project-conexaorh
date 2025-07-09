@@ -46,25 +46,22 @@
         <thead>
           <tr>
             <th>Requisitante</th>
-            <th>Data de Solicitação</th>
             <th>Cargo</th>
             <th>Base</th>
+            <th>Solicitado em</th>
             <th>Ass. Diretor</th>
-            <th>Data Diretor</th>
             <th>Ass. Presidente</th>
-            <th>Data Presidente</th>
             <th>Ass. RH</th>
-            <th>Data RH</th>
-            <th>Tempo (dias)</th>
+            <th>Tempo para Autorização do Presidente (dias)</th>
           </tr>
         </thead>
         <tbody>
           {% for registro in registros %}
           <tr>
             <td>{{ registro.requisitante }}</td>
-            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
             <td>{{ registro.cargo }}</td>
             <td>{{ registro.base }}</td>
+            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
             <td>    
                 {% if registro.assinatura_diretor %}
                     <i class="fa-solid fa-check" style="color: green;">Assinado</i>
@@ -73,32 +70,25 @@
                 {% endif %}
             </td>
 
-            <td>
-              {% if registro.assinatura_diretor %}
-                {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
-              {% else %}-{% endif %}
-            </td>
-
             <!-- Assinatura Presidente -->
             <td>
               {% if registro.assinatura_presidente %}
-               <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                {% if registro.presidente_aprovacao == 'AUTORIZADO' %}
+                  <p>Aprovado pelo Presidente:</p>
+                  <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                {% elif registro.presidente_aprovacao == 'NÃO AUTORIZADO' %}
+                  <p>Reprovado pelo Presidente:</p>
+                  <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                {% endif %}
               {% else %}
                 <form method="post" enctype="multipart/form-data" style="margin: 0;">
                   {% csrf_token %}
                   {{ form.as_p }}
                   <input type="hidden" name="registro_id" value="{{ registro.id }}">
                   <input type="hidden" name="tipo_registro" value="rp">
-                  <button type="submit" class="botao-aprovar">Aprovar</button>
+                  <button type="submit" class="botao-aprovar">Cadastrar</button>
                 </form>
               {% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_presidente %}
-                    {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
             </td>
             <td>    
                 {% if registro.assinatura_rh %}

@@ -2,10 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.db.models import Q
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden
 from itertools import chain
-from ..forms import  RHForm, RHFormRD, RHFormMOV
-from ..models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
+from conexaorh.forms import RHFormRP, RHFormMOV, RHFormRD
+from conexaorh.models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 
 @login_required
 def rh_page(request):
@@ -47,15 +47,16 @@ def rh_rp(request):
         return HttpResponseForbidden("Acesso negado!")
 
     registros = RequisicaoPessoal.objects.filter(presidente_aprovacao="AUTORIZADO").order_by('-data_solicitacao')
-    form = RHForm()
+    form = RHFormRP()
 
     if request.method == "POST":
         registro_id = request.POST.get("registro_id")
         registro = get_object_or_404(RequisicaoPessoal, id=registro_id)
-        form = RHForm(request.POST, request.FILES, instance=registro)
+        form = RHFormRP(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             registro = form.save(commit=False)
+            form.save(user=request.user)
             # se acabou de assinar
             if registro.assinatura_rh and registro.data_autorizacao_rh is None:
                 registro.data_autorizacao_rh = now()
@@ -67,6 +68,7 @@ def rh_rp(request):
             return redirect("rh_rp")
 
     return render(request, "conexaorh/rh/rp.html", {"registros": registros,"usuario": request.user, "form": form})
+
 
 @login_required
 def rh_mov(request):

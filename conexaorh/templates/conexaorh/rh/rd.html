@@ -68,7 +68,6 @@
             <th>Assinatura RH</th>
             <th>Data Assinatura RH</th>
             <th>Tempo para Autorização (dias)</th>
-            <th>Download Excel</th>
           </tr>
         </thead>
         <tbody>
@@ -131,11 +130,6 @@
                   {{ registro.dias_para_autorizacao_rh }} dias
                 {% endif %}
               {% else %}-{% endif %}
-            </td>
-            <td>
-              <a href="{% url 'download_rd_excel' registro.id %}">
-                <button class="btn btn-sm btn-success">Baixar Excel</button>
-              </a>
             </td>
           </tr>
           {% empty %}

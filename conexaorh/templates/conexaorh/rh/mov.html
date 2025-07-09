@@ -66,7 +66,6 @@
                         <th>Assinatura RH</th>
                         <th>Data Aprovação RH</th>
                         <th>Tempo para Aprovação (dias)</th>
-                        <th>Download Excel</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -135,11 +134,6 @@
                             {% else %}
                                 -
                             {% endif %}
-                        </td>
-                        <td>
-                            <a href="{% url 'download_mov_excel' registro.id %}">
-                                <button class="btn btn-sm btn-success">Baixar Excel</button>
-                            </a>
                         </td>
                     </tr>
                         {% empty %}

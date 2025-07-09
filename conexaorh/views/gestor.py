@@ -5,8 +5,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from itertools import chain
-from ..forms import RequisicaoPessoalForm, MovimentacaoPessoalForm, RequisicaoDesligamentoForm, GestorPropostoApprovalForm
-from ..models import MovimentacaoPessoal, RequisicaoPessoal, RequisicaoDesligamento
+from conexaorh.forms import RequisicaoPessoalForm, MovimentacaoPessoalForm, RequisicaoDesligamentoForm, GestorPropostoMOV
+from conexaorh.models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
 
 @login_required
 def gestor_page(request):
@@ -17,11 +17,13 @@ def gestor_page(request):
     form_movimentacao = MovimentacaoPessoalForm()
     form_rd = RequisicaoDesligamentoForm()
    
+    
     movimentacao = MovimentacaoPessoal.objects.filter(
         complice_aprovacao="AUTORIZADO",
         gestor_proposto=request.user.username
     )
-    form = GestorPropostoApprovalForm()
+    
+    form = GestorPropostoMOV()
 
     if request.method == "POST":
         if "submit_rp" in request.POST:
@@ -29,7 +31,7 @@ def gestor_page(request):
             if form_rp.is_valid():
                 form_rp.save(user=request.user)
                 return redirect("gestor_page")
-
+            
         elif "submit_movimentacao" in request.POST:
             form_movimentacao = MovimentacaoPessoalForm(request.POST, request.FILES)
             if form_movimentacao.is_valid():
@@ -42,7 +44,7 @@ def gestor_page(request):
                 return HttpResponseBadRequest("ID do registro não informado.")
             
             registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-            form = GestorPropostoApprovalForm(request.POST, request.FILES, instance=registro)
+            form = GestorPropostoMOV(request.POST, request.FILES, instance=registro)
 
             if form.is_valid():
                 form.save(user=request.user, gestor_role="proposto")
@@ -55,7 +57,7 @@ def gestor_page(request):
                             now().date() - registro.data_solicitacao.date()
                         ).days
             return redirect("gestor_page")
-            
+
         elif "submit_rd" in request.POST:
             form_rd = RequisicaoDesligamentoForm(request.POST, request.FILES)
             if form_rd.is_valid():
@@ -77,6 +79,7 @@ def gestor_page(request):
 
     return render(request, "conexaorh/gestor/gestor.html", context)
 
+
 @login_required
 def movimentacoes_pendentes(request):
     if request.user.user_type != 'gestor':
@@ -87,7 +90,7 @@ def movimentacoes_pendentes(request):
         ~Q(assinatura_complice=""),
         gestor_proposto=request.user.username
     )
-    form = GestorPropostoApprovalForm()
+    form = GestorPropostoMOV()
 
     if request.method == "POST" and "submit_aprovacao_mov" in request.POST:
         registro_id = request.POST.get("registro_id")
@@ -95,7 +98,7 @@ def movimentacoes_pendentes(request):
             return HttpResponseBadRequest("ID do registro não informado.")
         
         registro = get_object_or_404(MovimentacaoPessoal, id=registro_id)
-        form = GestorPropostoApprovalForm(request.POST, request.FILES, instance=registro)
+        form = GestorPropostoMOV(request.POST, request.FILES, instance=registro)
 
         if form.is_valid():
             assinatura = form.cleaned_data['assinatura_gestor_proposto']
