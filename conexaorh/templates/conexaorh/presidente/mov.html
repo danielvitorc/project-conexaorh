@@ -58,14 +58,11 @@
                         <th>Gestor Atual</th>
                         <th>Colaborador a ser movimentado</th>
                         <th>Cargo Proposto</th>
-                        <th>Data de Solicitação</th>
-                        <th>Assinatura Diretor</th>
-                        <th>Data Aprovação Diretor</th>
-                        <th>Assinatura Presidente</th>
-                        <th>Data Aprovação Presidente</th>
-                        <th>Assinatura RH</th>
-                        <th>Data Aprovação RH</th>
-                        <th>Tempo para Aprovação (dias)</th>
+                        <th>Solicitado em</th>
+                        <th>Ass. Diretor</th>
+                        <th>Ass. Presidente</th>
+                        <th>Ass. RH</th>
+                        <th>Tempo para Autorização do Presidente (dias)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,16 +81,12 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if registro.assinatura_diretor  %}
-                                {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if registro.assinatura_presidente %}
-                                <p>Aprovado pelo Presidente:</p>
-                                <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                            {% if registro.presidente_aprovacao == 'AUTORIZADO' %}
+                                 <p>Aprovado pelo presidente:</p>
+                                 <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                             {% elif registro.presidente_aprovacao == 'NÃO AUTORIZADO' %}
+                                 <p style="color: red;">Reprovado pelo presidente:</p>
+                                 <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                             {% else %}
                                 <form method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
@@ -104,28 +97,13 @@
                                 </form>
                             {% endif %}
                         </td>
-                        <td>
-                            {% if registro.assinatura_presidente %}
-                                {{ registro.data_autorizacao_presidente|date:"d/m/Y H:i" }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
                         <td>    
                             {% if registro.assinatura_rh %}
                                 <i class="fa-solid fa-check" style="color: green;"></i>
                             {% else %}
                                 -
                             {% endif %}
-                        </td>
-                        <td>
-                            {% if registro.assinatura_rh %}
-                                {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        
+                        </td>                        
                         <td>
                             {% if registro.dias_para_autorizacao_presidente is not None %}
                                 {% if registro.dias_para_autorizacao_presidente == 0 %}

@@ -52,22 +52,19 @@
     <!-- Tabela estilizada -->
     <div class="card-tabela-estilizada">
       <div class="tabela-header">
-        <h3>Registros de Desligamento</h3>
+        <h3>Registros de Requisição de Desligamento</h3>
       </div>
       <table class="tabela-moderninha">
         <thead>
           <tr>
             <th>Requisitante</th>
-            <th>Colaborador a ser Desligado</th>
+            <th>Colaborador</th>
             <th>Função</th>
-            <th>Data de Solicitação</th>
-            <th>Assinatura Diretor</th>
-            <th>Data Assinatura Diretor</th>
-            <th>Assinatura Presidente</th>
-            <th>Data Assinatura Presidente</th>
-            <th>Assinatura RH</th>
-            <th>Data Assinatura RH</th>
-            <th>Tempo para Autorização (dias)</th>
+            <th>Solicitado em</th>
+            <th>Ass. Diretor</th>
+            <th>Ass. Presidente</th>
+            <th>Ass. RH</th>
+            <th>Tempo para Autorização do RH/DP </th>
           </tr>
         </thead>
         <tbody>
@@ -84,13 +81,6 @@
                     -
                 {% endif %}
             </td>
-            <td>
-                {% if registro.assinatura_diretor %}
-                    {{ registro.data_autorizacao_diretor|date:"d/m/Y H:i" }}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
             <td>    
                 {% if registro.assinatura_presidente %}
                     <i class="fa-solid fa-check" style="color: green;">Assinado</i>
@@ -99,28 +89,21 @@
                 {% endif %}
             </td>
             <td>
-              {% if registro.assinatura_presidente %}
-                <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-              {% else %}-{% endif %}
-            </td>
-            <td>
-                {% if registro.assinatura_rh %}
-                    <p>Aprovado pelo RH:</p>
-                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                {% if registro.rh_aprovacao == 'AUTORIZADO' %}
+                     <p>Aprovado pelo presidente:</p>
+                     <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                {% elif registro.rh_aprovacao == 'NÃO AUTORIZADO' %}
+                     <p style="color: red;">Reprovado pelo presidente:</p>
+                     <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
                         <input type="hidden" name="tipo_registro" value="rd">
-                        <button type="submit" class="botao-aprovar">Aprovar</button>
+                        <button type="submit" class="botao-aprovar">Cadastrar</button>
                     </form>
                 {% endif %}
-            </td>
-            <td>
-              {% if registro.assinatura_rh %}
-                {{ registro.data_autorizacao_rh|date:"d/m/Y H:i" }}
-              {% else %}-{% endif %}
             </td>
             <td>
               {% if registro.dias_para_autorizacao_rh is not None %}

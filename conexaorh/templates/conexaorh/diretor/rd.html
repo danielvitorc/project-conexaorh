@@ -54,7 +54,7 @@
             <th>Ass. Diretor</th>
             <th>Ass. Presidente</th>
             <th>Ass. RH</th>
-            <th>Tempo (dias)</th>
+            <th>Tempo para Autorização do Diretor (dias)</th>
           </tr>
         </thead>
         <tbody>
@@ -67,16 +67,19 @@
 
             <!-- Diretor -->
             <td>
-                {% if registro.assinatura_diretor %}
-                    <p>Aprovado pelo Diretor:</p>
-                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                {% if registro.diretor_aprovacao == 'AUTORIZADO' %}
+                     <p>Aprovado pelo presidente:</p>
+                     <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                {% elif registro.diretor_aprovacao == 'NÃO AUTORIZADO' %}
+                     <p style="color: red;">Reprovado pelo presidente:</p>
+                     <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                 {% else %}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
                         <input type="hidden" name="tipo_registro" value="rd">
-                        <button type="submit" class="botao-aprovar">Aprovar</button>
+                        <button type="submit" class="botao-aprovar">Cadastrar</button>
                     </form>
                 {% endif %}
             </td>

@@ -125,6 +125,37 @@ class MovimentacaoPessoalForm(forms.ModelForm):
             'data_admissao': DateInput(attrs={'type': 'date'}),
             'data_movimentacao': DateInput(attrs={'type': 'date'}),
         }
+        
+        labels = {
+            'unidade' : 'Unidade',
+            'tipo_movimentacao' : 'Tipo de Movimentação',
+            'outro_tipo' : 'Outro Tipo',
+            'colaborador_movimentado' : 'Colaborador Movimentado',
+            'matricula' : 'Matrícula',
+            'data_admissao' : 'Data de Admissão',
+            'outro_info' : 'Outras Informações',
+            'localidade_atual' : 'Localidade Atual',
+            'cargo_atual' : 'Cargo Atual',
+            'departamento_atual' : 'Departamento Atual',
+            'salario_atual' : 'Salário Atual',
+            'gestor_atual' : 'Gestor Atual',
+            'centro_custo_atual' : 'Centro de Custo Atual',
+            'localidade_proposta' : 'Localidade Proposta',
+            'cargo_proposta' : 'Cargo Proposta',
+            'departamento_proposta' : 'Departamento Proposta',
+            'salario_proposta' : 'Salário Proposta',
+            'gestor_proposto' : 'Gestor Proposto',
+            'centro_custo_proposta' : 'Centro de Custo Proposta',
+            'data_movimentacao' : 'Data de Movimentação',
+            'tipo_adicional' : 'Tipo de Adicional',
+            'tipo_ajuda_custo' : 'Tipo de Ajuda de Custo',
+            'valor_ajuda' : 'Valor da Ajuda',
+            'periodo' : 'Período',
+            'jutificativa_movimentacao' : 'Justificativa da Movimentação',
+            'outro_justificativa' : 'Outra Justificativa',
+            'substituicao' : 'Substituição',
+            'comentario' : 'Comentários',
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

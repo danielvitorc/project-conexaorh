@@ -98,10 +98,25 @@ class RequisicaoDesligamentoForm(forms.ModelForm):
             'data_desligamento': DateInput(attrs={'type': 'date'}),
             'data_admissao': DateInput(attrs={'type': 'date'}),
         }
-        labels = {
-            'bloqueio_readmissao': 'Bloqueio de Readmissão'
+        labels = {       
+            'requisitante': 'Requisitante',
+            'colaborador_desligado': 'Colaborador Desligado',
+            'data_desligamento': 'Data do Desligamento',
+            'funcao': 'Função',
+            'salario': 'Salário',
+            'localidade': 'Localidade',
+            'matricula': 'Matrícula',
+            'data_admissao': 'Data de Admissão',
+            'centro_custo': 'Centro de Custo',
+            'tipo_desligamento': 'Tipo de Desligamento',
+            'motivo_desligamento': 'Motivo do Desligamento',
+            'outro_motivo': 'Outro Motivo',
+            'justificativa_desligamento': 'Justificativa do Desligamento',
+            'tipo_aviso': 'Tipo de Aviso',
+            'justificativa_aviso': 'Justificativa do Aviso',
+            'substituicao': 'Será necessário substituição?',
+            'bloqueio_readmissao': 'Bloqueio de Readmissão',
         }
-
 
     def save(self, commit=True, user=None):
         instance = super().save(commit=False)

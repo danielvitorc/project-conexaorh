@@ -106,6 +106,43 @@ class RequisicaoPessoalForm(forms.ModelForm):
             
         }
 
+        labels = {
+            'requisitante': 'Requisitante',
+            'cargo': 'Cargo',
+            'salario': 'Salário',
+            'adicionais': 'Adicionais',
+            'Quantidade_vagas': 'Quantidade de Vagas',
+            'horario_trabalho_inicio': 'Horário de Trabalho Início',
+            'horario_trabalho_fim': 'Horário de Trabalho Fim',
+            'tipo_ponto': 'Tipo de Ponto',
+            'inicio_contrato': 'Início do Contrato',
+            'termino_contrato': 'Término do Contrato',
+            'tipo_contratacao': 'Tipo de Contratação',
+            'motivo_contracao': 'Motivo de Contratação',
+            'beneficios': 'Benefícios',
+            'subtituicao': 'Substituição',
+            'matricula': 'Matrícula',
+            'justificativa_substituicao': 'Justificativa da Substituição',
+            'justificativa_outros': 'Outros',
+            'processo_seletivo': 'Processo Seletivo',
+            'localidade': 'Localidade',
+            'base': 'Base',
+            'sexo': 'Sexo',
+            'exige_viagem': 'Exige Viagem',
+            'cnh': 'CNH',
+            'tipo_cnh': 'Tipo de CNH',  
+            'outros': 'Outros',
+            'departamento': 'Departamento',
+            'escolaridade': 'Escolaridade',
+            'gestor_imediato': 'Gestor Imediato',
+            'centro_custo': 'Centro de Custo',
+            'cursos': 'Cursos',
+            'experiencias': 'Experiências',
+            'habilidades_comportamentais': 'Habilidades Comportamentais',
+            'principais_atribuicoes': 'Principais Atribuições',
+            'candidato_aprovado': 'Candidato Aprovado'
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.beneficios:
