@@ -92,11 +92,12 @@
             </td>
             <td>                    
                 {% if registro.presidente_aprovacao == "PENDENTE" or not registro.presidente_aprovacao %}
-                    <p style="color: orange;">Aguardando Autorização do Diretor</p>    
-                {% if registro.assinatura_rh %}
-                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-                {% else %}
-                    -
+                    <p style="color: orange;">Aguardando Autorização do Presidente</p>    
+                    {% if registro.assinatura_rh %}
+                        <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                    {% else %}
+                        -
+                    {% endif %}
                 {% endif %}
             </td>
 

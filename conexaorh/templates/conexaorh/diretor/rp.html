@@ -113,29 +113,30 @@
                         <p style="color: orange;">Aguardando Autorização do Diretor</p>
 
                     {% elif registro.diretor_aprovacao == "NÃO AUTORIZADO" %}
-                        <i class="fa-solid fa-xmark" style="color: red;"></i> Não autorizado
+                        <i class="fa-solid fa-xmark" style="color: red;"></i>
 
                     {% elif registro.diretor_aprovacao == "AUTORIZADO" %}
                         {% if registro.assinatura_presidente %}
-                            <i class="fa-solid fa-check" style="color: green;"></i> Assinado
+                            <i class="fa-solid fa-check" style="color: green;">Assinado</i>
                         {% else %}
-                            <i class="fa-solid fa-hourglass-half" style="color: orange;"></i> Aguardando assinatura do presidente
+                            <i class="fa-solid fa-hourglass-half" style="color: orange;"></i><p style="color: orange;">Aguardando Assinatura do Presidente</p>
                         {% endif %}
                     {% endif %}
                 </td>
 
                 <!-- Assinatura RH -->
                 <td>
-                {% if registro.assinatura_rh %}
-                    <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-                {% else %}
-                    {% if registro.diretor_aprovacao == "NÃO AUTORIZADO" %}
+                    {% if registro.assinatura_rh %}
+                        <i class="fa-solid fa-check" style="color: green;">Assinado</i>
+                    {% elif registro.diretor_aprovacao == "NÃO AUTORIZADO" and registro.presidente_aprovacao == "NÃO APLICÁVEL" %}
+                        <i class="fa-solid fa-xmark" style="color: red;"></i>
+                    {% elif registro.presidente_aprovacao == "AUTORIZADO" %}
+                        <i class="fa-solid fa-hourglass-half" style="color: orange;"></i> Aguardando assinatura do RH
+                    {% elif not registro.diretor_assinatura or not registro.presidente_assinatura %}
+                        <i class="fa-solid fa-hourglass-half" style="color: orange;"></i>
+                    {% elif registro.presidente_aprovacao == "NÃO AUTORIZADO" %}
                         <i class="fa-solid fa-xmark" style="color: red;"></i>
                     {% endif %}
-                    {% if not registro.diretor_aprovacao %}
-                        -
-                    {% endif %}
-                {% endif %}
                 </td>
 
                 <!-- Dias para aprovação -->

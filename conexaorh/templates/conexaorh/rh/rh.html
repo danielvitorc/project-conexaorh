@@ -55,6 +55,194 @@
             </div>
         </div>
 
+        <h2>Cadastro de Estrutura RH</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ filial_form.as_p }}
+            <button type="submit" name="filial_submit">Cadastrar Filial</button>
+        </form>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ base_form.as_p }}
+            <button type="submit" name="base_submit">Cadastrar Base</button>
+        </form>
+
+    <!-- Formulário Setor -->
+    <form method="post" id="setor-form">
+        {% csrf_token %}
+
+        <label for="nome-setor">Nome do Setor</label>
+        <input type="text" id="nome-setor" name="nome" class="form-control" required>
+
+        <label for="filial-select">Filial</label>
+        <select id="filial-select" name="filial">
+            <option value="">-- Escolha a filial --</option>
+            {% for filial in filiais %}
+                <option value="{{ filial.id }}">{{ filial.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="base-select">Base</label>
+        <select id="base-select" name="base">
+            <option value="">-- Escolha a base --</option>
+            <!-- Opções serão preenchidas via JS -->
+        </select>
+
+        <script>
+            const filialSelect = document.getElementById('filial-select');
+            const baseSelect = document.getElementById('base-select');
+
+            filialSelect.addEventListener('change', function () {
+                const filialId = this.value;
+                baseSelect.innerHTML = '<option value="">Carregando...</option>';
+
+                if (!filialId) {
+                    baseSelect.innerHTML = '<option value="">-- Escolha a base --</option>';
+                    return;
+                }
+
+                fetch(`/ajax/bases/?filial_id=${filialId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        baseSelect.innerHTML = '<option value="">-- Escolha a base --</option>';
+                        data.bases.forEach(base => {
+                            const option = document.createElement('option');
+                            option.value = base.id;
+                            option.textContent = base.nome;
+                            baseSelect.appendChild(option);
+                        });
+                    })
+                    .catch(() => {
+                        baseSelect.innerHTML = '<option value="">Erro ao carregar bases</option>';
+                    });
+            });
+        </script>
+
+        <button type="submit" name="setor_submit">Cadastrar Setor</button>
+    </form>
+        <form method="post">
+            {% csrf_token %}
+            {{ curso_form.as_p }}
+            <button type="submit" name="curso_submit">Cadastrar Curso</button>
+        </form>
+
+        <form method="post" id="cargo-form">
+            {% csrf_token %}
+
+            <label for="cargo-nome">Nome do Cargo</label>
+            <input type="text" id="cargo-nome" name="nome" class="form-control" required>
+
+            <label for="filial-select-cargo">Filial</label>
+            <select id="filial-select-cargo" name="filial">
+                <option value="">-- Escolha a filial --</option>
+                {% for filial in filiais %}
+                    <option value="{{ filial.id }}">{{ filial.nome }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="base-select-cargo">Base</label>
+            <select id="base-select-cargo" name="base">
+                <option value="">-- Escolha a base --</option>
+            </select>
+
+            <label for="setores-select">Setores</label>
+            <select id="setores-select" name="setores" multiple class="select2-setores" style="width: 100%;"></select>
+
+            <label for="cursos-select">Cursos</label>
+            {{ cargo_form.cursos }}
+
+            <button type="submit" name="cargo_submit">Cadastrar Cargo</button>
+        </form>
+
+        <script>
+            $(document).ready(function() {
+                let baseId = null;
+
+                $('#base-select-cargo').on('change', function () {
+                    baseId = $(this).val();
+                    $('#setores-select').val(null).trigger('change'); // limpa seleção
+                });
+
+                $('.select2-setores').select2({
+                    placeholder: "Selecione os setores",
+                    allowClear: true,
+                    width: '100%',
+                    ajax: {
+                        url: '/ajax/setores/',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                term: params.term,
+                                base_id: baseId
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.results
+                            };
+                        },
+                        cache: true
+                    }
+                });
+
+                $('.select2-cursos').select2({
+                    placeholder: "Selecione os cursos",
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+        </script>
+
+        <script>
+            const filialSelect = document.getElementById('filial-select-cargo');
+            const baseSelect = document.getElementById('base-select-cargo');
+            const setoresSelect = document.getElementById('setores-select');
+
+            filialSelect.addEventListener('change', function () {
+                const filialId = this.value;
+                baseSelect.innerHTML = '<option value="">Carregando...</option>';
+                setoresSelect.innerHTML = '<option value="">-- Escolha os setores --</option>';
+
+                if (!filialId) return;
+
+                fetch(`/ajax/bases/?filial_id=${filialId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        baseSelect.innerHTML = '<option value="">-- Escolha a base --</option>';
+                        data.bases.forEach(base => {
+                            const option = document.createElement('option');
+                            option.value = base.id;
+                            option.textContent = base.nome;
+                            baseSelect.appendChild(option);
+                        });
+                    });
+            });
+
+            baseSelect.addEventListener('change', function () {
+                const baseId = this.value;
+                setoresSelect.innerHTML = '<option value="">Carregando...</option>';
+
+                if (!baseId) return;
+
+                fetch(`/ajax/setores/?base_id=${baseId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        setoresSelect.innerHTML = '';
+                        data.setores.forEach(setor => {
+                            const option = document.createElement('option');
+                            option.value = setor.id;
+                            option.textContent = setor.nome;
+                            setoresSelect.appendChild(option);
+                        });
+                    });
+            });
+        </script>
+
+        <hr>'
+
         <div class="linha-amarela"></div>
 
         <!-- Card da tabela -->
@@ -191,8 +379,32 @@
         });
     </script>
 
-    <script src="{% static 'conexaorh/js/tema.js' %}"></script>
+    <script>
+    $(document).ready(function() {
+        $('.select2-cursos').select2({
+        placeholder: "Selecione os cursos",
+        allowClear: true,
+        width: '100%'
+        });
 
+        $('.select2-setores').select2({
+        placeholder: "Selecione os setores",
+        allowClear: true,
+        width: '100%'
+        });
+    });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- CSS do Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- JS do Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <script src="{% static 'conexaorh/js/tema.js' %}"></script>
 </body>
 
 </html>
