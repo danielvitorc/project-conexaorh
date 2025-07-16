@@ -1,4 +1,8 @@
+/* ===== SISTEMA RH - ESTILIZAÇÃO CORPORATIVA AVANÇADA ===== */
+
+/* Variáveis CSS Aprimoradas */
 :root {
+  /* Cores Principais - Mantidas conforme solicitado */
   --primary-color: #134BF2;
   --secondary-color: #000000;
   --accent-color: #0C87F2;
@@ -7,31 +11,102 @@
   --text-color: #000000;
   --card-bg: #ffffff;
   --dourado-nort: #FFD700;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --transition: all 0.3s ease-in-out;
-  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  --cor-linha-table: #edf2f7;
-  --cor-table-cabeçalho: #f9fafb;
-  --cor-table-texto: #a0aec0;
-  --cor-table-hover: #e4e5e6;
+  
+  /* Cores Estendidas para Sistema Robusto */
+  --primary-dark: #0F3CC9;
+  --primary-light: #4A6BF5;
+  --accent-light: #3D9BF4;
+  --surface-color: #FAFBFC;
+  --border-color: #E1E5E9;
+  --border-light: #F0F2F5;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --success-color: #10B981;
+  --warning-color: #F59E0B;
+  --error-color: #EF4444;
+  
+  /* Shadows Corporativas */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-primary: 0 10px 25px -5px rgba(19, 75, 242, 0.25);
+  --shadow-accent: 0 8px 20px -3px rgba(12, 135, 242, 0.2);
+  
+  /* Transições Suaves */
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Tipografia Corporativa */
+  --font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Espaçamento Sistemático */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  
+  /* Bordas e Raios */
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  
+  /* Gradientes Corporativos */
+  --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent-color) 0%, var(--highlight-color) 100%);
+  --gradient-surface: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-gold: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  
+  /* Cores para Tabelas */
+  --cor-linha-table: #f1f5f9;
+  --cor-table-cabeçalho: #f8fafc;
+  --cor-table-texto: #64748b;
+  --cor-table-hover: #f1f5f9;
 }
 
+/* Tema Escuro Aprimorado */
 [data-theme="dark"] {
-  --primary-color: #0F5FA6;
-  --secondary-color: #0A8CBF;
-  --accent-color: #04B2D9;
-  --highlight-color: #05DBF2;
-  --bg-color: #0D0D0D;
-  --text-color: #FFFFFF;
-  --card-bg: #;
-  --dourado-nort: #FFD700;
-  --shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
-  --cor-linha-table: #FFD700;
-  --cor-table-cabeçalho: #1c1c1c;
-  --cor-table-texto: #1BA0F2;
-  --cor-table-hover: #373838;
+  --primary-color: #3B82F6;
+  --secondary-color: #E5E7EB;
+  --accent-color: #60A5FA;
+  --highlight-color: #93C5FD;
+  --bg-color: #0F172A;
+  --text-color: #F1F5F9;
+  --card-bg: #1E293B;
+  --surface-color: #334155;
+  --border-color: #475569;
+  --border-light: #374151;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  
+  --gradient-surface: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  
+  --cor-linha-table: #374151;
+  --cor-table-cabeçalho: #1f2937;
+  --cor-table-texto: #9ca3af;
+  --cor-table-hover: #374151;
 }
-
 body {
   background-color: var(--bg-color);
   color: var(--text-color);

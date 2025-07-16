@@ -21,7 +21,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <!-- CSS próprio -->
-    <link rel="stylesheet" href="{% static 'conexaorh/css/rh.css' %}">
+    <link rel="stylesheet" href="{% static 'conexaorh/css/geral.css' %}">
+
 </head>
 <body>
 
@@ -32,7 +33,7 @@
         <!-- Card de boas-vindas -->
         <div class="card-welcome">
             <div class="welcome-text">
-                <h1>Bem-vindo, {{ usuario.first_name }} {{ usuario.last_name }}</h1>
+                <h1>Bem-vindo, {{ usuario.first_name }}</h1>
                 <p>Esta é a área exclusiva para usuários do tipo <strong>RH</strong>.</p>
             </div>
 
@@ -55,195 +56,91 @@
             </div>
         </div>
 
-        <h2>Cadastro de Estrutura RH</h2>
+        <!-- Templates de formulários (ocultos) -->
+        <div id="formTemplates" style="display: none;">
+            <!-- Formulário Filial -->
+            <div id="filial-form-template">
+                <form method="post" name="filial_form" class="modal-form">
+                    {% csrf_token %}
+                    {{ filial_form.as_p }}
+                    <button type="submit" name="filial_submit" class="btn btn-primary">Cadastrar Filial</button>
+                </form>
+            </div>
 
-        <form method="post">
-            {% csrf_token %}
-            {{ filial_form.as_p }}
-            <button type="submit" name="filial_submit">Cadastrar Filial</button>
-        </form>
+            <!-- Formulário Base -->
+            <div id="base-form-template">
+                <form method="post" name="base_form" class="modal-form">
+                    {% csrf_token %}
+                    {{ base_form.as_p }}
+                    <button type="submit" name="base_submit" class="btn btn-primary">Cadastrar Base</button>
+                </form>
+            </div>
 
-        <form method="post">
-            {% csrf_token %}
-            {{ base_form.as_p }}
-            <button type="submit" name="base_submit">Cadastrar Base</button>
-        </form>
+            <!-- Formulário Setor -->
+            <div id="setor-form-template">
+                <form method="post" id="setor-form" class="modal-form">
+                    {% csrf_token %}
 
-    <!-- Formulário Setor -->
-    <form method="post" id="setor-form">
-        {% csrf_token %}
+                    <label for="nome-setor">Nome do Setor</label>
+                    <input type="text" id="nome-setor" name="nome" class="form-control" required>
 
-        <label for="nome-setor">Nome do Setor</label>
-        <input type="text" id="nome-setor" name="nome" class="form-control" required>
+                    <label for="filial-select">Filial</label>
+                    <select id="filial-select" name="filial" class="form-control" required>
+                        <option value="">-- Escolha a filial --</option>
+                        {% for filial in filiais %}
+                            <option value="{{ filial.id }}">{{ filial.nome }}</option>
+                        {% endfor %}
+                    </select>
 
-        <label for="filial-select">Filial</label>
-        <select id="filial-select" name="filial">
-            <option value="">-- Escolha a filial --</option>
-            {% for filial in filiais %}
-                <option value="{{ filial.id }}">{{ filial.nome }}</option>
-            {% endfor %}
-        </select>
+                    <label for="base-select">Base</label>
+                    <select id="base-select" name="base" class="form-control">
+                        <option value="">-- Escolha a base --</option>
+                        <!-- Opções serão preenchidas via JS -->
+                    </select>
+                    <button type="submit" name="setor_submit" class="btn btn-primary">Cadastrar Setor</button>
+                </form>
+            </div>
 
-        <label for="base-select">Base</label>
-        <select id="base-select" name="base">
-            <option value="">-- Escolha a base --</option>
-            <!-- Opções serão preenchidas via JS -->
-        </select>
+            <!-- Formulário Curso -->
+            <div id="curso-form-template">
+                <form method="post" name="curso_form" class="modal-form">
+                    {% csrf_token %}
+                    {{ curso_form.as_p }}
+                    <button type="submit" name="curso_submit" class="btn btn-primary">Cadastrar Curso</button>
+                </form>
+            </div>
 
-        <script>
-            const filialSelect = document.getElementById('filial-select');
-            const baseSelect = document.getElementById('base-select');
+            <!-- Formulário Cargo -->
+            <div id="cargo-form-template">
+                <form method="post" id="cargo-form" class="modal-form">
+                    {% csrf_token %}
 
-            filialSelect.addEventListener('change', function () {
-                const filialId = this.value;
-                baseSelect.innerHTML = '<option value="">Carregando...</option>';
+                    <label for="cargo-nome">Nome do Cargo</label>
+                    <input type="text" id="cargo-nome" name="nome" class="form-control" required>
 
-                if (!filialId) {
-                    baseSelect.innerHTML = '<option value="">-- Escolha a base --</option>';
-                    return;
-                }
+                    <label for="filial-select-cargo">Filial</label>
+                    <select id="filial-select-cargo" name="filial" class="form-control" required>
+                        <option value="">-- Escolha a filial --</option>
+                        {% for filial in filiais %}
+                            <option value="{{ filial.id }}">{{ filial.nome }}</option>
+                        {% endfor %}
+                    </select>
 
-                fetch(`/ajax/bases/?filial_id=${filialId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        baseSelect.innerHTML = '<option value="">-- Escolha a base --</option>';
-                        data.bases.forEach(base => {
-                            const option = document.createElement('option');
-                            option.value = base.id;
-                            option.textContent = base.nome;
-                            baseSelect.appendChild(option);
-                        });
-                    })
-                    .catch(() => {
-                        baseSelect.innerHTML = '<option value="">Erro ao carregar bases</option>';
-                    });
-            });
-        </script>
+                    <label for="base-select-cargo">Base</label>
+                    <select id="base-select-cargo" name="base" class="form-control" required>
+                        <option value="">-- Escolha a base --</option>
+                    </select>
 
-        <button type="submit" name="setor_submit">Cadastrar Setor</button>
-    </form>
-        <form method="post">
-            {% csrf_token %}
-            {{ curso_form.as_p }}
-            <button type="submit" name="curso_submit">Cadastrar Curso</button>
-        </form>
+                    <label for="setores-select">Setores</label>
+                    <select id="setores-select" name="setores" multiple class="select2-setores form-control" style="width: 100%;"></select>
 
-        <form method="post" id="cargo-form">
-            {% csrf_token %}
+                    <label for="cursos-select">Cursos</label>
+                    {{ cargo_form.cursos }}
 
-            <label for="cargo-nome">Nome do Cargo</label>
-            <input type="text" id="cargo-nome" name="nome" class="form-control" required>
-
-            <label for="filial-select-cargo">Filial</label>
-            <select id="filial-select-cargo" name="filial">
-                <option value="">-- Escolha a filial --</option>
-                {% for filial in filiais %}
-                    <option value="{{ filial.id }}">{{ filial.nome }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="base-select-cargo">Base</label>
-            <select id="base-select-cargo" name="base">
-                <option value="">-- Escolha a base --</option>
-            </select>
-
-            <label for="setores-select">Setores</label>
-            <select id="setores-select" name="setores" multiple class="select2-setores" style="width: 100%;"></select>
-
-            <label for="cursos-select">Cursos</label>
-            {{ cargo_form.cursos }}
-
-            <button type="submit" name="cargo_submit">Cadastrar Cargo</button>
-        </form>
-
-        <script>
-            $(document).ready(function() {
-                let baseId = null;
-
-                $('#base-select-cargo').on('change', function () {
-                    baseId = $(this).val();
-                    $('#setores-select').val(null).trigger('change'); // limpa seleção
-                });
-
-                $('.select2-setores').select2({
-                    placeholder: "Selecione os setores",
-                    allowClear: true,
-                    width: '100%',
-                    ajax: {
-                        url: '/ajax/setores/',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function (params) {
-                            console.log("Buscando setores com base_id:", baseId, "e termo:", params.term);
-                            return {
-                                term: params.term,
-                                base_id: baseId
-                            };
-                        },
-                        processResults: function (data) {
-                            return {
-                                results: data.results
-                            };
-                        },
-                        cache: true
-                    }
-                });
-
-                $('.select2-cursos').select2({
-                    placeholder: "Selecione os cursos",
-                    allowClear: true,
-                    width: '100%'
-                });
-            });
-        </script>
-
-        <script>
-            const filialSelectCargo = document.getElementById('filial-select-cargo');
-            const baseSelectCargo = document.getElementById('base-select-cargo');
-            const setoresSelect = document.getElementById('setores-select');
-
-            filialSelectCargo.addEventListener('change', function () {
-                const filialId = this.value;
-                console.log("Filial selecionada:", filialId);  // <--- Aqui
-                baseSelectCargo.innerHTML = '<option value="">Carregando...</option>';
-                setoresSelect.innerHTML = '<option value="">-- Escolha os setores --</option>';
-
-                if (!filialId) return;
-
-                fetch(`/ajax/bases/?filial_id=${filialId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        baseSelectCargo.innerHTML = '<option value="">-- Escolha a base --</option>';
-                        data.bases.forEach(base => {
-                            const option = document.createElement('option');
-                            option.value = base.id;
-                            option.textContent = base.nome;
-                            baseSelectCargo.appendChild(option);
-                        });
-                    });
-            });
-
-            baseSelectCargo.addEventListener('change', function () {
-                const baseId = this.value;
-                setoresSelect.innerHTML = '<option value="">Carregando...</option>';
-
-                if (!baseId) return;
-
-                fetch(`/ajax/setores/?base_id=${baseId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        setoresSelect.innerHTML = '';
-                        data.results.forEach(setor => {
-                            const option = document.createElement('option');
-                            option.value = setor.id;
-                            option.textContent = setor.text;
-                            setoresSelect.appendChild(option);
-                        });
-                    });
-            });
-        </script>
-
-        <hr>
+                    <button type="submit" name="cargo_submit" class="btn btn-primary">Cadastrar Cargo</button>
+                </form>
+            </div>
+        </div>
 
         <div class="linha-amarela"></div>
 
@@ -284,7 +181,7 @@
                             </td>
                             <td>{{ registro.usuario.get_full_name }}</td>
                             <td>{{ registro.data_solicitacao|date:"d/m/Y - H:i" }}</td>
-                                                        <td>
+                            <td>
                                 {% if registro.rh_aprovacao == 'AUTORIZADO' %}
                                     {% if registro.tipo == 'RP' %}
                                     <a href="{% url 'download_rp_excel' registro.id %}" class="btn btn-download btn-sm">
@@ -342,23 +239,47 @@
             </div>
         </div>
     </div>
-    <script>
-        document.getElementById("filtroTipo").addEventListener("change", function () {
-            const tipoSelecionado = this.value;
-            const linhas = document.querySelectorAll(".tabela-moderninha tbody tr");
 
-            linhas.forEach(linha => {
-                const tipo = linha.children[0]?.textContent.trim();
+    <!-- Modal de Seleção de Formulários -->
+    <div id="formSelectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Selecione o Formulário RH</h2>
+            <div class="form-options-grid">
+                <button class="form-option-card" data-form-id="filial-form-template">
+                    <i class="bi bi-building"></i>
+                    <span>Cadastrar Filial</span>
+                </button>
+                <button class="form-option-card" data-form-id="base-form-template">
+                    <i class="bi bi-globe"></i>
+                    <span>Cadastrar Base</span>
+                </button>
+                <button class="form-option-card" data-form-id="setor-form-template">
+                    <i class="bi bi-diagram-3"></i>
+                    <span>Cadastrar Setor</span>
+                </button>
+                <button class="form-option-card" data-form-id="curso-form-template">
+                    <i class="bi bi-mortarboard"></i>
+                    <span>Cadastrar Curso</span>
+                </button>
+                <button class="form-option-card" data-form-id="cargo-form-template">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Cadastrar Cargo</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
-                if (tipoSelecionado === "Todos" || tipo === tipoSelecionado) {
-                    linha.style.display = "";
-                } else {
-                    linha.style.display = "none";
-                }
-            });
-        });
-    </script>
-
+    <!-- Modal para Exibição do Formulário -->
+    <div id="formModal" class="modal form-modal">
+        <div class="modal-content form-modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="modal-title">Formulário RH</h2>
+            <div class="modal-form-container">
+                <!-- O formulário selecionado será inserido aqui -->
+            </div>
+        </div>
+    </div>
     <script>
         function toggleDropdown() {
             const menu = document.getElementById("userDropdown");
@@ -380,22 +301,230 @@
             }
         });
     </script>
-
     <script>
-    $(document).ready(function() {
-        $('.select2-cursos').select2({
-        placeholder: "Selecione os cursos",
-        allowClear: true,
-        width: '100%'
+        document.getElementById("filtroTipo").addEventListener("change", function () {
+            const tipoSelecionado = this.value;
+            const linhas = document.querySelectorAll(".tabela-moderninha tbody tr");
+
+            linhas.forEach(linha => {
+                const tipo = linha.children[0]?.textContent.trim();
+
+                if (tipoSelecionado === "Todos" || tipo === tipoSelecionado) {
+                    linha.style.display = "";
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // A inicialização do select2-cursos e select2-setores para o formulário de Cargo será feita na função initializeFormScripts
         });
 
-        $('.select2-setores').select2({
-        placeholder: "Selecione os setores",
-        allowClear: true,
-        width: '100%'
+        // Função para inicializar os scripts específicos dos formulários dinâmicos
+        function initializeFormScripts(containerElement) {
+            // Script para o formulário de Setor
+            const filialSelect = containerElement.querySelector("#filial-select");
+            const baseSelect = containerElement.querySelector("#base-select");
+
+            if (filialSelect && baseSelect) {
+                filialSelect.addEventListener("change", function () {
+                    const filialId = this.value;
+                    baseSelect.innerHTML = "<option value=\"\">Carregando...</option>";
+
+                    if (!filialId) {
+                        baseSelect.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
+                        return;
+                    }
+
+                    fetch(`/ajax/bases/?filial_id=${filialId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            baseSelect.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
+                            data.bases.forEach(base => {
+                                const option = document.createElement("option");
+                                option.value = base.id;
+                                option.textContent = base.nome;
+                                baseSelect.appendChild(option);
+                            });
+                        })
+                        .catch(() => {
+                            baseSelect.innerHTML = "<option value=\"\">Erro ao carregar bases</option>";
+                        });
+                });
+            }
+
+            // Script para o formulário de Cargo
+            const filialSelectCargo = containerElement.querySelector("#filial-select-cargo");
+            const baseSelectCargo = containerElement.querySelector("#base-select-cargo");
+            const setoresSelect = containerElement.querySelector("#setores-select");
+            const cursosSelect = containerElement.querySelector(".select2-cursos"); // Seleciona o select de cursos
+
+            if (filialSelectCargo && baseSelectCargo && setoresSelect) {
+                // Re-inicializa Select2 para setores dentro do formulário de Cargo
+                $(setoresSelect).select2({
+                    placeholder: "Selecione os setores",
+                    allowClear: true,
+                    width: "100%",
+                    ajax: {
+                        url: "/ajax/setores/",
+                        dataType: "json",
+                        delay: 250,
+                        data: function (params) {
+                            const baseId = $(baseSelectCargo).val(); // Pega o valor atual da base selecionada
+                            console.log("Buscando setores com base_id:", baseId, "e termo:", params.term);
+                            return {
+                                term: params.term,
+                                base_id: baseId,
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.results,
+                            };
+                        },
+                        cache: true,
+                    },
+                });
+
+                // Re-inicializa Select2 para cursos dentro do formulário de Cargo
+                if (cursosSelect) {
+                    $(cursosSelect).select2({
+                        placeholder: "Selecione os cursos",
+                        allowClear: true,
+                        width: "100%",
+                    });
+                }
+
+                // Event listener para filial no formulário de Cargo
+                filialSelectCargo.addEventListener("change", function () {
+                    const filialId = this.value;
+                    console.log("Filial selecionada (Cargo):", filialId);
+                    baseSelectCargo.innerHTML = "<option value=\"\">Carregando...</option>";
+                    $(setoresSelect).val(null).trigger("change"); // Limpa seleção do Select2
+
+                    if (!filialId) {
+                        baseSelectCargo.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
+                        return;
+                    }
+
+                    fetch(`/ajax/bases/?filial_id=${filialId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            baseSelectCargo.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
+                            data.bases.forEach(base => {
+                                const option = document.createElement("option");
+                                option.value = base.id;
+                                option.textContent = base.nome;
+                                baseSelectCargo.appendChild(option);
+                            });
+                        })
+                        .catch(() => {
+                            baseSelectCargo.innerHTML = "<option value=\"\">Erro ao carregar bases</option>";
+                        });
+                });
+
+                // Event listener para base no formulário de Cargo
+                baseSelectCargo.addEventListener("change", function () {
+                    const baseId = this.value;
+                    $(setoresSelect).val(null).trigger("change"); // Limpa seleção do Select2
+
+                    if (!baseId) return;
+
+                    // Como o Select2 já está configurado com AJAX, ele buscará os setores automaticamente
+                    // quando a base mudar e o campo for ativado (clicado).
+                    // Não é necessário um fetch manual aqui, apenas garantir que o Select2 saiba a nova base_id.
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const openFormModalBtn = document.getElementById("openFormModalBtn");
+            const formSelectionModal = document.getElementById("formSelectionModal");
+            const formModal = document.getElementById("formModal");
+            const modalFormContainer = document.querySelector(".modal-form-container");
+
+            if (!formSelectionModal || !formModal) return;
+
+            const closeButtons = document.querySelectorAll(".close-button");
+            const formOptionCards = formSelectionModal.querySelectorAll(".form-option-card");
+
+            const formTitles = {
+                "filial-form-template": "Cadastrar Filial",
+                "base-form-template": "Cadastrar Base",
+                "setor-form-template": "Cadastrar Setor",
+                "curso-form-template": "Cadastrar Curso",
+                "cargo-form-template": "Cadastrar Cargo"
+            };
+
+            function closeAllModals() {
+                formSelectionModal.style.display = "none";
+                formModal.style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+
+            function cleanupForm() {
+                modalFormContainer.innerHTML = "";
+            }
+
+            if (openFormModalBtn) {
+                openFormModalBtn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    formSelectionModal.style.display = "block";
+                    document.body.style.overflow = "hidden";
+                });
+            }
+
+            closeButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    cleanupForm();
+                    closeAllModals();
+                });
+            });
+
+            window.addEventListener("click", function (event) {
+                if (event.target === formSelectionModal || event.target === formModal) {
+                    cleanupForm();
+                    closeAllModals();
+                }
+            });
+
+            formOptionCards.forEach(card => {
+                card.addEventListener("click", function () {
+                    const formId = this.dataset.formId;
+                    const formTemplate = document.getElementById(formId);
+
+                    if (formTemplate) {
+                        cleanupForm();
+
+                        const modalTitle = document.querySelector(".modal-title");
+                        modalTitle.textContent = formTitles[formId] || "Formulário RH";
+
+                        const formClone = formTemplate.cloneNode(true);
+                        formClone.style.display = "block";
+                        modalFormContainer.appendChild(formClone);
+
+                        // Chamar a função para inicializar os scripts do formulário recém-adicionado
+                        initializeFormScripts(formClone);
+
+                        formSelectionModal.style.display = "none";
+                        formModal.style.display = "block";
+                    }
+                });
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    if (formModal.style.display === "block" || formSelectionModal.style.display === "block") {
+                        cleanupForm();
+                        closeAllModals();
+                    }
+                }
+            });
         });
-    });
     </script>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
