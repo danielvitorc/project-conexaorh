@@ -3,10 +3,10 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.contrib import messages
 from django.db.models import Q
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden, HttpResponseBadRequest, JsonResponse
 from itertools import chain
 from conexaorh.forms import RequisicaoPessoalForm, MovimentacaoPessoalForm, RequisicaoDesligamentoForm, GestorPropostoMOV
-from conexaorh.models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento
+from conexaorh.models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento, Base, Setor, Cargo
 
 @login_required
 def gestor_page(request):
@@ -171,3 +171,29 @@ def registros_gestor(request):
         "registros_pendentes": registros_pendentes,
         "usuario": request.user  # opcional: para usar dados diretamente no template
     })
+
+def carregar_bases(request):
+    filial_id = request.GET.get('filial')
+    bases = Base.objects.filter(filial_id=filial_id).values('id', 'nome')
+    return JsonResponse(list(bases), safe=False)
+
+def carregar_departamentos(request):
+    base_id = request.GET.get('base')
+    departamentos = Setor.objects.filter(base_id=base_id).values('id', 'nome')
+    return JsonResponse(list(departamentos), safe=False)
+
+def carregar_cargos(request):
+    departamento_id = request.GET.get('departamento')
+    cargos = Cargo.objects.filter(setores__id=departamento_id).values('id', 'nome')
+    return JsonResponse(list(cargos), safe=False)
+
+def carregar_cursos_do_cargo(request):
+    cargo_id = request.GET.get('cargo')
+    cursos = []
+    if cargo_id:
+        try:
+            cargo = Cargo.objects.get(id=cargo_id)
+            cursos = list(cargo.cursos.values_list('nome', flat=True))
+        except Cargo.DoesNotExist:
+            pass
+    return JsonResponse({'cursos': cursos})

@@ -2,12 +2,16 @@ from django.conf import settings
 from .users import CustomUser as User
 from django.db import models
 from django.utils import timezone
+from conexaorh.models.organizacional import Filial, Base, Setor, Cargo 
 
 class RequisicaoPessoal(models.Model):
     data_solicitacao = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     requisitante= models.CharField(max_length=100)
-    cargo = models.CharField(max_length=100)
+    filial = models.ForeignKey(Filial, on_delete=models.SET_NULL, null=True, blank=True)
+    base = models.ForeignKey(Base, on_delete=models.SET_NULL, null=True, blank=True)
+    departamento = models.ForeignKey(Setor, on_delete=models.SET_NULL, null=True, blank=True)
+    cargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, blank=True)
     salario = models.FloatField()
     adicionais = models.FloatField(default=0)
     quantidade_vagas = models.IntegerField()
@@ -25,13 +29,13 @@ class RequisicaoPessoal(models.Model):
     justificativa_outros = models.CharField(max_length=100, null=True, blank=True)
     processo_seletivo = models.CharField(max_length=100)
     localidade = models.CharField(max_length=100, default="MANAUS", )
-    base = models.CharField(max_length=100 ,default="N/A", )
+    
     sexo = models.CharField(max_length=100)
     exige_viagem = models.CharField(max_length=100)
     cnh = models.CharField(max_length=100)
     tipo_cnh = models.CharField(max_length=100)
     outros_cnh = models.CharField(max_length=100, null=True, blank=True)
-    departamento = models.CharField(max_length=100)
+    
     escolaridade = models.CharField(max_length=100, default="ENSINO MÉDIO COMPLETO", )
     gestor_imediato = models.CharField(max_length=100)
     centro_custo = models.CharField(max_length=100)

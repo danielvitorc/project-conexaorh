@@ -1,4 +1,4 @@
-from conexaorh.models import RequisicaoPessoal
+from conexaorh.models import RequisicaoPessoal, Setor, Cargo, Base
 from conexaorh.utils.assinatura import assinar_formulario
 from django import forms
 from django.db import models
@@ -159,6 +159,31 @@ class RequisicaoPessoalForm(forms.ModelForm):
 
         if self.instance and self.instance.cnh:
             self.initial['cnh'] = self.instance.cnh.split(',')
+
+        self.fields['base'].queryset = Base.objects.none()
+        self.fields['departamento'].queryset = Setor.objects.none()
+        self.fields['cargo'].queryset = Cargo.objects.none()
+        
+        if 'filial' in self.data:
+                try:
+                    filial_id = int(self.data.get('filial'))
+                    self.fields['base'].queryset = Base.objects.filter(filial_id=filial_id)
+                except (ValueError, TypeError):
+                    pass
+
+        if 'base' in self.data:
+                try:
+                    base_id = int(self.data.get('base'))
+                    self.fields['departamento'].queryset = Setor.objects.filter(base_id=base_id)
+                except (ValueError, TypeError):
+                    pass
+
+        if 'departamento' in self.data:
+                try:
+                    setor_id = int(self.data.get('departamento'))
+                    self.fields['cargo'].queryset = Cargo.objects.filter(setores__id=setor_id)
+                except (ValueError, TypeError):
+                    pass
 
     def clean_beneficios(self):
         return ','.join(self.cleaned_data['beneficios'])

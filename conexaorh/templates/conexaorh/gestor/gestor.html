@@ -225,6 +225,65 @@
         </div>
     </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const filialSelect = document.getElementById('id_filial');
+      const baseSelect = document.getElementById('id_base');
+      const departamentoSelect = document.getElementById('id_departamento');
+      const cargoSelect = document.getElementById('id_cargo');
+
+      filialSelect.addEventListener('change', function () {
+          const filialId = this.value;
+          fetch(`/ajax/bases-gestor/?filial=${filialId}`)
+              .then(response => response.json())
+              .then(data => {
+                  baseSelect.innerHTML = '<option value="">---------</option>';
+                  data.forEach(base => {
+                      baseSelect.innerHTML += `<option value="${base.id}">${base.nome}</option>`;
+                  });
+                  departamentoSelect.innerHTML = '<option value="">---------</option>';
+                  cargoSelect.innerHTML = '<option value="">---------</option>';
+              });
+      });
+
+      baseSelect.addEventListener('change', function () {
+          const baseId = this.value;
+          fetch(`/ajax/departamentos/?base=${baseId}`)
+              .then(response => response.json())
+              .then(data => {
+                  departamentoSelect.innerHTML = '<option value="">---------</option>';
+                  data.forEach(dep => {
+                      departamentoSelect.innerHTML += `<option value="${dep.id}">${dep.nome}</option>`;
+                  });
+                  cargoSelect.innerHTML = '<option value="">---------</option>';
+              });
+      });
+
+      departamentoSelect.addEventListener('change', function () {
+          const departamentoId = this.value;
+          fetch(`/ajax/cargos/?departamento=${departamentoId}`)
+              .then(response => response.json())
+              .then(data => {
+                  cargoSelect.innerHTML = '<option value="">---------</option>';
+                  data.forEach(cargo => {
+                      cargoSelect.innerHTML += `<option value="${cargo.id}">${cargo.nome}</option>`;
+                  });
+              });
+      });
+
+      // Quando o cargo for selecionado, busca os cursos associados e preenche o campo
+      cargoSelect.addEventListener('change', function () {
+          const cargoId = this.value;
+          fetch(`/ajax/cursos-do-cargo/?cargo=${cargoId}`)
+              .then(response => response.json())
+              .then(data => {
+                  const cursosText = data.cursos.join(', ');
+                  document.getElementById('id_cursos').value = cursosText;
+              });
+      });
+
+  });
+</script>
 
 <div id="modalMov" class="modal">
     <div class="modal-content-custom">
