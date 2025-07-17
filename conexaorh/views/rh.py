@@ -222,10 +222,10 @@ def editar_filial(request, pk):
         form = FilialForm(request.POST, instance=filial)
         if form.is_valid():
             form.save()
-            return redirect('nome_da_sua_url_de_sucesso_filial') # Redirecione para a URL de sucesso apropriada
+            return redirect('rh_page') # Redirecione para a URL de sucesso apropriada
     else:
         form = FilialForm(instance=filial)
-    return render(request, 'seu_template_de_edicao_filial.html', {'form': form, 'filial': filial})
+    return render(request, 'rh.html', {'form': form, 'filial': filial})
 
 
 def editar_base(request, pk):
@@ -234,10 +234,10 @@ def editar_base(request, pk):
         form = BaseForm(request.POST, instance=base)
         if form.is_valid():
             form.save()
-            return redirect('nome_da_sua_url_de_sucesso_base') # Redirecione para a URL de sucesso apropriada
+            return redirect('rh_page') # Redirecione para a URL de sucesso apropriada
     else:
         form = BaseForm(instance=base)
-    return render(request, 'seu_template_de_edicao_base.html', {'form': form, 'base': base})
+    return render(request, 'rh.html', {'form': form, 'base': base})
 
 
 def editar_setor(request, pk):
@@ -246,10 +246,10 @@ def editar_setor(request, pk):
         form = SetorForm(request.POST, instance=setor)
         if form.is_valid():
             form.save()
-            return redirect('nome_da_sua_url_de_sucesso_setor') # Redirecione para a URL de sucesso apropriada
+            return redirect('rh_page') # Redirecione para a URL de sucesso apropriada
     else:
         form = SetorForm(instance=setor)
-    return render(request, 'seu_template_de_edicao_setor.html', {'form': form, 'setor': setor})
+    return render(request, 'rh.html', {'form': form, 'setor': setor})
 
 
 def editar_curso(request, pk):
@@ -258,10 +258,10 @@ def editar_curso(request, pk):
         form = CursoForm(request.POST, instance=curso)
         if form.is_valid():
             form.save()
-            return redirect('nome_da_sua_url_de_sucesso_curso') # Redirecione para a URL de sucesso apropriada
+            return redirect('rh_page') # Redirecione para a URL de sucesso apropriada
     else:
         form = CursoForm(instance=curso)
-    return render(request, 'seu_template_de_edicao_curso.html', {'form': form, 'curso': curso})
+    return render(request, 'rh.html', {'form': form, 'curso': curso})
 
 
 def editar_cargo(request, pk):
@@ -270,10 +270,10 @@ def editar_cargo(request, pk):
         form = CargoForm(request.POST, instance=cargo)
         if form.is_valid():
             form.save()
-            return redirect('nome_da_sua_url_de_sucesso_cargo') # Redirecione para a URL de sucesso apropriada
+            return redirect('rh_page') # Redirecione para a URL de sucesso apropriada
     else:
         form = CargoForm(instance=cargo)
-    return render(request, 'seu_template_de_edicao_cargo.html', {'form': form, 'cargo': cargo})
+    return render(request, 'rh.html', {'form': form, 'cargo': cargo})
 
 
 
