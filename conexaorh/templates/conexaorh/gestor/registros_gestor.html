@@ -35,7 +35,6 @@
 <body>
 
 {% include 'conexaorh/include/navbar.html' with pagina_ativa='gestor_page' botao_movimentacao=True %}
-{% include "conexaorh/include/modal_detalhes.html" %}
 
 <div class="main-content">  
     <div class="card-welcome">
@@ -290,5 +289,7 @@
   </script>
 
   <script src="{% static 'conexaorh/js/tema.js' %}"></script>
+  {% include "conexaorh/include/modal_detalhes.html" %}
+
 </body>
 </html>

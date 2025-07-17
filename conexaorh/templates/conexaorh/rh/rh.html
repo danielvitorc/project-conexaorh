@@ -65,6 +65,66 @@
                     {{ filial_form.as_p }}
                     <button type="submit" name="filial_submit" class="btn btn-primary">Cadastrar Filial</button>
                 </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for filial in filiais %}
+                        <tr>
+                            <td>{{ filial.nome }}</td>
+                            <td>
+                                    <!-- Botão que abre o modal -->
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar{{ filial.id }}">
+                                    Editar
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="modalEditar{{ filial.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form method="POST" action="{% url 'editar_filial' filial.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h5 class="modal-title">Editar Filial</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="nome{{ filial.id }}" class="form-label">Nome da Filial</label>
+                                                <input type="text" name="nome" id="nome{{ filial.id }}" class="form-control" value="{{ filial.nome }}" required>
+                                            </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                    </div>
+
+                                    <!-- Botão para excluir filial -->
+                                    <a href="{% url 'excluir_filial' filial.id %}" 
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Tem certeza que deseja excluir esta filial?');"
+                                    title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                    </a>
+
+                                </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                        <td colspan="2">Nenhuma filial encontrada.</td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
             </div>
 
             <!-- Formulário Base -->
@@ -74,6 +134,37 @@
                     {{ base_form.as_p }}
                     <button type="submit" name="base_submit" class="btn btn-primary">Cadastrar Base</button>
                 </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Filial</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    {% for base in bases %}
+                    <tbody>
+                        <tr>
+                            <td>{{ base.nome }}</td>
+                            <td>{{ base.filial }}</td>
+                            <td>
+                                <!-- Botão que abre o modal -->
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#">
+                                    Editar
+                                </button>
+                                 <!-- Botão para excluir base -->
+                                <a href="{% url 'excluir_base' base.id %}" 
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Tem certeza que deseja excluir esta base?');"
+                                    title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
             <!-- Formulário Setor -->
@@ -99,6 +190,37 @@
                     </select>
                     <button type="submit" name="setor_submit" class="btn btn-primary">Cadastrar Setor</button>
                 </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Base</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    {% for setor in setores %}
+                    <tbody>
+                        <tr>
+                            <td>{{setor.nome}}</td>
+                            <td>{{setor.base}}</td>
+                            <td>
+                                <!-- Botão que abre o modal -->
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#">
+                                    Editar
+                                </button>
+                                 <!-- Botão para excluir setor -->
+                                <a href="{% url 'excluir_setor' setor.id %}" 
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Tem certeza que deseja excluir este setor?');"
+                                    title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
             </div>
 
             <!-- Formulário Curso -->
@@ -108,6 +230,34 @@
                     {{ curso_form.as_p }}
                     <button type="submit" name="curso_submit" class="btn btn-primary">Cadastrar Curso</button>
                 </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    {% for curso in cursos %}
+                    <tbody>
+                        <tr>
+                            <td>{{curso.nome}}</td>
+                            <td>
+                                <!-- Botão que abre o modal -->
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#">
+                                    Editar
+                                </button>
+                                 <!-- Botão para excluir curso -->
+                                <a href="{% url 'excluir_curso' curso.id %}" 
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Tem certeza que deseja excluir este curso?');"
+                                    title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
             </div>
 
             <!-- Formulário Cargo -->
@@ -139,6 +289,34 @@
 
                     <button type="submit" name="cargo_submit" class="btn btn-primary">Cadastrar Cargo</button>
                 </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    {% for cargo in cargos %}
+                    <tbody>
+                        <tr>
+                            <td>{{ cargo.nome }}</td>
+                            <td>
+                                 <!-- Botão que abre o modal -->
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#">
+                                    Editar
+                                </button>
+                                 <!-- Botão para excluir cargo -->
+                                <a href="{% url 'excluir_cargo' cargo.id %}" 
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Tem certeza que deseja excluir este cargo?');"
+                                    title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
             </div>
         </div>
 
@@ -161,6 +339,7 @@
             <table class="tabela-moderninha">
                 <thead class="table-light">
                     <tr>
+                        <th></th>
                         <th>Tipo</th>
                         <th>Requisitante</th>
                         <th>Data de Solicitação</th>

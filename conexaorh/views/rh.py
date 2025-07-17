@@ -3,9 +3,10 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.db.models import Q
 from django.http import HttpResponseForbidden,  JsonResponse
+from django.contrib import messages
 from itertools import chain
 from conexaorh.forms import RHFormRP, RHFormMOV, RHFormRD, FilialForm, BaseForm, SetorForm, CursoForm, CargoForm
-from conexaorh.models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento, Base, Filial, Setor, Curso
+from conexaorh.models import RequisicaoPessoal, MovimentacaoPessoal, RequisicaoDesligamento, Base, Filial, Setor, Curso, Cargo
 
 @login_required
 def rh_page(request):
@@ -20,6 +21,9 @@ def rh_page(request):
     cargo_form = CargoForm()
 
     filiais = Filial.objects.all()
+    bases = Base.objects.all()
+    setores = Setor.objects.all()
+    cargos = Cargo.objects.all()   
     cursos = Curso.objects.all()
 
     # Verifica se algum formulário foi enviado
@@ -98,7 +102,10 @@ def rh_page(request):
         "curso_form": curso_form,
         "cargo_form": cargo_form,
         'filiais': filiais,
-        "cursos": cursos
+        "cursos": cursos,
+        "cargos": cargos,
+        "setores": setores,
+        "bases": bases
     })
 
 
@@ -208,3 +215,67 @@ def setores_por_base(request):
         setores = [{'id': s.id, 'text': s.nome} for s in qs]
 
     return JsonResponse({'results': setores})
+
+
+def editar_filial(request, pk):
+    filial = get_object_or_404(Filial, pk=pk)
+
+    if request.method == 'POST':
+        novo_nome = request.POST.get('nome')
+        if novo_nome:
+            filial.nome = novo_nome
+            filial.save()
+            messages.success(request, 'Filial atualizada com sucesso!')
+        return redirect('rh_page')  
+
+    return redirect('rh_page')
+
+# Função para excluir filial
+def excluir_filial(request, id):
+    filial = get_object_or_404(Filial, id=id)
+    try:
+        filial.delete()
+        messages.success(request, "Filial excluída com sucesso.")
+    except Exception as e:
+        messages.error(request, f"Ocorreu um erro ao tentar excluir a filial: {e}")
+    return redirect('rh_page')  
+
+# Função para excluir base
+def excluir_base(request, id):
+    base = get_object_or_404(Base, id=id)
+    try:
+        base.delete()
+        messages.success(request, "base excluída com sucesso.")
+    except Exception as e:
+        messages.error(request, f"Ocorreu um erro ao tentar excluir a base: {e}")
+    return redirect('rh_page')  
+
+# Função para excluir setor
+def excluir_setor(request, id):
+    setor = get_object_or_404(Setor, id=id)
+    try:
+        setor.delete()
+        messages.success(request, "setor excluído com sucesso.")
+    except Exception as e:
+        messages.error(request, f"Ocorreu um erro ao tentar excluir o setor: {e}")
+    return redirect('rh_page') 
+
+# Função para excluir curso
+def excluir_curso(request, id):
+    curso = get_object_or_404(Curso, id=id)
+    try:
+        curso.delete()
+        messages.success(request, "curso excluído com sucesso.")
+    except Exception as e:
+        messages.error(request, f"Ocorreu um erro ao tentar excluir o curso: {e}")
+    return redirect('rh_page')  
+
+# Função para excluir cargo
+def excluir_cargo(request, id):
+    cargo = get_object_or_404(cargo, id=id)
+    try:
+        cargo.delete()
+        messages.success(request, "cargo excluído com sucesso.")
+    except Exception as e:
+        messages.error(request, f"Ocorreu um erro ao tentar excluir o cargo: {e}")
+    return redirect('rh_page')   
