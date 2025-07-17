@@ -666,9 +666,8 @@ p {
 
 /* Modais Corporativos */
 .modal {
-  display: none;
   position: fixed;
-  z-index: 1001;
+  z-index: 1055 !important;
   left: 0;
   top: 0;
   width: 100%;
@@ -1056,6 +1055,270 @@ label {
 #openFormModalBtn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg), var(--shadow-primary);
+}
+
+
+
+/* ===== ESTILIZAÇÃO DE MODAIS - SISTEMA RH ===== */
+
+/* Estilo geral do modal */
+.modal {
+  position: fixed;
+  z-index: 1055 !important;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro semi-transparente */
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Conteúdo do modal */
+.modal-content-custom {
+  background: var(--card-bg);
+  margin: 5% auto;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  width: 90%;
+  max-width: 800px; /* Largura máxima */
+  position: relative;
+  animation: slideIn 0.4s ease-out;
+  border-top: 4px solid var(--primary-color);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Botão de fechar */
+.close {
+  color: var(--text-muted);
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.close:hover,
+.close:focus {
+  color: var(--error-color);
+  text-decoration: none;
+  cursor: pointer;
+  transform: rotate(90deg);
+}
+
+/* Título do modal */
+.modal-content-custom h2 {
+  color: var(--primary-color);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-size: 1.75rem;
+}
+
+/* Hint de fluxo do formulário */
+.form-flow-hint {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+/* Títulos de seção dentro do formulário */
+.section-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border-light);
+  font-size: 1.2rem;
+}
+
+/* Grid do formulário */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Grupo de formulário */
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(19, 75, 242, 0.15);
+}
+
+/* Botões de ação do modal */
+.modal-content-custom .btn {
+  margin-top: 2rem;
+  float: right;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--error-color);
+  color: white;
+}
+
+/* Estilos específicos para cada modal */
+#modalRp .modal-content-custom { border-top-color: var(--primary-color); }
+#modalMov .modal-content-custom { border-top-color: var(--warning-color); }
+#modalRd .modal-content-custom { border-top-color: var(--error-color); }
+
+#modalRp .section-title { color: var(--primary-color); }
+#modalMov .section-title { color: var(--warning-color); }
+#modalRd .section-title { color: var(--error-color); }
+
+
+
+
+/* ===== ESTILIZAÇÃO DE CHECKBOX - SISTEMA RH ===== */
+
+/* Estilo para o container do checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--font-family);
+}
+
+/* Esconder o checkbox padrão */
+.checkbox-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Estilo para o checkbox customizado */
+.checkmark {
+  height: 24px;
+  width: 24px;
+  background-color: var(--surface-color);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ícone de check */
+.checkmark::after {
+  content: "\2713"; /* Unicode para o tick */
+  color: white;
+  font-size: 16px;
+  display: none;
+  transition: all 0.2s ease-in-out;
+  transform: scale(0);
+}
+
+/* Quando o checkbox está marcado */
+.checkbox-container input[type="checkbox"]:checked ~ .checkmark {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.checkbox-container input[type="checkbox"]:checked ~ .checkmark::after {
+  display: block;
+  transform: scale(1);
+}
+
+/* Efeito de hover */
+.checkbox-container:hover .checkmark {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(19, 75, 242, 0.1);
+}
+
+/* Estilo para o texto do label */
+.checkbox-container label {
+  margin-left: 0.8rem;
+  color: var(--text-color);
+  font-weight: var(--font-weight-medium);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Estilo para o help text */
+.checkbox-container .helptext {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  margin-left: 0.8rem; /* Alinhar com o label */
+}
+
+/* Estilo para erros */
+.checkbox-container .errorlist {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+  margin-left: 0.8rem;
+  list-style: none;
+  padding: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .checkbox-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .checkbox-container label,
+  .checkbox-container .helptext,
+  .checkbox-container .errorlist {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
 }
 
 

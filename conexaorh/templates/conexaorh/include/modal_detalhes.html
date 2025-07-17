@@ -1,127 +1,198 @@
+{% load static %}
+{% comment %}
+Arquivo: modal_detalhes.html
+Versão completa com TODOS os campos originais, reorganizados em um layout moderno
+com seções, grids e ícones para melhor legibilidade e apelo visual.
+{% endcomment %}
+
 {% for registro in registros %}
 
-    <!--Detalhes de Requisição de Pessoal-->
+
+  <link rel="stylesheet" href="{% static 'conexaorh/css/detalhes.css' %}">
+    <!-- ================================================== -->
+    <!-- ========= MODAL DETALHES: REQUISIÇÃO PESSOAL ========= -->
+    <!-- ================================================== -->
     {% if registro.tipo == "RP" %}
-        <div class="modal" id="modalRP{{ registro.id }}" tabindex="-1" aria-labelledby="modalLabel{{ registro.id }}" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-              <div class="modal-content">
-                <div class="modal-header bg-warning text-dark">
-                  <h5 class="modal-title">Detalhes da Requisição Pessoal Nº 1</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+    <div class="modal fade" id="modalRP{{ registro.id }}" tabindex="-1" aria-labelledby="modalLabel{{ registro.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content modal-details-card">
+                <div class="modal-header modal-header-rp">
+                    <h5 class="modal-title" id="modalLabel{{ registro.id }}">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Detalhes da Requisição de Pessoal Nº <strong>{{ registro.n_rp|default:"N/A" }}</strong>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                  <p><strong>Requisitante:</strong> {{ registro.requisitante }}</p>
-                  <p><strong>Cargo:</strong> {{ registro.cargo }}</p>
-                  <p><strong>Salário:</strong> R$ {{ registro.salario }}</p>
-                  <p><strong>Adicionais:</strong> R$ {{ registro.adicionais }}</p>
-                  <p><strong>Quantidade de Vagas:</strong> {{ registro.quantidade_vagas }}</p>
-                  <p><strong>Horário de Trabalho:</strong> {{ registro.horario_trabalho_inicio }} às {{ registro.horario_trabalho_fim }}</p>
-                  <p><strong>Tipo de Ponto:</strong> {{ registro.tipo_ponto }}</p>
-                  <p><strong>Início do Contrato:</strong> {{ registro.inicio_contrato }}</p>
-                  <p><strong>Término do Contrato:</strong> {{ registro.termino_contrato }}</p>
-                  <p><strong>Tipo de Contratação:</strong> {{ registro.tipo_contratacao }}</p>
-                  <p><strong>Motivo da Contratação:</strong> {{ registro.motivo_contracao }}</p>
-                  <p><strong>Benefícios:</strong> {{ registro.beneficios }}</p>
-                  <p><strong>Substituição:</strong> {{ registro.subtituicao }}</p>
-                  <p><strong>Justificativa:</strong> {{ registro.justificativa_substituicao }}</p>
-                  <p><strong>Processo Seletivo:</strong> {{ registro.processo_seletivo }}</p>
-                  <p><strong>Localidade:</strong> {{ registro.localidade }}</p>
-                  <p><strong>Base:</strong> {{ registro.base }}</p>
-                  <p><strong>Sexo:</strong> {{ registro.sexo }}</p>
-                  <p><strong>Exige Viagem:</strong> {{ registro.exige_viagem }}</p>
-                  <p><strong>CNH:</strong> {{ registro.cnh }} {% if registro.outros_cnh %}({{ registro.outros_cnh }}){% endif %}</p>
-                  <p><strong>Departamento:</strong> {{ registro.departamento }}</p>
-                  <p><strong>Escolaridade:</strong> {{ registro.escolaridade }}</p>
-                  <p><strong>Gestor Imediato:</strong> {{ registro.gestor_imediato }}</p>
-                  <p><strong>Centro de Custo:</strong> {{ registro.centro_custo }}</p>
-                  <p><strong>Cursos:</strong> {{ registro.cursos }}</p>
-                  <p><strong>Experiências:</strong> {{ registro.experiencias }}</p>
-                  <p><strong>Habilidades:</strong> {{ registro.habilidades_comportamentais }}</p>
-                  <p><strong>Principais Atribuições:</strong> {{ registro.principais_atribuicoes }}</p>
-                  <p><strong>Candidato Aprovado:</strong> {{ registro.candidato_aprovado }}</p>
+                    <!-- Seção: Informações da Vaga -->
+                    <h6 class="details-section-title">Informações da Vaga e Contrato</h6>
+                    <div class="details-grid">
+                        <div class="detail-item"><i class="fas fa-user-tag"></i><strong>Requisitante:</strong><span>{{ registro.requisitante|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-user-tie"></i><strong>Cargo:</strong><span>{{ registro.cargo|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-building"></i><strong>Departamento:</strong><span>{{ registro.departamento|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-dollar-sign"></i><strong>Salário:</strong><span>R$ {{ registro.salario|default:"0,00" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-plus-circle"></i><strong>Adicionais:</strong><span>R$ {{ registro.adicionais|default:"0,00" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-users"></i><strong>Qtd. Vagas:</strong><span>{{ registro.quantidade_vagas|default:"1" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-clock"></i><strong>Horário:</strong><span>{{ registro.horario_trabalho_inicio }} às {{ registro.horario_trabalho_fim }}</span></div>
+                        <div class="detail-item"><i class="fas fa-fingerprint"></i><strong>Tipo de Ponto:</strong><span>{{ registro.tipo_ponto|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-id-card"></i><strong>Tipo de Contratação:</strong><span>{{ registro.tipo_contratacao|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-calendar-alt"></i><strong>Início do Contrato:</strong><span>{{ registro.inicio_contrato|date:"d/m/Y" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-calendar-times"></i><strong>Término do Contrato:</strong><span>{{ registro.termino_contrato|date:"d/m/Y"|default:"Indeterminado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-gift"></i><strong>Benefícios:</strong><span>{{ registro.beneficios|default:"Não informado" }}</span></div>
+                    </div>
+
+                    <!-- Seção: Perfil do Candidato -->
+                    <h6 class="details-section-title">Perfil do Candidato</h6>
+                    <div class="details-grid">
+                        <div class="detail-item"><i class="fas fa-graduation-cap"></i><strong>Escolaridade:</strong><span>{{ registro.escolaridade|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-venus-mars"></i><strong>Sexo:</strong><span>{{ registro.sexo|default:"Indiferente" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-car"></i><strong>CNH:</strong><span>{{ registro.cnh|default:"Não exige" }} {% if registro.outros_cnh %}({{ registro.outros_cnh }}){% endif %}</span></div>
+                        <div class="detail-item"><i class="fas fa-plane"></i><strong>Exige Viagem:</strong><span>{{ registro.exige_viagem|default:"Não" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-book"></i><strong>Cursos Necessários:</strong><span>{{ registro.cursos|default:"Não especificado" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-briefcase"></i><strong>Experiências Requeridas:</strong><span>{{ registro.experiencias|default:"Não especificado" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-lightbulb"></i><strong>Habilidades Comportamentais:</strong><span>{{ registro.habilidades_comportamentais|default:"Não especificado" }}</span></div>
+                    </div>
+
+                    <!-- Seção: Detalhes Administrativos -->
+                    <h6 class="details-section-title">Detalhes Administrativos e Justificativas</h6>
+                    <div class="details-grid">
+                        <div class="detail-item"><i class="fas fa-map-marker-alt"></i><strong>Localidade:</strong><span>{{ registro.localidade|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-building"></i><strong>Base:</strong><span>{{ registro.base|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-sitemap"></i><strong>Gestor Imediato:</strong><span>{{ registro.gestor_imediato|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-chart-pie"></i><strong>Centro de Custo:</strong><span>{{ registro.centro_custo|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-clipboard-check"></i><strong>Processo Seletivo:</strong><span>{{ registro.processo_seletivo|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-user-check"></i><strong>Candidato Aprovado:</strong><span>{{ registro.candidato_aprovado|default:"Nenhum" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-question-circle"></i><strong>Motivo da Contratação:</strong><span>{{ registro.motivo_contracao|default:"Não informado" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-exchange-alt"></i><strong>Em Substituição de:</strong><span>{{ registro.subtituicao|default:"Não se aplica" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-file-alt"></i><strong>Justificativa da Substituição:</strong><span>{{ registro.justificativa_substituicao|default:"Não se aplica" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-tasks"></i><strong>Principais Atribuições:</strong><span>{{ registro.principais_atribuicoes|default:"Não informado" }}</span></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
-              </div>
-            </div>
-        </div>
-
-    <!--Detalhes de Movimentaçaõ de Pessoal-->
-    {% elif registro.tipo == "MOV" %}
-        <div class="modal fade" id="modalMOV{{ registro.id }}" tabindex="-1" aria-labelledby="modalMovLabel{{ registro.id }}" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content bg-light text-dark">
-                    <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title" id="modalMovLabel{{ registro.id }}">Detalhes da Movimentação Nº {{ registro.n_mov }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Colaborador:</strong> {{ registro.colaborador_movimentado }}</p>
-                        <p><strong>Matrícula:</strong> {{ registro.matricula }}</p>
-                        <p><strong>Data de Admissão:</strong> {{ registro.data_admissao }}</p>
-                        <p><strong>Tipo de Movimentação:</strong> {{ registro.tipo_movimentacao }} {% if registro.outro_tipo %} ({{ registro.outro_tipo }}) {% endif %}</p>
-                        <p><strong>Localidade Atual:</strong> {{ registro.localidade_atual }}</p>
-                        <p><strong>Cargo Atual:</strong> {{ registro.cargo_atual }}</p>
-                        <p><strong>Departamento Atual:</strong> {{ registro.departamento_atual }}</p>
-                        <p><strong>Salário Atual:</strong> R$ {{ registro.salario_atual }}</p>
-                        <p><strong>Gestor Atual:</strong> {{ registro.gestor_atual }}</p>
-                        <p><strong>Centro de Custo Atual:</strong> {{ registro.centro_custo_atual }}</p>
-                        <hr>
-                        <p><strong>Localidade Proposta:</strong> {{ registro.localidade_proposta }}</p>
-                        <p><strong>Cargo Proposto:</strong> {{ registro.cargo_proposto }}</p>
-                        <p><strong>Departamento Proposto:</strong> {{ registro.departamento_proposto }}</p>
-                        <p><strong>Salário Proposto:</strong> R$ {{ registro.salario_proposto }}</p>
-                        <p><strong>Gestor Proposto:</strong> {{ registro.gestor_proposto }}</p>
-                        <p><strong>Centro de Custo Proposto:</strong> {{ registro.centro_custo_proposto }}</p>
-                        <p><strong>Data da Movimentação:</strong> {{ registro.data_movimentacao }}</p>
-                        <p><strong>Tipo de Adicional:</strong> {{ registro.tipo_adicional }}</p>
-                        <p><strong>Ajuda de Custo:</strong> {{ registro.tipo_ajuda_custo }} - R$ {{ registro.valor_ajuda }}</p>
-                        <p><strong>Período:</strong> {{ registro.periodo }}</p>
-                        <p><strong>Justificativa:</strong> {{ registro.jutificativa_movimentacao }} {% if registro.outro_justificativa %} ({{ registro.outro_justificativa }}){% endif %}</p>
-                        <p><strong>Substituição:</strong> {{ registro.substituicao }}</p>
-                        <p><strong>Comentários:</strong> {{ registro.comentarios }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    </div>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <a href="{% url 'exportar_requisicao_pdf' %}?requisicao={{ registro.id }}" class="btn btn-primary-custom"><i class="fas fa-file-pdf me-2"></i>Exportar PDF</a>
                 </div>
             </div>
         </div>
-
-    <!--Detalhes de Requisição de Desligamento-->    
-    {% elif registro.tipo == "RD" %}
-        <div class="modal fade" id="modalRD{{ registro.id }}" tabindex="-1" aria-labelledby="modalRDLabel{{ registro.id }}" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content bg-light text-dark">
-                    <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title" id="modalRDLabel{{ registro.id }}">Detalhes da Requisição de Desligamento</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Requisitante:</strong> {{ registro.requisitante }}</p>
-                        <p><strong>Colaborador Desligado:</strong> {{ registro.colaborador_desligado }}</p>
-                        <p><strong>Matrícula:</strong> {{ registro.matricula }}</p>
-                        <p><strong>Data de Admissão:</strong> {{ registro.data_admissao }}</p>
-                        <p><strong>Data de Desligamento:</strong> {{ registro.data_desligamento }}</p>
-                        <p><strong>Função:</strong> {{ registro.funcao }}</p>
-                        <p><strong>Salário:</strong> R$ {{ registro.salario }}</p>
-                        <p><strong>Localidade:</strong> {{ registro.localidade }}</p>
-                        <p><strong>Centro de Custo:</strong> {{ registro.centro_custo }}</p>
-                        <p><strong>Tipo de Desligamento:</strong> {{ registro.tipo_desligamento }}</p>
-                        <p><strong>Motivo do Desligamento:</strong> {{ registro.motivo_desligamento }} {% if registro.outro_motivo %} ({{ registro.outro_motivo }}) {% endif %}</p>
-                        <p><strong>Justificativa do Desligamento:</strong> {{ registro.justificativa_desligamento }}</p>
-                        <p><strong>Tipo de Aviso:</strong> {{ registro.tipo_aviso }}</p>
-                        <p><strong>Justificativa do Aviso:</strong> {{ registro.justificativa_aviso }}</p>
-                        <p><strong>Substituição:</strong> {{ registro.substituicao }}</p>
-                        <p><strong>Bloqueio para Re-Admissão:</strong> {{ registro.bloqueio_readmissao|yesno:"Sim,Não" }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
     {% endif %}
-    
+
+
+    <!-- ================================================== -->
+    <!-- ========= MODAL DETALHES: MOVIMENTAÇÃO ========= -->
+    <!-- ================================================== -->
+    {% if registro.tipo == "MOV" %}
+    <div class="modal fade" id="modalMOV{{ registro.id }}" tabindex="-1" aria-labelledby="modalMovLabel{{ registro.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content modal-details-card">
+                <div class="modal-header modal-header-mov">
+                    <h5 class="modal-title" id="modalMovLabel{{ registro.id }}">
+                        <i class="fas fa-random me-2"></i>
+                        Detalhes da Movimentação Nº <strong>{{ registro.n_mov|default:"N/A" }}</strong>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Coluna: Situação Atual -->
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h6 class="details-section-title">Situação Atual</h6>
+                            <div class="details-grid-single">
+                                <div class="detail-item"><i class="fas fa-user"></i><strong>Colaborador:</strong><span>{{ registro.colaborador_movimentado|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-id-badge"></i><strong>Matrícula:</strong><span>{{ registro.matricula|default:"N/A" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-calendar-plus"></i><strong>Data Admissão:</strong><span>{{ registro.data_admissao|date:"d/m/Y" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-map-marker-alt"></i><strong>Localidade:</strong><span>{{ registro.localidade_atual|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-user-tie"></i><strong>Cargo:</strong><span>{{ registro.cargo_atual|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-building"></i><strong>Departamento:</strong><span>{{ registro.departamento_atual|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-dollar-sign"></i><strong>Salário:</strong><span>R$ {{ registro.salario_atual|default:"0,00" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-sitemap"></i><strong>Gestor:</strong><span>{{ registro.gestor_atual|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-chart-pie"></i><strong>Centro de Custo:</strong><span>{{ registro.centro_custo_atual|default:"Não informado" }}</span></div>
+                            </div>
+                        </div>
+                        <!-- Coluna: Situação Proposta -->
+                        <div class="col-lg-6">
+                            <h6 class="details-section-title">Situação Proposta</h6>
+                            <div class="details-grid-single">
+                                <div class="detail-item"><i class="fas fa-map-marker-alt"></i><strong>Localidade:</strong><span>{{ registro.localidade_proposta|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-user-tie"></i><strong>Cargo:</strong><span>{{ registro.cargo_proposto|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-building"></i><strong>Departamento:</strong><span>{{ registro.departamento_proposto|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-dollar-sign"></i><strong>Salário:</strong><span>R$ {{ registro.salario_proposto|default:"0,00" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-sitemap"></i><strong>Gestor:</strong><span>{{ registro.gestor_proposto|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-chart-pie"></i><strong>Centro de Custo:</strong><span>{{ registro.centro_custo_proposto|default:"Não informado" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-calendar-check"></i><strong>Data Efetiva:</strong><span>{{ registro.data_movimentacao|date:"d/m/Y" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-plus-circle"></i><strong>Tipo Adicional:</strong><span>{{ registro.tipo_adicional|default:"Nenhum" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-wallet"></i><strong>Ajuda de Custo:</strong><span>{{ registro.tipo_ajuda_custo }} - R$ {{ registro.valor_ajuda|default:"0,00" }}</span></div>
+                                <div class="detail-item"><i class="fas fa-history"></i><strong>Período:</strong><span>{{ registro.periodo|default:"Não informado" }}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Seção: Justificativa -->
+                    <h6 class="details-section-title mt-4">Justificativa e Comentários</h6>
+                     <div class="details-grid">
+                        <div class="detail-item-full"><i class="fas fa-info-circle"></i><strong>Tipo de Movimentação:</strong><span>{{ registro.tipo_movimentacao }} {% if registro.outro_tipo %} ({{ registro.outro_tipo }}){% endif %}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-file-alt"></i><strong>Justificativa:</strong><span>{{ registro.jutificativa_movimentacao|default:"Não informado" }} {% if registro.outro_justificativa %} ({{ registro.outro_justificativa }}){% endif %}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-exchange-alt"></i><strong>Em Substituição de:</strong><span>{{ registro.substituicao|default:"Não se aplica" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-comment-dots"></i><strong>Comentários Adicionais:</strong><span>{{ registro.comentarios|default:"Nenhum" }}</span></div>
+                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <a href="{% url 'exportar_movimentacao_pdf' %}?movimentacao={{ registro.id }}" class="btn btn-warning-custom"><i class="fas fa-file-pdf me-2"></i>Exportar PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- ================================================== -->
+    <!-- ========= MODAL DETALHES: DESLIGAMENTO ========= -->
+    <!-- ================================================== -->
+    {% if registro.tipo == "RD" %}
+    <div class="modal fade" id="modalRD{{ registro.id }}" tabindex="-1" aria-labelledby="modalRDLabel{{ registro.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content modal-details-card">
+                <div class="modal-header modal-header-rd">
+                    <h5 class="modal-title" id="modalRDLabel{{ registro.id }}">
+                        <i class="fas fa-user-times me-2"></i>
+                        Detalhes da Requisição de Desligamento
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Seção: Informações do Colaborador -->
+                    <h6 class="details-section-title">Informações do Colaborador</h6>
+                    <div class="details-grid">
+                        <div class="detail-item"><i class="fas fa-user-tag"></i><strong>Requisitante:</strong><span>{{ registro.requisitante|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-user"></i><strong>Colaborador a ser Desligado:</strong><span>{{ registro.colaborador_desligado|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-id-badge"></i><strong>Matrícula:</strong><span>{{ registro.matricula|default:"N/A" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-user-tie"></i><strong>Função:</strong><span>{{ registro.funcao|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-calendar-plus"></i><strong>Data Admissão:</strong><span>{{ registro.data_admissao|date:"d/m/Y" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-dollar-sign"></i><strong>Salário:</strong><span>R$ {{ registro.salario|default:"0,00" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-map-marker-alt"></i><strong>Localidade:</strong><span>{{ registro.localidade|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-chart-pie"></i><strong>Centro de Custo:</strong><span>{{ registro.centro_custo|default:"Não informado" }}</span></div>
+                    </div>
+
+                    <!-- Seção: Detalhes do Desligamento -->
+                    <h6 class="details-section-title">Detalhes e Motivos do Desligamento</h6>
+                    <div class="details-grid">
+                        <div class="detail-item"><i class="fas fa-calendar-times"></i><strong>Data do Desligamento:</strong><span>{{ registro.data_desligamento|date:"d/m/Y" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-sign-out-alt"></i><strong>Tipo de Desligamento:</strong><span>{{ registro.tipo_desligamento|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-gavel"></i><strong>Tipo de Aviso:</strong><span>{{ registro.tipo_aviso|default:"Não informado" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-user-lock"></i><strong>Bloqueio para Readmissão:</strong><span>{{ registro.bloqueio_readmissao|yesno:"Sim,Não" }}</span></div>
+                        <div class="detail-item"><i class="fas fa-exchange-alt"></i><strong>Haverá Substituição:</strong><span>{{ registro.substituicao|default:"Não informado" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-comment-dots"></i><strong>Motivo do Desligamento:</strong><span>{{ registro.motivo_desligamento|default:"Não informado" }} {% if registro.outro_motivo %} ({{ registro.outro_motivo }}){% endif %}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-file-alt"></i><strong>Justificativa do Desligamento:</strong><span>{{ registro.justificativa_desligamento|default:"Não informado" }}</span></div>
+                        <div class="detail-item-full"><i class="fas fa-file-signature"></i><strong>Justificativa do Aviso:</strong><span>{{ registro.justificativa_aviso|default:"Não informado" }}</span></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <a href="{% url 'exportar_desligamento_pdf' %}?desligamento={{ registro.id }}" class="btn btn-danger-custom"><i class="fas fa-file-pdf me-2"></i>Exportar PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 {% endfor %}

@@ -1,0 +1,167 @@
+
+/* =================================================================== */
+/* ========== ESTILIZAÇÃO AVANÇADA PARA MODAL DE DETALHES ========== */
+/* =================================================================== */
+
+/* Card principal do modal */
+.modal-details-card {
+  border: none;
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-color); /* Fundo sutilmente diferente */
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+[data-theme="dark"] .modal-details-card {
+    background-color: #0b1120; /* Um tom mais escuro para o modal no tema dark */
+}
+
+/* Cabeçalhos coloridos por tipo de registro */
+.modal-header {
+  color: white;
+  border-bottom: none;
+  padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+.modal-header .modal-title {
+  font-weight: var(--font-weight-bold);
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.modal-header-rp { background: var(--gradient-primary); }
+.modal-header-mov { background: var(--gradient-gold); color: #333 !important; } /* Texto escuro para melhor contraste no dourado */
+.modal-header-rd { background: linear-gradient(135deg, var(--error-color), #b91c1c); }
+
+/* Botão de fechar branco para os headers coloridos */
+.modal-header .btn-close-white {
+    filter: brightness(0) invert(1);
+}
+.modal-header-mov .btn-close-white {
+    filter: none; /* Sem filtro para o header dourado */
+}
+
+
+/* Corpo do modal */
+.modal-body {
+  padding: var(--spacing-xl);
+}
+
+/* Título da seção de detalhes */
+.details-section-title {
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-color);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+}
+
+.details-section-title:first-child {
+  margin-top: 0;
+}
+
+[data-theme="dark"] .details-section-title {
+    color: var(--dourado-nort);
+}
+
+/* Grid para os itens de detalhe */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.details-grid-single {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+}
+
+/* Estilo de cada item de detalhe */
+.detail-item, .detail-item-full {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-light);
+  border-left: 4px solid transparent; /* Borda inicial transparente */
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-fast);
+}
+
+.detail-item:hover, .detail-item-full:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-left-color: var(--primary-color);
+}
+
+[data-theme="dark"] .detail-item:hover, [data-theme="dark"] .detail-item-full:hover {
+    border-left-color: var(--dourado-nort);
+}
+
+.detail-item-full {
+  grid-column: 1 / -1; /* Ocupa a linha inteira */
+}
+
+.detail-item strong, .detail-item-full strong {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+}
+
+.detail-item i, .detail-item-full i {
+  color: var(--primary-light);
+  margin-right: var(--spacing-sm);
+  font-size: 0.9rem;
+  width: 20px; /* Alinha os ícones */
+  text-align: center;
+}
+
+.detail-item span, .detail-item-full span {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color);
+  font-size: 1rem;
+  word-wrap: break-word;
+  padding-left: 28px; /* Alinha o texto com o label, abaixo do ícone */
+}
+
+/* Rodapé do modal */
+.modal-footer {
+  background-color: var(--surface-color);
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-md) var(--spacing-xl);
+  display: flex;
+  justify-content: flex-end;
+}
+
+[data-theme="dark"] .modal-footer {
+    background-color: rgba(0,0,0,0.2);
+}
+
+/* Botões customizados para o rodapé */
+.btn-primary-custom {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: var(--shadow-primary);
+}
+.btn-warning-custom {
+    background: var(--gradient-gold);
+    color: var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+.btn-danger-custom {
+    background: linear-gradient(135deg, var(--error-color), #dc2626);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}

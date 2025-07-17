@@ -2,27 +2,24 @@
 <!DOCTYPE html>
 <html lang="pt-br" data-theme="light">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link rel="icon" href="https://encrypted-tbn2.gstatic.com/faviconV2?url=https://www.nortetech.net&client=VFE&size=64&type=FAVICON&fallback_opts=TYPE,SIZE,URL&nfrp=2" type="image/png">
-<title>{% block title %}Formularios - RH{% endblock %}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="https://encrypted-tbn2.gstatic.com/faviconV2?url=https://www.nortetech.net&client=VFE&size=64&type=FAVICON&fallback_opts=TYPE,SIZE,URL&nfrp=2" type="image/png">
+    <title>{% block title %}Página do Gestor - RH{% endblock %}</title>
 
+    <!-- ================== CSS ================== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'conexaorh/css/gestor.css' %}">
+    <link rel="stylesheet" href="{% static 'conexaorh/css/geral.css' %}">
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
-
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-
-
-<link rel="stylesheet" href="{% static 'conexaorh/css/gestor.css' %}">
+    <!-- ================== JAVASCRIPT ================== -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 </head>
 <body>
 
@@ -30,390 +27,317 @@
 
 <div class="main-content">
 
-      <!-- Card de boas-vindas -->
-  <div class="card-welcome">
+    <!-- Card de boas-vindas -->
+    <div class="card-welcome">
         <div class="welcome-text">
             <h1 class="mb-4">Bem-vindo à Página do Gestor, {{ usuario.first_name }}</h1>
             <p>Esta é a área exclusiva para usuários do tipo Gestor.</p>
         </div>
-
         <div class="user-profile">
             <div class="profile-info">
-            <span class="user-name">{{ usuario.first_name }} {{ usuario.last_name }}</span>
-            <span class="user-role">{{ usuario.get_user_type_display }}</span>
+                <span class="user-name">{{ usuario.first_name }} {{ usuario.last_name }}</span>
+                <span class="user-role">{{ usuario.get_user_type_display }}</span>
             </div>
             <div class="dropdown-container">
-            <span class="dropdown-icon" onclick="toggleDropdown()">
-                <i class="fa fa-chevron-down"></i>
-            </span>
-
-            <div id="userDropdown" class="dropdown-menu">
-                <a href="{% url 'logout' %}" class="dropdown-item logout">
-                <i class="fas fa-sign-out-alt"></i> Sair
-                </a>
-            </div>
+                <span class="dropdown-icon" onclick="toggleDropdown( )">
+                    <i class="fa fa-chevron-down"></i>
+                </span>
+                <div id="userDropdown" class="dropdown-menu">
+                    <a href="{% url 'logout' %}" class="dropdown-item logout">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-
-  <div class="container mt-5">
-    
-      <!-- Coluna das ações rápidas -->
-      <div class="container-fluid mt-5 d-flex gap-4 align-items-stretch">
-
-        <div class="d-flex flex-column align-items-start gap-4 p-3 rounded" style="background-color: transparent; width: 320px; ">
-
-            <h5 class="text-primary fw-bold ms-2">Ações Rápidas</h5>
-
-            <div class="card shadow-sm w-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                    <h5 class="card-title">Requisição de Pessoal</h5>
-                    <p class="card-text">Solicite novas contratações de forma rápida e organizada.</p>
-                    <button onclick="openModal('modalRp')" class="btn btn-outline-primary">Abrir Formulário</button>
+    <!-- Seção de Ações Rápidas com os 3 Cards -->
+    <div class="container-fluid mt-4">
+        <h3 class="mb-3">Ações Rápidas</h3>
+        <div class="row g-4">
+            <!-- Card Requisição de Pessoal -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card shadow-sm h-100 text-center action-card">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Requisição de Pessoal</h5>
+                        <p class="card-text">Solicite novas contratações de forma rápida e organizada.</p>
+                        <div class="mt-auto">
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalRp">
+                                Abrir Formulário
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="card shadow-sm w-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-exchange-alt fa-3x text-warning mb-3"></i>
-                    <h5 class="card-title">Movimentação de Pessoal</h5>
-                    <p class="card-text">Registre promoções ou transferências internas com facilidade.</p>
-                    <button onclick="openModal('modalMov')" class="btn btn-outline-warning">Abrir Formulário</button>
+            <!-- Card Movimentação de Pessoal -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card shadow-sm h-100 text-center action-card">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fas fa-exchange-alt fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Movimentação de Pessoal</h5>
+                        <p class="card-text">Registre promoções ou transferências internas com facilidade.</p>
+                        <div class="mt-auto">
+                            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalMov">
+                                Abrir Formulário
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="card shadow-sm w-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-user-times fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Requisição de Desligamento</h5>
-                    <p class="card-text">Solicite desligamentos de colaboradores com o devido registro.</p>
-                    <button onclick="openModal('modalRd')" class="btn btn-outline-danger">Abrir Formulário</button>
+            <!-- Card Requisição de Desligamento -->
+            <div class="col-lg-4 col-md-12">
+                <div class="card shadow-sm h-100 text-center action-card">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fas fa-user-times fa-3x text-danger mb-3"></i>
+                        <h5 class="card-title">Requisição de Desligamento</h5>
+                        <p class="card-text">Solicite desligamentos de colaboradores com o devido registro.</p>
+                        <div class="mt-auto">
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalRd">
+                                Abrir Formulário
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-      <div style="width: 2px; background-color: #FFD700;"></div>
-      <!-- Coluna da tabela com nova estilização -->
-      <div class="col-md-8">
-        <div class="tabela-estilizada">
-          <div class="tabela-header">
-            <h3>
-              <i class="fas fa-tasks text-info me-2"></i>Movimentações Pendentes como Gestor Proposto
-            </h3>
-          </div>
+    </div>
 
-          <div class="table-responsive">
-            <table id="tabela-movimentacoes" class="tabela-moderninha display nowrap w-100">
-              <thead>
-                <tr>
-                  <th>Gestor Atual</th>
-                  <th>Colaborador a ser movimentado</th>
-                  <th>Cargo Proposto</th>
-                  <th>Data Solicitação</th>
-                  <th>Assinatura Gestor Proposto</th>
-                  <th>Data Aprovação</th>
-                  <th>Tempo para Aprovação (dias)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for registro in movimentacao %}
-                <tr>
-                  <td>{{ registro.gestor_atual }}</td>
-                  <td>{{ registro.colaborador_movimentado }}</td>
-                  <td>{{ registro.cargo_proposto }}</td>
-                  <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
-                  <td>
-                    {% if registro.assinatura_gestor_proposto %}
-                    <p class="mb-1">Aprovado pelo Gestor:</p>
-                   <i class="fa-solid fa-check" style="color: green;">Assinado</i>
-                    {% else %}
-                    <form method="post" enctype="multipart/form-data" class="d-flex flex-column align-items-start">
-                      {% csrf_token %}
-                      {{ form.as_p }}
-                      <input type="hidden" name="registro_id" value="{{ registro.id }}">
-                      <button type="submit" name="submit_aprovacao_mov" class="btn btn-sm btn-outline-success mt-2">Enviar Assinatura</button>
-                    </form>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if registro.assinatura_gestor_proposto %}
-                    {{ registro.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
-                    {% else %}
-                    -
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if registro.dias_para_autorizacao_gestor_proposto is not None %}
-                      {% if registro.dias_para_autorizacao_gestor_proposto == 0 %}
-                        Aprovado no mesmo dia
-                      {% else %}
-                        {{ registro.dias_para_autorizacao_gestor_proposto }} dias
-                      {% endif %}
-                    {% else %}
-                      -
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-
-          {% if movimentacao|length == 0 %}
-          <div class="tabela-rodape">
-            <p class="text-muted text-center mt-3">Não há movimentações aguardando sua aprovação.</p>
-          </div>
-          {% endif %}
+    <!-- Linha Amarela Divisória -->
+    <div class="linha-amarela my-5"></div>
+    <!-- Tabela de Movimentações Pendentes -->
+    <div class="container-fluid">
+        <div class="card-tabela-estilizada">
+            <div class="tabela-header">
+                <h3><i class="fas fa-tasks text-info me-2"></i>Movimentações Pendentes como Gestor Proposto</h3>
+            </div>
+            <div class="table-responsive">
+                <table id="tabela-movimentacoes" class="tabela-moderninha display nowrap w-100">
+                    <thead>
+                        <tr>
+                            <!-- ATENÇÃO: O cabeçalho da sua tabela tem 8 colunas, não 7. Adicionei uma <th> vazia para a primeira coluna. -->
+                            <th></th>
+                            <th>Gestor Atual</th>
+                            <th>Colaborador</th>
+                            <th>Cargo Proposto</th>
+                            <th>Data Solicitação</th>
+                            <th>Sua Assinatura</th>
+                            <th>Data Aprovação</th>
+                            <th>Tempo para Aprovar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in movimentacao %}
+                        <tr>
+                            <td>{{ registro.gestor_atual }}</td>
+                            <td>{{ registro.colaborador_movimentado }}</td>
+                            <td>{{ registro.cargo_proposto }}</td>
+                            <td>{{ registro.data_solicitacao|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if registro.assinatura_gestor_proposto %}
+                                    <span class="text-success"><i class="fa-solid fa-check"></i> Assinado</span>
+                                {% else %}
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
+                                        <input type="hidden" name="registro_id" value="{{ registro.id }}">
+                                        <button type="submit" name="submit_aprovacao_mov" class="btn btn-sm btn-outline-success">
+                                            Aprovar
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if registro.assinatura_gestor_proposto %}
+                                    {{ registro.data_autorizacao_gestor_proposto|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    <span class="text-muted">Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if registro.dias_para_autorizacao_gestor_proposto is not None %}
+                                    {% if registro.dias_para_autorizacao_gestor_proposto == 0 %}
+                                        Aprovado no mesmo dia
+                                    {% else %}
+                                        {{ registro.dias_para_autorizacao_gestor_proposto }} dias
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <!-- A linha de "vazio" agora tem 8 colunas para evitar o erro do DataTables -->
+                            <td colspan="8" class="text-center text-muted py-4">Não há movimentações aguardando sua aprovação.</td>
+                        </tr>
+                        {% endfor %}  <!-- <--- AQUI ESTÁ A TAG QUE FALTAVA -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </div>
+    </div>
+</div>
 
-  </div>
+<!-- =================================================================== -->
+<!-- =================== MODAIS DE FORMULÁRIO =================== -->
+<!-- =================================================================== -->
 
+<!-- Modal Requisição de Pessoal -->
+<div class="modal fade" id="modalRp" tabindex="-1" aria-labelledby="modalRpLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content-custom">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalRpLabel">Requisição de Pessoal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="form-flow-hint">Preencha os dados da vaga, o perfil do candidato e os benefícios.</p>
+                <form method="post" name="submit_rp">
+                    {% csrf_token %}
+                    <h3 class="section-title">Informações da Vaga</h3>
+                    <div class="form-grid">
+                        {{ form_rp.as_p }}
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="submit_rp" class="btn btn-primary">Registrar Requisição</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Movimentação de Pessoal -->
+<div class="modal fade" id="modalMov" tabindex="-1" aria-labelledby="modalMovLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content-custom">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalMovLabel">Movimentação de Pessoal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="form-flow-hint">Informe os dados da movimentação, como setor, motivo e nova função.</p>
+                <form method="post" name="submit_movimentacao">
+                    {% csrf_token %}
+                    <h3 class="section-title">Dados da Movimentação</h3>
+                    <div class="form-grid">
+                        {{ form_movimentacao.as_p }}
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="submit_movimentacao" class="btn btn-warning">Registrar Movimentação</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Requisição de Desligamento -->
+<div class="modal fade" id="modalRd" tabindex="-1" aria-labelledby="modalRdLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content-custom">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalRdLabel">Requisição de Desligamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="form-flow-hint">Preencha os dados da solicitação, justificativa e prazos.</p>
+                <form method="post" name="submit_rd">
+                    {% csrf_token %}
+                    <h3 class="section-title">Detalhes do Desligamento</h3>
+                    <div class="form-grid">
+                        {{ form_rd.as_p }}
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="submit_rd" class="btn btn-danger">Registrar Desligamento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação (se necessário) -->
+<div class="modal fade" id="modalConfirmacao" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content-custom">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Deseja realizar também uma Requisição de Pessoal?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                <button type="button" class="btn btn-primary" id="confirmarRequisicaoBtn">Sim</button>
+            </div>
+        </div>
     </div>
 </div>
 
 
-<div id="modalRp" class="modal">
-    <div class="modal-content-custom">
-        <span class="close" onclick="closeModal('modalRp')">&times;</span>
-        <h2>Requisição de Pessoal</h2>
-        <p class="form-flow-hint">Preencha os dados da vaga desejada, depois especifique o perfil do candidato e os benefícios oferecidos.</p>
-        <form method="post">
-            {% csrf_token %}
-            <h3 class="section-title">Informações da Vaga</h3>
-            <div class="form-grid">
-                {% for field in form_rp.visible_fields %}
-                    {% if forloop.counter <= 10 %}
-                    <div class="form-group">
-                        {{ form.media }}
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            <h3 class="section-title">Perfil do Candidato</h3>
-            <div class="form-grid">
-                {% for field in form_rp.visible_fields %}
-                    {% if forloop.counter > 10 and forloop.counter <= 20 %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            <h3 class="section-title">Benefícios e Requisitos</h3>
-            <div class="form-grid">
-                {% for field in form_rp.visible_fields %}
-                    {% if forloop.counter > 20 %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            <button type="submit" name="submit_rp" class="btn btn-primary">Registrar Requisição</button>
-        </form>
-        <div>
-          <a href=""></a>
-        </div>
-    </div>
-</div>
+<!-- =================================================================== -->
+<!-- =================== SCRIPTS DA PÁGINA =================== -->
+<!-- =================================================================== -->
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-      const filialSelect = document.getElementById('id_filial');
-      const baseSelect = document.getElementById('id_base');
-      const departamentoSelect = document.getElementById('id_departamento');
-      const cargoSelect = document.getElementById('id_cargo');
-
-      filialSelect.addEventListener('change', function () {
-          const filialId = this.value;
-          fetch(`/ajax/bases-gestor/?filial=${filialId}`)
-              .then(response => response.json())
-              .then(data => {
-                  baseSelect.innerHTML = '<option value="">---------</option>';
-                  data.forEach(base => {
-                      baseSelect.innerHTML += `<option value="${base.id}">${base.nome}</option>`;
-                  });
-                  departamentoSelect.innerHTML = '<option value="">---------</option>';
-                  cargoSelect.innerHTML = '<option value="">---------</option>';
-              });
-      });
-
-      baseSelect.addEventListener('change', function () {
-          const baseId = this.value;
-          fetch(`/ajax/departamentos/?base=${baseId}`)
-              .then(response => response.json())
-              .then(data => {
-                  departamentoSelect.innerHTML = '<option value="">---------</option>';
-                  data.forEach(dep => {
-                      departamentoSelect.innerHTML += `<option value="${dep.id}">${dep.nome}</option>`;
-                  });
-                  cargoSelect.innerHTML = '<option value="">---------</option>';
-              });
-      });
-
-      departamentoSelect.addEventListener('change', function () {
-          const departamentoId = this.value;
-          fetch(`/ajax/cargos/?departamento=${departamentoId}`)
-              .then(response => response.json())
-              .then(data => {
-                  cargoSelect.innerHTML = '<option value="">---------</option>';
-                  data.forEach(cargo => {
-                      cargoSelect.innerHTML += `<option value="${cargo.id}">${cargo.nome}</option>`;
-                  });
-              });
-      });
-
-      // Quando o cargo for selecionado, busca os cursos associados e preenche o campo
-      cargoSelect.addEventListener('change', function () {
-          const cargoId = this.value;
-          fetch(`/ajax/cursos-do-cargo/?cargo=${cargoId}`)
-              .then(response => response.json())
-              .then(data => {
-                  const cursosText = data.cursos.join(', ');
-                  document.getElementById('id_cursos').value = cursosText;
-              });
-      });
-
-  });
-</script>
-
-<div id="modalMov" class="modal">
-    <div class="modal-content-custom">
-        <span class="close" onclick="closeModal('modalMov')">&times;</span>
-        <h2>Movimentação de Pessoal</h2>
-        <p class="form-flow-hint">Informe os dados da movimentação desejada, como setor, motivo e nova função.</p>
-        <form method="post">
-            {% csrf_token %}
-            <h3 class="section-title">Dados da Movimentação</h3>
-            <div class="form-grid">
-                {% for field in form_movimentacao.visible_fields %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-            <button type="submit" name="submit_movimentacao" class="btn btn-warning">Registrar Movimentação</button>
-        </form>
-    </div>
-</div>
-
-<div id="modalRd" class="modal">
-    <div class="modal-content-custom">
-        <span class="close" onclick="closeModal('modalRd')">&times;</span>
-        <h2>Requisição de Desligamento</h2>
-        <p class="form-flow-hint">Preencha os dados da solicitação de desligamento, justificativa e prazos.</p>
-        <form method="post">
-            {% csrf_token %}
-            <h3 class="section-title">Detalhes do Desligamento</h3>
-            <div class="form-grid">
-                {% for field in form_rd.visible_fields %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-            <button type="submit" name="submit_rd" class="btn btn-danger">Registrar Desligamento</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal de Confirmação -->
-<div id="modalConfirmacao" class="modal">
-    <div class="modal-content-custom">
-        <span class="close" onclick="closeModal('modalConfirmacao')">&times;</span>
-        <h3>Deseja realizar também fazer Requisição de Pessoal?</h3>
-        <button class="btn btn-primary" onclick="confirmarRequisicao()">Sim</button>
-        <button class="btn btn-secondary" onclick="closeModal('modalConfirmacao')">Não</button>
-    </div>
-</div>
-
-<script>
-  function toggleDropdown() {
-    const menu = document.getElementById("userDropdown");
-    const blur = document.getElementById("blur-background");
-
-    const isOpen = menu.style.display === "block";
-    menu.style.display = isOpen ? "none" : "block";
-    blur.style.display = isOpen ? "none" : "block";
-  }
-
-  document.addEventListener("click", function (e) {
-    const dropdown = document.getElementById("userDropdown");
-    const icon = document.querySelector(".dropdown-icon");
-    const blur = document.getElementById("blur-background");
-
-    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
-      dropdown.style.display = "none";
-      blur.style.display = "none";
+    // Script para o dropdown do perfil de usuário
+    function toggleDropdown() {
+        const menu = document.getElementById("userDropdown");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
-  });
-</script>
-<script>
+
+    document.addEventListener("click", function (e) {
+        const dropdown = document.getElementById("userDropdown");
+        const icon = document.querySelector(".dropdown-icon");
+        if (dropdown && icon && !dropdown.contains(e.target) && !icon.contains(e.target)) {
+            dropdown.style.display = "none";
+        }
+    });
+
+    // Inicialização do DataTable para a tabela de pendências
     $(document).ready(function () {
         $('#tabela-movimentacoes').DataTable({
             responsive: true,
             pageLength: 5,
             lengthMenu: [5, 10, 15, 20, "Todos"],
             language: {
-                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json",
+                // ADICIONE ESTA LINHA:
+                emptyTable: "Não há movimentações aguardando sua aprovação."
             },
-            columnDefs: [
-                { targets: [0,1,2,3,5,6], orderable: true },
-                { targets: [4], orderable: false }
-            ]
-        });
+            order: [[ 3, 'desc' ]]
+        } );
     });
-</script>
 
-<script src="{% static 'conexaorh/js/tema.js' %}"></script>
+    // Lógica para o modal de confirmação
+    document.addEventListener('DOMContentLoaded', function() {
+        const abrirConfirmacao = "{{ abrir_confirmacao|default:'false' }}" === "True";
+        const modalConfirmacao = new bootstrap.Modal(document.getElementById('modalConfirmacao'));
+        const modalRp = new bootstrap.Modal(document.getElementById('modalRp'));
 
-<script>
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.style.display = "block";
-    }
-
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.style.display = "none";
-    }
-
-    function confirmarRequisicao() {
-        closeModal('modalConfirmacao');
-        openModal('modalRp');
-    }
-
-    const abrirConfirmacao = "{{ abrir_confirmacao|default:'false' }}" === "True";
-
-    window.onload = function () {
         if (abrirConfirmacao) {
-            openModal('modalConfirmacao');
-
-            // 🔧 Remove ?confirmacao=1 da URL sem recarregar a página
+            modalConfirmacao.show();
+            // Remove o parâmetro da URL
             if (window.history.replaceState) {
                 const url = new URL(window.location);
                 url.searchParams.delete('confirmacao');
                 window.history.replaceState({}, document.title, url.pathname + url.search);
             }
         }
-    };
+
+        document.getElementById('confirmarRequisicaoBtn').addEventListener('click', function() {
+            modalConfirmacao.hide();
+            modalRp.show();
+        });
+    });
 </script>
 
-
-
-
+<script src="{% static 'conexaorh/js/tema.js' %}"></script>
 
 </body>
 </html>
