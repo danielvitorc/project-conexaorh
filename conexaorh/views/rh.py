@@ -216,19 +216,66 @@ def setores_por_base(request):
 
     return JsonResponse({'results': setores})
 
-
 def editar_filial(request, pk):
     filial = get_object_or_404(Filial, pk=pk)
-
     if request.method == 'POST':
-        novo_nome = request.POST.get('nome')
-        if novo_nome:
-            filial.nome = novo_nome
-            filial.save()
-            messages.success(request, 'Filial atualizada com sucesso!')
-        return redirect('rh_page')  
+        form = FilialForm(request.POST, instance=filial)
+        if form.is_valid():
+            form.save()
+            return redirect('nome_da_sua_url_de_sucesso_filial') # Redirecione para a URL de sucesso apropriada
+    else:
+        form = FilialForm(instance=filial)
+    return render(request, 'seu_template_de_edicao_filial.html', {'form': form, 'filial': filial})
 
-    return redirect('rh_page')
+
+def editar_base(request, pk):
+    base = get_object_or_404(Base, pk=pk)
+    if request.method == 'POST':
+        form = BaseForm(request.POST, instance=base)
+        if form.is_valid():
+            form.save()
+            return redirect('nome_da_sua_url_de_sucesso_base') # Redirecione para a URL de sucesso apropriada
+    else:
+        form = BaseForm(instance=base)
+    return render(request, 'seu_template_de_edicao_base.html', {'form': form, 'base': base})
+
+
+def editar_setor(request, pk):
+    setor = get_object_or_404(Setor, pk=pk)
+    if request.method == 'POST':
+        form = SetorForm(request.POST, instance=setor)
+        if form.is_valid():
+            form.save()
+            return redirect('nome_da_sua_url_de_sucesso_setor') # Redirecione para a URL de sucesso apropriada
+    else:
+        form = SetorForm(instance=setor)
+    return render(request, 'seu_template_de_edicao_setor.html', {'form': form, 'setor': setor})
+
+
+def editar_curso(request, pk):
+    curso = get_object_or_404(Curso, pk=pk)
+    if request.method == 'POST':
+        form = CursoForm(request.POST, instance=curso)
+        if form.is_valid():
+            form.save()
+            return redirect('nome_da_sua_url_de_sucesso_curso') # Redirecione para a URL de sucesso apropriada
+    else:
+        form = CursoForm(instance=curso)
+    return render(request, 'seu_template_de_edicao_curso.html', {'form': form, 'curso': curso})
+
+
+def editar_cargo(request, pk):
+    cargo = get_object_or_404(Cargo, pk=pk)
+    if request.method == 'POST':
+        form = CargoForm(request.POST, instance=cargo)
+        if form.is_valid():
+            form.save()
+            return redirect('nome_da_sua_url_de_sucesso_cargo') # Redirecione para a URL de sucesso apropriada
+    else:
+        form = CargoForm(instance=cargo)
+    return render(request, 'seu_template_de_edicao_cargo.html', {'form': form, 'cargo': cargo})
+
+
 
 # Função para excluir filial
 def excluir_filial(request, id):

@@ -667,7 +667,6 @@ p {
 /* Modais Corporativos */
 .modal {
   position: fixed;
-  z-index: 1055 !important;
   left: 0;
   top: 0;
   width: 100%;
@@ -677,21 +676,6 @@ p {
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   animation: fadeIn 0.3s ease-out;
-}
-/* Modais Corporativos */
-.modal {
-  position: fixed;
-  z-index: 1055 !important;
-  z-index: 1055 !important;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-content {
@@ -1080,3 +1064,69 @@ label {
   box-shadow: var(--shadow-lg), var(--shadow-primary);
 }
 
+
+/* Aplica estilos quando o atributo data-theme="dark" está ativo */
+html[data-theme="dark"] {
+
+
+    /* Texto selecionado no campo */
+    .select2-container--default .select2-selection--single .select2-selection__rendered,
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        color: var(--text-color); /* Cor do texto selecionado */
+    }
+
+    /* Placeholder */
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: var(--text-muted); /* Cor do placeholder */
+    }
+
+    /* Seta do dropdown */
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        border-color: var(--text-color) transparent transparent transparent; /* Cor da seta */
+    }
+
+    /* Borda e sombra ao focar */
+    .select2-container--default.select2-container--focus .select2-selection--single,
+    .select2-container--default.select2-container--focus .select2-container--open .select2-selection--single,
+    .select2-container--default.select2-container--focus .select2-selection--multiple,
+    .select2-container--default.select2-container--open .select2-selection--multiple {
+        border-color: var(--primary-color); /* Borda ao focar */
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25); /* Sombra ao focar */
+    }
+
+    /* Dropdown de resultados */
+    .select2-container--default .select2-results__option {
+        background-color: var(--card-bg); /* Fundo das opções */
+        color: var(--text-color); /* Cor do texto das opções */
+    }
+
+    /* Opção destacada (hover) no dropdown */
+    .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+        background-color: var(--highlight-color); /* Fundo da opção em hover */
+        color: #ffffff; /* Texto da opção em hover */
+    }
+
+    /* Opção selecionada (tag) em campos multiple */
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: var(--primary-color); /* Fundo da tag selecionada */
+        color: #ffffff; /* Texto da tag selecionada */
+        border: 1px solid var(--primary-color); /* Borda da tag selecionada */
+    }
+
+    /* Botão de remover tag (X) */
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: #ffffff; /* Cor do X */
+    }
+
+    /* Campo de busca dentro do dropdown */
+    .select2-search--dropdown .select2-search__field {
+        background-color: var(--surface-color); /* Fundo do campo de busca */
+        border: 1px solid var(--border-color); /* Borda do campo de busca */
+        color: var(--text-color); /* Texto do campo de busca */
+    }
+
+    /* Resultado de busca sem correspondência */
+    .select2-results__option--disabled {
+        color: var(--text-muted); /* Cor do texto para 'Nenhum resultado encontrado' */
+    }
+}

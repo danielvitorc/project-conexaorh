@@ -28,7 +28,6 @@
     <!-- Outras bibliotecas JS -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 </head>
 <body>
@@ -85,45 +84,21 @@
                         <tr>
                             <td>{{ filial.nome }}</td>
                             <td>
-                                    <!-- Botão que abre o modal -->
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar{{ filial.id }}">
+                                <!-- Botão que abre o modal de edição (usando data-attributes) -->
+                                <button class="btn btn-sm btn-primary btn-editar-filial" 
+                                        data-filial-id="{{ filial.id }}" 
+                                        data-filial-nome="{{ filial.nome }}">
                                     Editar
-                                    </button>
+                                </button>
 
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="modalEditar{{ filial.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form method="POST" action="{% url 'editar_filial' filial.id %}">
-                                        {% csrf_token %}
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                            <h5 class="modal-title">Editar Filial</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="nome{{ filial.id }}" class="form-label">Nome da Filial</label>
-                                                <input type="text" name="nome" id="nome{{ filial.id }}" class="form-control" value="{{ filial.nome }}" required>
-                                            </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-success">Salvar Alterações</button>
-                                            </div>
-                                        </div>
-                                        </form>
-                                    </div>
-                                    </div>
-
-                                    <!-- Botão para excluir filial -->
-                                    <a href="{% url 'excluir_filial' filial.id %}" 
-                                    class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Tem certeza que deseja excluir esta filial?');"
-                                    title="Excluir">
-                                    <i class="bi bi-trash"></i>
-                                    </a>
-
-                                </td>
+                                <!-- Botão para excluir filial -->
+                                <a href="{% url 'excluir_filial' filial.id %}" 
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja excluir esta filial?');"
+                                title="Excluir">
+                                <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -156,10 +131,14 @@
                             <td>{{ base.nome }}</td>
                             <td>{{ base.filial }}</td>
                             <td>
-                                <!-- Botão que abre o modal -->
-                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#">
+                                <!-- Botão que abre o modal de edição (usando data-attributes) -->
+                                <button class="btn btn-sm btn-primary btn-editar-base" 
+                                        data-base-id="{{ base.id }}" 
+                                        data-base-nome="{{ base.nome }}"
+                                        data-base-filial="{{ base.filial.id }}">
                                     Editar
                                 </button>
+
                                  <!-- Botão para excluir base -->
                                 <a href="{% url 'excluir_base' base.id %}" 
                                     class="btn btn-danger btn-sm"
@@ -212,10 +191,14 @@
                             <td>{{setor.nome}}</td>
                             <td>{{setor.base}}</td>
                             <td>
-                                <!-- Botão que abre o modal -->
-                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#">
+                                <!-- Botão que abre o modal de edição (usando data-attributes) -->
+                                <button class="btn btn-sm btn-primary btn-editar-setor" 
+                                        data-setor-id="{{ setor.id }}" 
+                                        data-setor-nome="{{ setor.nome }}"
+                                        data-setor-base="{{ setor.base.id }}">
                                     Editar
                                 </button>
+
                                  <!-- Botão para excluir setor -->
                                 <a href="{% url 'excluir_setor' setor.id %}" 
                                     class="btn btn-danger btn-sm"
@@ -250,10 +233,13 @@
                         <tr>
                             <td>{{curso.nome}}</td>
                             <td>
-                                <!-- Botão que abre o modal -->
-                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#">
+                                <!-- Botão que abre o modal de edição (usando data-attributes) -->
+                                <button class="btn btn-sm btn-primary btn-editar-curso" 
+                                        data-curso-id="{{ curso.id }}" 
+                                        data-curso-nome="{{ curso.nome }}">
                                     Editar
                                 </button>
+
                                  <!-- Botão para excluir curso -->
                                 <a href="{% url 'excluir_curso' curso.id %}" 
                                     class="btn btn-danger btn-sm"
@@ -309,10 +295,15 @@
                         <tr>
                             <td>{{ cargo.nome }}</td>
                             <td>
-                                 <!-- Botão que abre o modal -->
-                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#">
+                                 <!-- Botão que abre o modal de edição (usando data-attributes) -->
+                                <button class="btn btn-sm btn-primary btn-editar-cargo" 
+                                        data-cargo-id="{{ cargo.id }}" 
+                                        data-cargo-nome="{{ cargo.nome }}"
+                                        data-cargo-setores="{% for setor in cargo.setores.all %}{{ setor.id }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                                        data-cargo-cursos="{% for curso in cargo.cursos.all %}{{ curso.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
                                     Editar
                                 </button>
+
                                  <!-- Botão para excluir cargo -->
                                 <a href="{% url 'excluir_cargo' cargo.id %}" 
                                     class="btn btn-danger btn-sm"
@@ -467,6 +458,166 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAIS DE EDIÇÃO (MOVIDOS PARA FORA) -->
+    
+    <!-- Modal de Edição de Filial -->
+    <div class="modal fade" id="modalEditarFilial" tabindex="-1" aria-labelledby="modalEditarFilialLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="formEditarFilial">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarFilialLabel">Editar Filial</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nomeFilialEditar" class="form-label">Nome da Filial</label>
+                            <input type="text" name="nome" id="nomeFilialEditar" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Base -->
+    <div class="modal fade" id="modalEditarBase" tabindex="-1" aria-labelledby="modalEditarBaseLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="formEditarBase">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarBaseLabel">Editar Base</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nomeBaseEditar" class="form-label">Nome da Base</label>
+                            <input type="text" name="nome" id="nomeBaseEditar" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="filialBaseEditar" class="form-label">Filial</label>
+                            <select name="filial" id="filialBaseEditar" class="form-control" required>
+                                {% for filial in filiais %}
+                                    <option value="{{ filial.id }}">{{ filial.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Setor -->
+    <div class="modal fade" id="modalEditarSetor" tabindex="-1" aria-labelledby="modalEditarSetorLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="formEditarSetor">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarSetorLabel">Editar Setor</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nomeSetorEditar" class="form-label">Nome do Setor</label>
+                            <input type="text" name="nome" id="nomeSetorEditar" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="baseSetorEditar" class="form-label">Base</label>
+                            <select name="base" id="baseSetorEditar" class="form-control" required>
+                                {% for base in bases %}
+                                    <option value="{{ base.id }}">{{ base.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Curso -->
+    <div class="modal fade" id="modalEditarCurso" tabindex="-1" aria-labelledby="modalEditarCursoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="formEditarCurso">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarCursoLabel">Editar Curso</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nomeCursoEditar" class="form-label">Nome do Curso</label>
+                            <input type="text" name="nome" id="nomeCursoEditar" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Cargo -->
+    <div class="modal fade" id="modalEditarCargo" tabindex="-1" aria-labelledby="modalEditarCargoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="formEditarCargo">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarCargoLabel">Editar Cargo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nomeCargoEditar" class="form-label">Nome do Cargo</label>
+                            <input type="text" name="nome" id="nomeCargoEditar" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="setoresCargoEditar" class="form-label">Setores</label>
+                            <select name="setores" id="setoresCargoEditar" class="form-control" multiple>
+                                {% for setor in setores %}
+                                    <option value="{{ setor.id }}">{{ setor.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cursosCargoEditar" class="form-label">Cursos</label>
+                            <select name="cursos" id="cursosCargoEditar" class="form-control" multiple>
+                                {% for curso in cursos %}
+                                    <option value="{{ curso.id }}">{{ curso.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function toggleDropdown() {
             const menu = document.getElementById("userDropdown");
@@ -508,6 +659,21 @@
         $(document).ready(function() {
             // A inicialização do select2-cursos e select2-setores para o formulário de Cargo será feita na função initializeFormScripts
         });
+
+        // Função para fechar modal principal e abrir modal de edição
+        function abrirModalEdicao(modalId) {
+            // Fechar o modal principal primeiro
+            const formModal = bootstrap.Modal.getInstance(document.getElementById('formModal'));
+            if (formModal) {
+                formModal.hide();
+            }
+            
+            // Aguardar um pouco e abrir o modal de edição
+            setTimeout(() => {
+                const modalEdicao = new bootstrap.Modal(document.getElementById(modalId));
+                modalEdicao.show();
+            }, 300);
+        }
 
         // Função para inicializar os scripts específicos dos formulários dinâmicos
         function initializeFormScripts(containerElement) {
@@ -624,6 +790,99 @@
                     // Não é necessário um fetch manual aqui, apenas garantir que o Select2 saiba a nova base_id.
                 });
             }
+
+            // Event listeners para os botões de editar filial
+            const botoesEditarFilial = containerElement.querySelectorAll('.btn-editar-filial');
+            botoesEditarFilial.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    const filialId = this.getAttribute('data-filial-id');
+                    const filialNome = this.getAttribute('data-filial-nome');
+                    
+                    // Preencher o modal de edição
+                    document.getElementById('nomeFilialEditar').value = filialNome;
+                    document.getElementById('formEditarFilial').action = `/editar_filial/${filialId}/`;
+                    
+                    abrirModalEdicao('modalEditarFilial');
+                });
+            });
+
+            // Event listeners para os botões de editar base
+            const botoesEditarBase = containerElement.querySelectorAll('.btn-editar-base');
+            botoesEditarBase.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    const baseId = this.getAttribute('data-base-id');
+                    const baseNome = this.getAttribute('data-base-nome');
+                    const baseFilial = this.getAttribute('data-base-filial');
+                    
+                    // Preencher o modal de edição
+                    document.getElementById('nomeBaseEditar').value = baseNome;
+                    document.getElementById('filialBaseEditar').value = baseFilial;
+                    document.getElementById('formEditarBase').action = `/editar_base/${baseId}/`;
+                    
+                    abrirModalEdicao('modalEditarBase');
+                });
+            });
+
+            // Event listeners para os botões de editar setor
+            const botoesEditarSetor = containerElement.querySelectorAll('.btn-editar-setor');
+            botoesEditarSetor.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    const setorId = this.getAttribute('data-setor-id');
+                    const setorNome = this.getAttribute('data-setor-nome');
+                    const setorBase = this.getAttribute('data-setor-base');
+                    
+                    // Preencher o modal de edição
+                    document.getElementById('nomeSetorEditar').value = setorNome;
+                    document.getElementById('baseSetorEditar').value = setorBase;
+                    document.getElementById('formEditarSetor').action = `/editar_setor/${setorId}/`;
+                    
+                    abrirModalEdicao('modalEditarSetor');
+                });
+            });
+
+            // Event listeners para os botões de editar curso
+            const botoesEditarCurso = containerElement.querySelectorAll('.btn-editar-curso');
+            botoesEditarCurso.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    const cursoId = this.getAttribute('data-curso-id');
+                    const cursoNome = this.getAttribute('data-curso-nome');
+                    
+                    // Preencher o modal de edição
+                    document.getElementById('nomeCursoEditar').value = cursoNome;
+                    document.getElementById('formEditarCurso').action = `/editar_curso/${cursoId}/`;
+                    
+                    abrirModalEdicao('modalEditarCurso');
+                });
+            });
+
+            // Event listeners para os botões de editar cargo
+            const botoesEditarCargo = containerElement.querySelectorAll('.btn-editar-cargo');
+            botoesEditarCargo.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    const cargoId = this.getAttribute('data-cargo-id');
+                    const cargoNome = this.getAttribute('data-cargo-nome');
+                    const cargoSetores = this.getAttribute('data-cargo-setores').split(',').filter(id => id);
+                    const cargoCursos = this.getAttribute('data-cargo-cursos').split(',').filter(id => id);
+                    
+                    // Preencher o modal de edição
+                    document.getElementById('nomeCargoEditar').value = cargoNome;
+                    document.getElementById('formEditarCargo').action = `/editar_cargo/${cargoId}/`;
+                    
+                    // Selecionar setores
+                    const selectSetores = document.getElementById('setoresCargoEditar');
+                    Array.from(selectSetores.options).forEach(option => {
+                        option.selected = cargoSetores.includes(option.value);
+                    });
+                    
+                    // Selecionar cursos
+                    const selectCursos = document.getElementById('cursosCargoEditar');
+                    Array.from(selectCursos.options).forEach(option => {
+                        option.selected = cargoCursos.includes(option.value);
+                    });
+                    
+                    abrirModalEdicao('modalEditarCargo');
+                });
+            });
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -714,8 +973,10 @@
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="{% static 'conexaorh/js/tema.js' %}"></script>
 </body>
 
 </html>
+
