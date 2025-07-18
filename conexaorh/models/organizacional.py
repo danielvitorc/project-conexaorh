@@ -14,6 +14,7 @@ class Base(models.Model):
         return self.nome
 
 class Setor(models.Model):
+    centro_de_custo = models.CharField(max_length=50, null=True, blank=True)
     nome = models.CharField(max_length=50)
     base = models.ForeignKey(Base, on_delete=models.CASCADE, related_name='setores')
 

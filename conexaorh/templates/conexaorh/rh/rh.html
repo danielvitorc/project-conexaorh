@@ -34,6 +34,7 @@
 
     {% include 'conexaorh/include/navbar.html' with pagina_ativa='rh_page' rh=True %}
     {% include "conexaorh/include/modal_detalhes.html" %}
+    
 
     <div class="main-content">
 
@@ -86,6 +87,7 @@
                             <td>
                                 <!-- Botão que abre o modal de edição (usando data-attributes) -->
                                 <button class="btn btn-sm btn-primary btn-editar-filial" 
+                                        data-bs-toggle="modal" data-bs-target="#modalEditarFilial"
                                         data-filial-id="{{ filial.id }}" 
                                         data-filial-nome="{{ filial.nome }}">
                                     Editar
@@ -133,6 +135,7 @@
                             <td>
                                 <!-- Botão que abre o modal de edição (usando data-attributes) -->
                                 <button class="btn btn-sm btn-primary btn-editar-base" 
+                                        data-bs-toggle="modal" data-bs-target="#modalEditarBase"
                                         data-base-id="{{ base.id }}" 
                                         data-base-nome="{{ base.nome }}"
                                         data-base-filial="{{ base.filial.id }}">
@@ -159,6 +162,9 @@
                 <form method="post" id="setor-form" class="modal-form">
                     {% csrf_token %}
 
+                    <label for="centro-de-custo">Centro de Custo</label>
+                    <input type="text" id="centro-de-custo" name="centro_de_custo" class="form-control" required>
+
                     <label for="nome-setor">Nome do Setor</label>
                     <input type="text" id="nome-setor" name="nome" class="form-control" required>
 
@@ -180,6 +186,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>CC</th>
                             <th>Nome</th>
                             <th>Base</th>
                             <th>Ações</th>
@@ -188,12 +195,15 @@
                     {% for setor in setores %}
                     <tbody>
                         <tr>
+                            <td>{{ setor.centro_de_custo|default:"N/A" }}</td>
                             <td>{{setor.nome}}</td>
                             <td>{{setor.base}}</td>
                             <td>
-                                <!-- Botão que abre o modal de edição (usando data-attributes) -->
-                                <button class="btn btn-sm btn-primary btn-editar-setor" 
-                                        data-setor-id="{{ setor.id }}" 
+                                <button class="btn btn-sm btn-primary" 
+                                        data-bs-toggle="modal" data-bs-target="#modalEditarSetor"
+                                        data-id="{{ setor.id }}"
+                                        data-url-base="{% url 'editar_setor' 0 %}".replace('0', '')
+                                        data-setor-cdc="{{ setor.centro_de_custo|default:'' }}"
                                         data-setor-nome="{{ setor.nome }}"
                                         data-setor-base="{{ setor.base.id }}">
                                     Editar
@@ -234,7 +244,8 @@
                             <td>{{curso.nome}}</td>
                             <td>
                                 <!-- Botão que abre o modal de edição (usando data-attributes) -->
-                                <button class="btn btn-sm btn-primary btn-editar-curso" 
+                                <button class="btn btn-sm btn-primary btn-editar-curso"
+                                        data-bs-toggle="modal" data-bs-target="#modalEditarCurso" 
                                         data-curso-id="{{ curso.id }}" 
                                         data-curso-nome="{{ curso.nome }}">
                                     Editar
@@ -297,6 +308,7 @@
                             <td>
                                  <!-- Botão que abre o modal de edição (usando data-attributes) -->
                                 <button class="btn btn-sm btn-primary btn-editar-cargo" 
+                                        data-bs-toggle="modal" data-bs-target="#modalEditarCargo"
                                         data-cargo-id="{{ cargo.id }}" 
                                         data-cargo-nome="{{ cargo.nome }}"
                                         data-cargo-setores="{% for setor in cargo.setores.all %}{{ setor.id }}{% if not forloop.last %},{% endif %}{% endfor %}"
@@ -338,7 +350,6 @@
             <table class="tabela-moderninha">
                 <thead class="table-light">
                     <tr>
-                        <th></th>
                         <th>Tipo</th>
                         <th>Requisitante</th>
                         <th>Data de Solicitação</th>
@@ -422,7 +433,7 @@
     <div id="formSelectionModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h2>Selecione o Formulário RH</h2>
+            <h2>Selecione o tipo de cadastro</h2>
             <div class="form-options-grid">
                 <button class="form-option-card" data-form-id="filial-form-template">
                     <i class="bi bi-building"></i>
@@ -530,6 +541,10 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
                     <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="centroCustoSetorEditar" class="form-label">Centro de Custo</label>
+                            <input type="text" name="centro_de_custo" id="centroCustoSetorEditar" class="form-control">
+                        </div>
                         <div class="mb-3">
                             <label for="nomeSetorEditar" class="form-label">Nome do Setor</label>
                             <input type="text" name="nome" id="nomeSetorEditar" class="form-control" required>
@@ -656,246 +671,50 @@
         });
     </script>
     <script>
+                // Função de debug para logs
+        function debugLog(message, data = null) {
+            console.log('[MODAL DEBUG]', message, data);
+        }
+
         $(document).ready(function() {
-            // A inicialização do select2-cursos e select2-setores para o formulário de Cargo será feita na função initializeFormScripts
+            debugLog('Document ready - Inicializando scripts dos modais');
         });
 
         // Função para fechar modal principal e abrir modal de edição
         function abrirModalEdicao(modalId) {
-            // Fechar o modal principal primeiro
-            const formModal = bootstrap.Modal.getInstance(document.getElementById('formModal'));
-            if (formModal) {
-                formModal.hide();
-            }
+            debugLog('Tentando abrir modal de edição:', modalId);
             
-            // Aguardar um pouco e abrir o modal de edição
-            setTimeout(() => {
-                const modalEdicao = new bootstrap.Modal(document.getElementById(modalId));
-                modalEdicao.show();
-            }, 300);
-        }
-
-        // Função para inicializar os scripts específicos dos formulários dinâmicos
-        function initializeFormScripts(containerElement) {
-            // Script para o formulário de Setor
-            const filialSelect = containerElement.querySelector("#filial-select");
-            const baseSelect = containerElement.querySelector("#base-select");
-
-            if (filialSelect && baseSelect) {
-                filialSelect.addEventListener("change", function () {
-                    const filialId = this.value;
-                    baseSelect.innerHTML = "<option value=\"\">Carregando...</option>";
-
-                    if (!filialId) {
-                        baseSelect.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
-                        return;
+            try {
+                // Fechar o modal principal primeiro
+                const formModal = document.getElementById('formModal');
+                if (formModal) {
+                    const modalInstance = bootstrap.Modal.getInstance(formModal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                        debugLog('Modal principal fechado');
                     }
-
-                    fetch(`/ajax/bases/?filial_id=${filialId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            baseSelect.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
-                            data.bases.forEach(base => {
-                                const option = document.createElement("option");
-                                option.value = base.id;
-                                option.textContent = base.nome;
-                                baseSelect.appendChild(option);
-                            });
-                        })
-                        .catch(() => {
-                            baseSelect.innerHTML = "<option value=\"\">Erro ao carregar bases</option>";
-                        });
-                });
-            }
-
-            // Script para o formulário de Cargo
-            const filialSelectCargo = containerElement.querySelector("#filial-select-cargo");
-            const baseSelectCargo = containerElement.querySelector("#base-select-cargo");
-            const setoresSelect = containerElement.querySelector("#setores-select");
-            const cursosSelect = containerElement.querySelector(".select2-cursos"); // Seleciona o select de cursos
-
-            if (filialSelectCargo && baseSelectCargo && setoresSelect) {
-                // Re-inicializa Select2 para setores dentro do formulário de Cargo
-                $(setoresSelect).select2({
-                    placeholder: "Selecione os setores",
-                    allowClear: true,
-                    width: "100%",
-                    ajax: {
-                        url: "/ajax/setores/",
-                        dataType: "json",
-                        delay: 250,
-                        data: function (params) {
-                            const baseId = $(baseSelectCargo).val(); // Pega o valor atual da base selecionada
-                            console.log("Buscando setores com base_id:", baseId, "e termo:", params.term);
-                            return {
-                                term: params.term,
-                                base_id: baseId,
-                            };
-                        },
-                        processResults: function (data) {
-                            return {
-                                results: data.results,
-                            };
-                        },
-                        cache: true,
-                    },
-                });
-
-                // Re-inicializa Select2 para cursos dentro do formulário de Cargo
-                if (cursosSelect) {
-                    $(cursosSelect).select2({
-                        placeholder: "Selecione os cursos",
-                        allowClear: true,
-                        width: "100%",
-                    });
                 }
-
-                // Event listener para filial no formulário de Cargo
-                filialSelectCargo.addEventListener("change", function () {
-                    const filialId = this.value;
-                    console.log("Filial selecionada (Cargo):", filialId);
-                    baseSelectCargo.innerHTML = "<option value=\"\">Carregando...</option>";
-                    $(setoresSelect).val(null).trigger("change"); // Limpa seleção do Select2
-
-                    if (!filialId) {
-                        baseSelectCargo.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
-                        return;
+                
+                // Aguardar um pouco e abrir o modal de edição
+                setTimeout(() => {
+                    const modalEdicao = document.getElementById(modalId);
+                    if (modalEdicao) {
+                        const modalInstance = new bootstrap.Modal(modalEdicao);
+                        modalInstance.show();
+                        debugLog('Modal de edição aberto:', modalId);
+                    } else {
+                        debugLog('ERRO: Modal de edição não encontrado:', modalId);
                     }
-
-                    fetch(`/ajax/bases/?filial_id=${filialId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            baseSelectCargo.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
-                            data.bases.forEach(base => {
-                                const option = document.createElement("option");
-                                option.value = base.id;
-                                option.textContent = base.nome;
-                                baseSelectCargo.appendChild(option);
-                            });
-                        })
-                        .catch(() => {
-                            baseSelectCargo.innerHTML = "<option value=\"\">Erro ao carregar bases</option>";
-                        });
-                });
-
-                // Event listener para base no formulário de Cargo
-                baseSelectCargo.addEventListener("change", function () {
-                    const baseId = this.value;
-                    $(setoresSelect).val(null).trigger("change"); // Limpa seleção do Select2
-
-                    if (!baseId) return;
-
-                    // Como o Select2 já está configurado com AJAX, ele buscará os setores automaticamente
-                    // quando a base mudar e o campo for ativado (clicado).
-                    // Não é necessário um fetch manual aqui, apenas garantir que o Select2 saiba a nova base_id.
-                });
+                }, 300);
+            } catch (error) {
+                debugLog('ERRO ao abrir modal de edição:', error);
             }
-
-            // Event listeners para os botões de editar filial
-            const botoesEditarFilial = containerElement.querySelectorAll('.btn-editar-filial');
-            botoesEditarFilial.forEach(botao => {
-                botao.addEventListener('click', function() {
-                    const filialId = this.getAttribute('data-filial-id');
-                    const filialNome = this.getAttribute('data-filial-nome');
-                    
-                    // Preencher o modal de edição
-                    document.getElementById('nomeFilialEditar').value = filialNome;
-                    document.getElementById('formEditarFilial').action = `/editar_filial/${filialId}/`;
-                    
-                    abrirModalEdicao('modalEditarFilial');
-                });
-            });
-
-            // Event listeners para os botões de editar base
-            const botoesEditarBase = containerElement.querySelectorAll('.btn-editar-base');
-            botoesEditarBase.forEach(botao => {
-                botao.addEventListener('click', function() {
-                    const baseId = this.getAttribute('data-base-id');
-                    const baseNome = this.getAttribute('data-base-nome');
-                    const baseFilial = this.getAttribute('data-base-filial');
-                    
-                    // Preencher o modal de edição
-                    document.getElementById('nomeBaseEditar').value = baseNome;
-                    document.getElementById('filialBaseEditar').value = baseFilial;
-                    document.getElementById('formEditarBase').action = `/editar_base/${baseId}/`;
-                    
-                    abrirModalEdicao('modalEditarBase');
-                });
-            });
-
-            // Event listeners para os botões de editar setor
-            const botoesEditarSetor = containerElement.querySelectorAll('.btn-editar-setor');
-            botoesEditarSetor.forEach(botao => {
-                botao.addEventListener('click', function() {
-                    const setorId = this.getAttribute('data-setor-id');
-                    const setorNome = this.getAttribute('data-setor-nome');
-                    const setorBase = this.getAttribute('data-setor-base');
-                    
-                    // Preencher o modal de edição
-                    document.getElementById('nomeSetorEditar').value = setorNome;
-                    document.getElementById('baseSetorEditar').value = setorBase;
-                    document.getElementById('formEditarSetor').action = `/editar_setor/${setorId}/`;
-                    
-                    abrirModalEdicao('modalEditarSetor');
-                });
-            });
-
-            // Event listeners para os botões de editar curso
-            const botoesEditarCurso = containerElement.querySelectorAll('.btn-editar-curso');
-            botoesEditarCurso.forEach(botao => {
-                botao.addEventListener('click', function() {
-                    const cursoId = this.getAttribute('data-curso-id');
-                    const cursoNome = this.getAttribute('data-curso-nome');
-                    
-                    // Preencher o modal de edição
-                    document.getElementById('nomeCursoEditar').value = cursoNome;
-                    document.getElementById('formEditarCurso').action = `/editar_curso/${cursoId}/`;
-                    
-                    abrirModalEdicao('modalEditarCurso');
-                });
-            });
-
-            // Event listeners para os botões de editar cargo
-            const botoesEditarCargo = containerElement.querySelectorAll('.btn-editar-cargo');
-            botoesEditarCargo.forEach(botao => {
-                botao.addEventListener('click', function() {
-                    const cargoId = this.getAttribute('data-cargo-id');
-                    const cargoNome = this.getAttribute('data-cargo-nome');
-                    const cargoSetores = this.getAttribute('data-cargo-setores').split(',').filter(id => id);
-                    const cargoCursos = this.getAttribute('data-cargo-cursos').split(',').filter(id => id);
-                    
-                    // Preencher o modal de edição
-                    document.getElementById('nomeCargoEditar').value = cargoNome;
-                    document.getElementById('formEditarCargo').action = `/editar_cargo/${cargoId}/`;
-                    
-                    // Selecionar setores
-                    const selectSetores = document.getElementById('setoresCargoEditar');
-                    Array.from(selectSetores.options).forEach(option => {
-                        option.selected = cargoSetores.includes(option.value);
-                    });
-                    
-                    // Selecionar cursos
-                    const selectCursos = document.getElementById('cursosCargoEditar');
-                    Array.from(selectCursos.options).forEach(option => {
-                        option.selected = cargoCursos.includes(option.value);
-                    });
-                    
-                    abrirModalEdicao('modalEditarCargo');
-                });
-            });
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const openFormModalBtn = document.getElementById("openFormModalBtn");
-            const formSelectionModal = document.getElementById("formSelectionModal");
-            const formModal = document.getElementById("formModal");
-            const modalFormContainer = document.querySelector(".modal-form-container");
-
-            if (!formSelectionModal || !formModal) return;
-
-            const closeButtons = document.querySelectorAll(".close-button");
-            const formOptionCards = formSelectionModal.querySelectorAll(".form-option-card");
-
+        // Função para atualizar o título do modal
+        function atualizarTituloModal(formId) {
+            debugLog('Atualizando título do modal para:', formId);
+            
             const formTitles = {
                 "filial-form-template": "Cadastrar Filial",
                 "base-form-template": "Cadastrar Base",
@@ -903,73 +722,805 @@
                 "curso-form-template": "Cadastrar Curso",
                 "cargo-form-template": "Cadastrar Cargo"
             };
-
-            function closeAllModals() {
-                formSelectionModal.style.display = "none";
-                formModal.style.display = "none";
-                document.body.style.overflow = "auto";
-            }
-
-            function cleanupForm() {
-                modalFormContainer.innerHTML = "";
-            }
-
-            if (openFormModalBtn) {
-                openFormModalBtn.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    formSelectionModal.style.display = "block";
-                    document.body.style.overflow = "hidden";
-                });
-            }
-
-            closeButtons.forEach(button => {
-                button.addEventListener("click", function () {
-                    cleanupForm();
-                    closeAllModals();
-                });
-            });
-
-            window.addEventListener("click", function (event) {
-                if (event.target === formSelectionModal || event.target === formModal) {
-                    cleanupForm();
-                    closeAllModals();
+            
+            try {
+                const modalTitle = document.querySelector("#formModal .modal-title");
+                if (modalTitle) {
+                    const novoTitulo = formTitles[formId] || "Formulário RH";
+                    modalTitle.textContent = novoTitulo;
+                    debugLog('Título do modal atualizado para:', novoTitulo);
+                } else {
+                    debugLog('ERRO: Elemento modal-title não encontrado');
                 }
-            });
+            } catch (error) {
+                debugLog('ERRO ao atualizar título do modal:', error);
+            }
+        }
 
-            formOptionCards.forEach(card => {
-                card.addEventListener("click", function () {
-                    const formId = this.dataset.formId;
-                    const formTemplate = document.getElementById(formId);
-
-                    if (formTemplate) {
-                        cleanupForm();
-
-                        const modalTitle = document.querySelector(".modal-title");
-                        modalTitle.textContent = formTitles[formId] || "Formulário RH";
-
-                        const formClone = formTemplate.cloneNode(true);
-                        formClone.style.display = "block";
-                        modalFormContainer.appendChild(formClone);
-
-                        // Chamar a função para inicializar os scripts do formulário recém-adicionado
-                        initializeFormScripts(formClone);
-
-                        formSelectionModal.style.display = "none";
-                        formModal.style.display = "block";
+        // Função para exibir mensagens de sucesso ou erro
+        function exibirMensagem(tipo, mensagem) {
+            debugLog('Exibindo mensagem:', { tipo, mensagem });
+            
+            try {
+                // Remove mensagens anteriores
+                const mensagensAnteriores = document.querySelectorAll('.alert-modal');
+                mensagensAnteriores.forEach(msg => {
+                    if (msg && msg.remove) {
+                        msg.remove();
                     }
                 });
-            });
+                
+                // Cria nova mensagem
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${tipo === 'success' ? 'success' : 'danger'} alert-dismissible fade show alert-modal`;
+                alertDiv.innerHTML = `
+                    ${mensagem}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                // Insere a mensagem no topo do modal
+                const modalContent = document.querySelector('#formModal .modal-form-container');
+                if (modalContent) {
+                    modalContent.insertBefore(alertDiv, modalContent.firstChild);
+                    debugLog('Mensagem inserida no modal');
+                } else {
+                    debugLog('ERRO: Container do modal não encontrado');
+                }
+            } catch (error) {
+                debugLog('ERRO ao exibir mensagem:', error);
+            }
+        }
 
-            document.addEventListener("keydown", function (event) {
-                if (event.key === "Escape") {
-                    if (formModal.style.display === "block" || formSelectionModal.style.display === "block") {
+        // Função para limpar formulário após sucesso
+        function limparFormulario(form) {
+            debugLog('Limpando formulário');
+            
+            if (!form) {
+                debugLog('ERRO: Formulário é null');
+                return;
+            }
+            
+            try {
+                // Limpa campos de texto
+                const inputs = form.querySelectorAll('input[type="text"], input[type="email"], textarea');
+                inputs.forEach(input => {
+                    if (input) {
+                        input.value = '';
+                    }
+                });
+                
+                // Reseta selects
+                const selects = form.querySelectorAll('select');
+                selects.forEach(select => {
+                    if (select) {
+                        select.selectedIndex = 0;
+                        // Se for um Select2, também limpa
+                        try {
+                            if ($(select).hasClass('select2-hidden-accessible')) {
+                                $(select).val(null).trigger('change');
+                            }
+                        } catch (e) {
+                            debugLog('Erro ao limpar Select2:', e);
+                        }
+                    }
+                });
+                
+                debugLog('Formulário limpo com sucesso');
+            } catch (error) {
+                debugLog('ERRO ao limpar formulário:', error);
+            }
+        }
+
+        // Função para atualizar tabela após cadastro bem-sucedido
+        function atualizarTabela(tipo, dados) {
+            debugLog('Atualizando tabela:', { tipo, dados });
+            
+            try {
+                const tabela = document.querySelector('#formModal .table tbody');
+                if (!tabela) {
+                    debugLog('ERRO: Tabela não encontrada');
+                    return;
+                }
+                
+                // Remove linha "Nenhum registro encontrado" se existir
+                const linhaVazia = tabela.querySelector('td[colspan]');
+                if (linhaVazia && linhaVazia.parentElement) {
+                    linhaVazia.parentElement.remove();
+                    debugLog('Linha vazia removida');
+                }
+                
+                // Cria nova linha baseada no tipo
+                const novaLinha = document.createElement('tr');
+                
+                switch(tipo) {
+                    case 'filial':
+                        novaLinha.innerHTML = `
+                            <td>${dados.nome || ''}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-editar-filial" 
+                                        data-filial-id="${dados.id || ''}" 
+                                        data-filial-nome="${dados.nome || ''}">
+                                    Editar
+                                </button>
+                                <a href="/excluir_filial/${dados.id || ''}/" 
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja excluir esta filial?');"
+                                title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        `;
+                        break;
+                        
+                    case 'base':
+                        novaLinha.innerHTML = `
+                            <td>${dados.nome || ''}</td>
+                            <td>${dados.filial || ''}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-editar-base" 
+                                        data-base-id="${dados.id || ''}" 
+                                        data-base-nome="${dados.nome || ''}">
+                                    Editar
+                                </button>
+                                <a href="/excluir_base/${dados.id || ''}/" 
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja excluir esta base?');"
+                                title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        `;
+                        break;
+                        
+                    case 'setor':
+                        novaLinha.innerHTML = `
+                            <td>${dados.centro_de_custo || 'N/A'}</td>
+                            <td>${dados.nome || ''}</td>
+                            <td>${dados.base || ''}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-editar-setor" 
+                                        data-setor-id="${dados.id || ''}" 
+                                        data-setor-nome="${dados.nome || ''}">
+                                    Editar
+                                </button>
+                                <a href="/excluir_setor/${dados.id || ''}/" 
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja excluir este setor?');"
+                                title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        `;
+                        break;
+                        
+                    case 'curso':
+                        novaLinha.innerHTML = `
+                            <td>${dados.nome || ''}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-editar-curso" 
+                                        data-curso-id="${dados.id || ''}" 
+                                        data-curso-nome="${dados.nome || ''}">
+                                    Editar
+                                </button>
+                                <a href="/excluir_curso/${dados.id || ''}/" 
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja excluir este curso?');"
+                                title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        `;
+                        break;
+                        
+                    case 'cargo':
+                        novaLinha.innerHTML = `
+                            <td>${dados.nome || ''}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-editar-cargo" 
+                                        data-cargo-id="${dados.id || ''}" 
+                                        data-cargo-nome="${dados.nome || ''}">
+                                    Editar
+                                </button>
+                                <a href="/excluir_cargo/${dados.id || ''}/" 
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja excluir este cargo?');"
+                                title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        `;
+                        break;
+                        
+                    default:
+                        debugLog('ERRO: Tipo de tabela não reconhecido:', tipo);
+                        return;
+                }
+                
+                // Adiciona a nova linha no início da tabela
+                tabela.insertBefore(novaLinha, tabela.firstChild);
+                debugLog('Nova linha adicionada à tabela');
+                
+                // Re-inicializa os event listeners para os novos botões
+                const formModal = document.querySelector('#formModal');
+                if (formModal) {
+                    initializeFormScripts(formModal);
+                }
+            } catch (error) {
+                debugLog('ERRO ao atualizar tabela:', error);
+            }
+        }
+
+        // Função para interceptar envio de formulários e fazer AJAX
+        function interceptarFormulario(form) {
+            debugLog('Interceptando formulário');
+            
+            if (!form) {
+                debugLog('ERRO: Formulário é null');
+                return;
+            }
+            
+            try {
+                form.addEventListener('submit', function(e) {
+                    debugLog('Submit interceptado');
+                    e.preventDefault(); // Impede o envio normal do formulário
+                    
+                    const formData = new FormData(form);
+                    
+                    // CORREÇÃO CRÍTICA: Garantir que o nome do botão seja incluído
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    if (submitButton && submitButton.name) {
+                        // Adiciona explicitamente o nome do botão ao FormData
+                        formData.set(submitButton.name, submitButton.value || 'true');
+                        debugLog('Botão de submit adicionado ao FormData:', submitButton.name);
+                    } else {
+                        debugLog('ERRO: Botão de submit não encontrado ou sem nome');
+                        return;
+                    }
+                    
+                    // Log do FormData para debug
+                    debugLog('FormData sendo enviado:');
+                    for (let [key, value] of formData.entries()) {
+                        debugLog(`  ${key}: ${value}`);
+                    }
+                    
+                    const originalText = submitButton.textContent;
+                    
+                    // Desabilita o botão e mostra loading
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Salvando...';
+                    
+                    debugLog('Enviando requisição AJAX');
+                    
+                    // Faz a requisição AJAX
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        }
+                    })
+                    .then(response => {
+                        debugLog('Resposta recebida:', response);
+                        
+                        // Verifica se a resposta é JSON válida
+                        const contentType = response.headers.get('content-type');
+                        debugLog('Content-Type da resposta:', contentType);
+                        
+                        if (contentType && contentType.includes('application/json')) {
+                            return response.json();
+                        } else {
+                            // Tenta ler como texto para debug
+                            return response.text().then(text => {
+                                debugLog('Resposta não-JSON recebida:', text.substring(0, 200));
+                                throw new Error('Resposta não é JSON válida');
+                            });
+                        }
+                    })
+                    .then(data => {
+                        debugLog('Dados JSON recebidos:', data);
+                        
+                        if (data && data.success) {
+                            // Sucesso - exibe mensagem, limpa formulário e atualiza tabela
+                            exibirMensagem('success', data.message || 'Operação realizada com sucesso!');
+                            limparFormulario(form);
+                            
+                            // Determina o tipo baseado no nome do botão
+                            let tipo = '';
+                            if (formData.has('filial_submit')) tipo = 'filial';
+                            else if (formData.has('base_submit')) tipo = 'base';
+                            else if (formData.has('setor_submit')) tipo = 'setor';
+                            else if (formData.has('curso_submit')) tipo = 'curso';
+                            else if (formData.has('cargo_submit')) tipo = 'cargo';
+                            
+                            debugLog('Tipo identificado:', tipo);
+                            
+                            // Atualiza a tabela com o novo registro
+                            if (tipo && data[tipo]) {
+                                atualizarTabela(tipo, data[tipo]);
+                            }
+                            
+                        } else {
+                            // Erro - exibe mensagens de erro
+                            let mensagemErro = 'Ocorreram erros no formulário:';
+                            if (data && data.errors) {
+                                for (const campo in data.errors) {
+                                    if (campo === '__all__') {
+                                        mensagemErro = data.errors[campo].join(', ');
+                                    } else {
+                                        mensagemErro += `<br>• ${campo}: ${data.errors[campo].join(', ')}`;
+                                    }
+                                }
+                            } else if (data && data.message) {
+                                mensagemErro = data.message;
+                            }
+                            exibirMensagem('error', mensagemErro);
+                        }
+                    })
+                    .catch(error => {
+                        debugLog('ERRO na requisição:', error);
+                        exibirMensagem('error', 'Ocorreu um erro inesperado. Verifique se todos os campos estão preenchidos corretamente e tente novamente.');
+                    })
+                    .finally(() => {
+                        // Reabilita o botão
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.textContent = originalText;
+                        }
+                        debugLog('Requisição finalizada');
+                    });
+                });
+            } catch (error) {
+                debugLog('ERRO ao interceptar formulário:', error);
+            }
+        }
+
+        // Função para inicializar os scripts específicos dos formulários dinâmicos
+        function initializeFormScripts(containerElement) {
+            debugLog('Inicializando scripts do formulário');
+            
+            if (!containerElement) {
+                debugLog('ERRO: Container é null');
+                return;
+            }
+            
+            try {
+                // Script para o formulário de Setor
+                const filialSelect = containerElement.querySelector("#filial-select");
+                const baseSelect = containerElement.querySelector("#base-select");
+
+                if (filialSelect && baseSelect) {
+                    debugLog('Inicializando selects de filial/base para setor');
+                    
+                    filialSelect.addEventListener("change", function () {
+                        const filialId = this.value;
+                        debugLog('Filial selecionada:', filialId);
+                        
+                        baseSelect.innerHTML = "<option value=\"\">Carregando...</option>";
+
+                        if (!filialId) {
+                            baseSelect.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
+                            return;
+                        }
+
+                        fetch(`/ajax/bases/?filial_id=${filialId}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                baseSelect.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
+                                if (data && data.bases) {
+                                    data.bases.forEach(base => {
+                                        const option = document.createElement("option");
+                                        option.value = base.id;
+                                        option.textContent = base.nome;
+                                        baseSelect.appendChild(option);
+                                    });
+                                }
+                                debugLog('Bases carregadas:', data.bases);
+                            })
+                            .catch((error) => {
+                                debugLog('Erro ao carregar bases:', error);
+                                baseSelect.innerHTML = "<option value=\"\">Erro ao carregar bases</option>";
+                            });
+                    });
+                }
+
+                // Script para o formulário de Cargo
+                const filialSelectCargo = containerElement.querySelector("#filial-select-cargo");
+                const baseSelectCargo = containerElement.querySelector("#base-select-cargo");
+                const setoresSelect = containerElement.querySelector("#setores-select");
+                const cursosSelect = containerElement.querySelector(".select2-cursos");
+
+                if (filialSelectCargo && baseSelectCargo && setoresSelect) {
+                    debugLog('Inicializando selects para cargo');
+                    
+                    // Re-inicializa Select2 para setores dentro do formulário de Cargo
+                    try {
+                        $(setoresSelect).select2({
+                            placeholder: "Selecione os setores",
+                            allowClear: true,
+                            width: "100%",
+                            ajax: {
+                                url: "/ajax/setores/",
+                                dataType: "json",
+                                delay: 250,
+                                data: function (params) {
+                                    const baseId = $(baseSelectCargo).val();
+                                    debugLog("Buscando setores com base_id:", baseId, "e termo:", params.term);
+                                    return {
+                                        term: params.term,
+                                        base_id: baseId,
+                                    };
+                                },
+                                processResults: function (data) {
+                                    return {
+                                        results: data.results || [],
+                                    };
+                                },
+                                cache: true,
+                            },
+                        });
+                    } catch (e) {
+                        debugLog('Erro ao inicializar Select2 de setores:', e);
+                    }
+
+                    // Re-inicializa Select2 para cursos dentro do formulário de Cargo
+                    if (cursosSelect) {
+                        try {
+                            $(cursosSelect).select2({
+                                placeholder: "Selecione os cursos",
+                                allowClear: true,
+                                width: "100%",
+                            });
+                        } catch (e) {
+                            debugLog('Erro ao inicializar Select2 de cursos:', e);
+                        }
+                    }
+
+                    // Event listener para filial no formulário de Cargo
+                    filialSelectCargo.addEventListener("change", function () {
+                        const filialId = this.value;
+                        debugLog("Filial selecionada (Cargo):", filialId);
+                        
+                        baseSelectCargo.innerHTML = "<option value=\"\">Carregando...</option>";
+                        try {
+                            $(setoresSelect).val(null).trigger("change");
+                        } catch (e) {
+                            debugLog('Erro ao limpar Select2:', e);
+                        }
+
+                        if (!filialId) {
+                            baseSelectCargo.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
+                            return;
+                        }
+
+                        fetch(`/ajax/bases/?filial_id=${filialId}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                baseSelectCargo.innerHTML = "<option value=\"\">-- Escolha a base --</option>";
+                                if (data && data.bases) {
+                                    data.bases.forEach(base => {
+                                        const option = document.createElement("option");
+                                        option.value = base.id;
+                                        option.textContent = base.nome;
+                                        baseSelectCargo.appendChild(option);
+                                    });
+                                }
+                            })
+                            .catch((error) => {
+                                debugLog('Erro ao carregar bases para cargo:', error);
+                                baseSelectCargo.innerHTML = "<option value=\"\">Erro ao carregar bases</option>";
+                            });
+                    });
+
+                    // Event listener para base no formulário de Cargo
+                    baseSelectCargo.addEventListener("change", function () {
+                        const baseId = this.value;
+                        debugLog('Base selecionada (Cargo):', baseId);
+                        try {
+                            $(setoresSelect).val(null).trigger("change");
+                        } catch (e) {
+                            debugLog('Erro ao limpar Select2 na mudança de base:', e);
+                        }
+                    });
+                }
+
+                // Event listeners para os botões de editar (com verificações robustas)
+                const initEditButtons = (selector, modalId, dataAttributes) => {
+                    const botoes = containerElement.querySelectorAll(selector);
+                    debugLog(`Inicializando ${botoes.length} botões ${selector}`);
+                    
+                    botoes.forEach(botao => {
+                        if (botao) {
+                            botao.addEventListener('click', function() {
+                                try {
+                                    const data = {};
+                                    dataAttributes.forEach(attr => {
+                                        data[attr] = this.getAttribute(`data-${attr}`) || '';
+                                    });
+                                    
+                                    debugLog(`Clique em botão ${selector}:`, data);
+                                    
+                                    // Aqui você pode adicionar a lógica específica para cada tipo de edição
+                                    // Por exemplo, preencher campos específicos baseado no tipo
+                                    
+                                    abrirModalEdicao(modalId);
+                                } catch (error) {
+                                    debugLog(`Erro ao processar clique em ${selector}:`, error);
+                                }
+                            });
+                        }
+                    });
+                };
+
+                // Inicializa botões de editar
+                initEditButtons('.btn-editar-filial', 'modalEditarFilial', ['filial-id', 'filial-nome']);
+                initEditButtons('.btn-editar-base', 'modalEditarBase', ['base-id', 'base-nome', 'base-filial']);
+                initEditButtons('.btn-editar-setor', 'modalEditarSetor', ['setor-id', 'setor-nome', 'setor-base']);
+                initEditButtons('.btn-editar-curso', 'modalEditarCurso', ['curso-id', 'curso-nome']);
+                initEditButtons('.btn-editar-cargo', 'modalEditarCargo', ['cargo-id', 'cargo-nome', 'cargo-setores', 'cargo-cursos']);
+
+                // NOVA FUNCIONALIDADE: Interceptar formulários para AJAX
+                const formularios = containerElement.querySelectorAll('.modal-form');
+                debugLog(`Encontrados ${formularios.length} formulários para interceptar`);
+                
+                formularios.forEach(form => {
+                    if (form) {
+                        interceptarFormulario(form);
+                    }
+                });
+                
+                debugLog('Scripts do formulário inicializados com sucesso');
+            } catch (error) {
+                debugLog('ERRO ao inicializar scripts do formulário:', error);
+            }
+        }
+
+        // Função principal de inicialização - VERSÃO MAIS ROBUSTA
+        document.addEventListener("DOMContentLoaded", function () {
+            debugLog('DOM carregado - Inicializando sistema de modais');
+            
+            try {
+                const openFormModalBtn = document.getElementById("openFormModalBtn");
+                const formSelectionModal = document.getElementById("formSelectionModal");
+                const formModal = document.getElementById("formModal");
+                const modalFormContainer = document.querySelector(".modal-form-container");
+
+                if (!formSelectionModal || !formModal) {
+                    debugLog('ERRO: Modais principais não encontrados');
+                    return;
+                }
+
+                const closeButtons = document.querySelectorAll(".close-button");
+                const formOptionCards = formSelectionModal.querySelectorAll(".form-option-card");
+
+                function closeAllModals() {
+                    try {
+                        // CORREÇÃO: Verificação mais robusta antes de acessar .style
+                        if (formSelectionModal) {
+                            formSelectionModal.style.display = "none";
+                        }
+                        if (formModal) {
+                            formModal.style.display = "none";
+                        }
+                        if (document.body) {
+                            document.body.style.overflow = "auto";
+                        }
+                        debugLog('Todos os modais fechados');
+                    } catch (error) {
+                        debugLog('ERRO ao fechar modais:', error);
+                    }
+                }
+
+                function cleanupForm() {
+                    try {
+                        if (modalFormContainer) {
+                            modalFormContainer.innerHTML = "";
+                            debugLog('Formulário limpo');
+                        }
+                    } catch (error) {
+                        debugLog('ERRO ao limpar formulário:', error);
+                    }
+                }
+
+                if (openFormModalBtn) {
+                    openFormModalBtn.addEventListener("click", function (event) {
+                        debugLog('Botão de abrir modal clicado');
+                        event.preventDefault();
+                        try {
+                            if (formSelectionModal) {
+                                formSelectionModal.style.display = "block";
+                                if (document.body) {
+                                    document.body.style.overflow = "hidden";
+                                }
+                                debugLog('Modal de seleção aberto');
+                            }
+                        } catch (error) {
+                            debugLog('ERRO ao abrir modal de seleção:', error);
+                        }
+                    });
+                }
+
+                closeButtons.forEach(button => {
+                    if (button) {
+                        button.addEventListener("click", function () {
+                            debugLog('Botão de fechar clicado');
+                            cleanupForm();
+                            closeAllModals();
+                        });
+                    }
+                });
+
+                window.addEventListener("click", function (event) {
+                    if (event.target === formSelectionModal || event.target === formModal) {
+                        debugLog('Clique fora do modal detectado');
                         cleanupForm();
                         closeAllModals();
                     }
-                }
-            });
+                });
+
+                formOptionCards.forEach(card => {
+                    if (card) {
+                        card.addEventListener("click", function () {
+                            const formId = this.dataset.formId;
+                            debugLog('Card de formulário clicado:', formId);
+                            
+                            try {
+                                const formTemplate = document.getElementById(formId);
+
+                                if (formTemplate && modalFormContainer) {
+                                    cleanupForm();
+
+                                    // ATUALIZAÇÃO DO TÍTULO DO MODAL
+                                    atualizarTituloModal(formId);
+
+                                    const formClone = formTemplate.cloneNode(true);
+                                    formClone.style.display = "block";
+                                    modalFormContainer.appendChild(formClone);
+
+                                    // Chamar a função para inicializar os scripts do formulário recém-adicionado
+                                    initializeFormScripts(formClone);
+
+                                    if (formSelectionModal) {
+                                        formSelectionModal.style.display = "none";
+                                    }
+                                    if (formModal) {
+                                        formModal.style.display = "block";
+                                    }
+                                    
+                                    debugLog('Formulário carregado e modal aberto:', formId);
+                                } else {
+                                    debugLog('ERRO: Template ou container não encontrado');
+                                }
+                            } catch (error) {
+                                debugLog('ERRO ao processar clique no card:', error);
+                            }
+                        });
+                    }
+                });
+
+                document.addEventListener("keydown", function (event) {
+                    if (event.key === "Escape") {
+                        try {
+                            const modalAberto = (formModal && formModal.style && formModal.style.display === "block") || 
+                                            (formSelectionModal && formSelectionModal.style && formSelectionModal.style.display === "block");
+                            
+                            if (modalAberto) {
+                                debugLog('ESC pressionado - fechando modais');
+                                cleanupForm();
+                                closeAllModals();
+                            }
+                        } catch (error) {
+                            debugLog('ERRO ao processar ESC:', error);
+                        }
+                    }
+                });
+                
+                debugLog('Sistema de modais inicializado com sucesso');
+            } catch (error) {
+                debugLog('ERRO CRÍTICO na inicialização:', error);
+            }
         });
-    </script>
+    // =================================================================
+    // INICIALIZAÇÃO DOS MODAIS DE EDIÇÃO (BOOTSTRAP)
+    // =================================================================
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log('Scripts de edição DOMContentLoaded: Iniciando...');
+
+        // Edição de Filial
+        const modalEditarFilial = document.getElementById('modalEditarFilial');
+        if (modalEditarFilial) {
+            modalEditarFilial.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const filialId = button.getAttribute('data-filial-id');
+                const filialNome = button.getAttribute('data-filial-nome');
+                
+                const form = modalEditarFilial.querySelector('#formEditarFilial');
+                form.action = `/editar_filial/${filialId}/`;
+                
+                const inputNome = modalEditarFilial.querySelector('#nomeFilialEditar');
+                inputNome.value = filialNome;
+            });
+            // LINHA PROBLEMÁTICA REMOVIDA DAQUI.
+        }
+
+        // Edição de Base
+        const modalEditarBase = document.getElementById('modalEditarBase');
+        if (modalEditarBase) {
+            modalEditarBase.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const baseId = button.getAttribute('data-base-id');
+                const baseNome = button.getAttribute('data-base-nome');
+                const baseFilial = button.getAttribute('data-base-filial');
+
+                const form = modalEditarBase.querySelector('#formEditarBase');
+                form.action = `/editar_base/${baseId}/`;
+
+                modalEditarBase.querySelector('#nomeBaseEditar').value = baseNome;
+                modalEditarBase.querySelector('#filialBaseEditar').value = baseFilial;
+            });
+        }
+
+        // Edição de Setor
+        const modalEditarSetor = document.getElementById('modalEditarSetor');
+        if (modalEditarSetor) {
+            modalEditarSetor.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const setorId = button.getAttribute('data-id');
+                const setorCdc = button.getAttribute('data-setor-cdc');
+                const setorNome = button.getAttribute('data-setor-nome');
+                const setorBase = button.getAttribute('data-setor-base');
+
+                const form = modalEditarSetor.querySelector('#formEditarSetor');
+                form.action = `/editar_setor/${setorId}/`;
+
+                modalEditarSetor.querySelector('#centroCustoSetorEditar').value = setorCdc;
+                modalEditarSetor.querySelector('#nomeSetorEditar').value = setorNome;
+                modalEditarSetor.querySelector('#baseSetorEditar').value = setorBase;
+            });
+        }
+
+        // Edição de Curso
+        const modalEditarCurso = document.getElementById('modalEditarCurso');
+        if (modalEditarCurso) {
+            modalEditarCurso.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const cursoId = button.getAttribute('data-curso-id');
+                const cursoNome = button.getAttribute('data-curso-nome');
+
+                const form = modalEditarCurso.querySelector('#formEditarCurso');
+                form.action = `/editar_curso/${cursoId}/`;
+                modalEditarCurso.querySelector('#nomeCursoEditar').value = cursoNome;
+            });
+        }
+
+        // Edição de Cargo
+        const modalEditarCargo = document.getElementById('modalEditarCargo');
+        if (modalEditarCargo) {
+            modalEditarCargo.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const cargoId = button.getAttribute('data-cargo-id');
+                const cargoNome = button.getAttribute('data-cargo-nome');
+                const cargoSetores = (button.getAttribute('data-cargo-setores') || '').split(',').filter(Boolean);
+                const cargoCursos = (button.getAttribute('data-cargo-cursos') || '').split(',').filter(Boolean);
+
+                const form = modalEditarCargo.querySelector('#formEditarCargo');
+                form.action = `/editar_cargo/${cargoId}/`;
+
+                modalEditarCargo.querySelector('#nomeCargoEditar').value = cargoNome;
+                
+                const setoresSelect = modalEditarCargo.querySelector('#setoresCargoEditar');
+                Array.from(setoresSelect.options).forEach(option => {
+                    option.selected = cargoSetores.includes(option.value);
+                });
+
+                const cursosSelect = modalEditarCargo.querySelector('#cursosCargoEditar');
+                Array.from(cursosSelect.options).forEach(option => {
+                    option.selected = cargoCursos.includes(option.value);
+                });
+            });
+        }
+    });
+</script>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -13,20 +13,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'conexaorh/css/gestor.css' %}">
-    <link rel="stylesheet" href="{% static 'conexaorh/css/geral.css' %}">
-
-    <!-- ================== JAVASCRIPT ================== -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    
+    <!-- Os scripts JS foram movidos para o final do <body> -->
 </head>
 <body>
 
 {% include 'conexaorh/include/navbar.html' with pagina_ativa='gestor_page' botao_movimentacao=True %}
 
 <div class="main-content">
-
     <!-- Card de boas-vindas -->
     <div class="card-welcome">
         <div class="welcome-text">
@@ -39,7 +33,7 @@
                 <span class="user-role">{{ usuario.get_user_type_display }}</span>
             </div>
             <div class="dropdown-container">
-                <span class="dropdown-icon" onclick="toggleDropdown( )">
+                <span class="dropdown-icon" onclick="toggleDropdown(  )">
                     <i class="fa fa-chevron-down"></i>
                 </span>
                 <div id="userDropdown" class="dropdown-menu">
@@ -57,7 +51,7 @@
         <div class="row g-4">
             <!-- Card Requisição de Pessoal -->
             <div class="col-lg-4 col-md-6">
-                <div class="card shadow-sm h-100 text-center action-card">
+                <div class="card-welcome shadow-sm h-100 text-center action-card">
                     <div class="card-body d-flex flex-column">
                         <i class="fas fa-users fa-3x text-primary mb-3"></i>
                         <h5 class="card-title">Requisição de Pessoal</h5>
@@ -72,7 +66,7 @@
             </div>
             <!-- Card Movimentação de Pessoal -->
             <div class="col-lg-4 col-md-6">
-                <div class="card shadow-sm h-100 text-center action-card">
+                <div class="card-welcome shadow-sm h-100 text-center action-card">
                     <div class="card-body d-flex flex-column">
                         <i class="fas fa-exchange-alt fa-3x text-warning mb-3"></i>
                         <h5 class="card-title">Movimentação de Pessoal</h5>
@@ -87,7 +81,7 @@
             </div>
             <!-- Card Requisição de Desligamento -->
             <div class="col-lg-4 col-md-12">
-                <div class="card shadow-sm h-100 text-center action-card">
+                <div class="card-welcome shadow-sm h-100 text-center action-card">
                     <div class="card-body d-flex flex-column">
                         <i class="fas fa-user-times fa-3x text-danger mb-3"></i>
                         <h5 class="card-title">Requisição de Desligamento</h5>
@@ -105,6 +99,7 @@
 
     <!-- Linha Amarela Divisória -->
     <div class="linha-amarela my-5"></div>
+    
     <!-- Tabela de Movimentações Pendentes -->
     <div class="container-fluid">
         <div class="card-tabela-estilizada">
@@ -115,8 +110,6 @@
                 <table id="tabela-movimentacoes" class="tabela-moderninha display nowrap w-100">
                     <thead>
                         <tr>
-                            <!-- ATENÇÃO: O cabeçalho da sua tabela tem 8 colunas, não 7. Adicionei uma <th> vazia para a primeira coluna. -->
-                            <th></th>
                             <th>Gestor Atual</th>
                             <th>Colaborador</th>
                             <th>Cargo Proposto</th>
@@ -137,9 +130,9 @@
                                 {% if registro.assinatura_gestor_proposto %}
                                     <span class="text-success"><i class="fa-solid fa-check"></i> Assinado</span>
                                 {% else %}
-                                    <form method="post" enctype="multipart/form-data">
+                                    <form method="post" enctype="multipart/form-data" class="d-inline">
                                         {% csrf_token %}
-                                        {{ form.as_p }}
+                                        {{ form.assinatura_gestor_proposto }} 
                                         <input type="hidden" name="registro_id" value="{{ registro.id }}">
                                         <button type="submit" name="submit_aprovacao_mov" class="btn btn-sm btn-outline-success">
                                             Aprovar
@@ -168,10 +161,9 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <!-- A linha de "vazio" agora tem 8 colunas para evitar o erro do DataTables -->
-                            <td colspan="8" class="text-center text-muted py-4">Não há movimentações aguardando sua aprovação.</td>
+                            <td colspan="7" class="text-center text-muted py-4">Não há movimentações aguardando sua aprovação.</td>
                         </tr>
-                        {% endfor %}  <!-- <--- AQUI ESTÁ A TAG QUE FALTAVA -->
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -186,7 +178,7 @@
 <!-- Modal Requisição de Pessoal -->
 <div class="modal fade" id="modalRp" tabindex="-1" aria-labelledby="modalRpLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content-custom">
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalRpLabel">Requisição de Pessoal</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -212,7 +204,7 @@
 <!-- Modal Movimentação de Pessoal -->
 <div class="modal fade" id="modalMov" tabindex="-1" aria-labelledby="modalMovLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content-custom">
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalMovLabel">Movimentação de Pessoal</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -238,7 +230,7 @@
 <!-- Modal Requisição de Desligamento -->
 <div class="modal fade" id="modalRd" tabindex="-1" aria-labelledby="modalRdLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content-custom">
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalRdLabel">Requisição de Desligamento</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -264,7 +256,7 @@
 <!-- Modal de Confirmação (se necessário) -->
 <div class="modal fade" id="modalConfirmacao" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content-custom">
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Confirmação</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -284,6 +276,20 @@
 <!-- =================================================================== -->
 <!-- =================== SCRIPTS DA PÁGINA =================== -->
 <!-- =================================================================== -->
+
+<!-- CORREÇÃO: Todos os scripts foram movidos para o final do <body> e na ordem correta -->
+
+<!-- 2. Bootstrap JS (depende do jQuery ) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 3. DataTables (depende do jQuery ) -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- 4. Select2 (depende do jQuery ) -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- 5. Seu script personalizado (depende de todas as bibliotecas acima ) -->
 <script>
     // Script para o dropdown do perfil de usuário
     function toggleDropdown() {
@@ -299,39 +305,60 @@
         }
     });
 
-    // Inicialização do DataTable para a tabela de pendências
+    // Inicialização do DataTable e Lógica dos Modais
     $(document).ready(function () {
+        // Inicializa a tabela
         $('#tabela-movimentacoes').DataTable({
             responsive: true,
             pageLength: 5,
             lengthMenu: [5, 10, 15, 20, "Todos"],
             language: {
                 url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json",
-                // ADICIONE ESTA LINHA:
                 emptyTable: "Não há movimentações aguardando sua aprovação."
             },
             order: [[ 3, 'desc' ]]
         } );
-    });
 
-    // Lógica para o modal de confirmação
-    document.addEventListener('DOMContentLoaded', function() {
-        const abrirConfirmacao = "{{ abrir_confirmacao|default:'false' }}" === "True";
-        const modalConfirmacao = new bootstrap.Modal(document.getElementById('modalConfirmacao'));
-        const modalRp = new bootstrap.Modal(document.getElementById('modalRp'));
+        // Solução para o problema dos modais fechando sozinhos com Select2
+        function inicializarSelect2(modalElement) {
+            // Encontra todos os campos com a classe .select2-field dentro do modal específico
+            $(modalElement).find('.select2-field').each(function() {
+                // Verifica se o campo já foi inicializado para evitar duplicação
+                if (!$(this).data('select2')) { 
+                    $(this).select2({
+                        dropdownParent: $(modalElement), // Anexa o dropdown ao modal
+                        width: '100%'
+                    });
+                }
+            });
+        }
+
+        // Adiciona um listener para quando QUALQUER modal for aberto
+        $('.modal').on('shown.bs.modal', function () {
+            inicializarSelect2(this); // 'this' é o elemento do modal que foi aberto
+        });
+
+        // Lógica para o modal de confirmação
+        const urlParams = new URLSearchParams(window.location.search);
+        const abrirConfirmacao = urlParams.get('confirmacao') === 'true';
 
         if (abrirConfirmacao) {
+            const modalConfirmacao = new bootstrap.Modal(document.getElementById('modalConfirmacao'));
             modalConfirmacao.show();
-            // Remove o parâmetro da URL
+            // Remove o parâmetro da URL para não reabrir ao recarregar a página
             if (window.history.replaceState) {
                 const url = new URL(window.location);
                 url.searchParams.delete('confirmacao');
-                window.history.replaceState({}, document.title, url.pathname + url.search);
+                window.history.replaceState({ path: url.href }, '', url.href);
             }
         }
 
-        document.getElementById('confirmarRequisicaoBtn').addEventListener('click', function() {
-            modalConfirmacao.hide();
+        $('#confirmarRequisicaoBtn').on('click', function() {
+            const modalConfirmacao = bootstrap.Modal.getInstance(document.getElementById('modalConfirmacao'));
+            const modalRp = new bootstrap.Modal(document.getElementById('modalRp'));
+            if (modalConfirmacao) {
+                modalConfirmacao.hide();
+            }
             modalRp.show();
         });
     });

@@ -21,8 +21,9 @@ class BaseForm(forms.ModelForm):
 class SetorForm(forms.ModelForm):
     class Meta:
         model = Setor
-        fields = ['nome', 'base']
+        fields = ['centro_de_custo', 'nome', 'base']
         widgets = {
+            'centro_de_custo': forms.TextInput(attrs={'class': 'form-control'}),
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'base': forms.Select(attrs={'class': 'form-control'}),
         }

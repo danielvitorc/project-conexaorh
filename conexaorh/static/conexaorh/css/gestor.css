@@ -19,6 +19,7 @@
   --surface-color: #FAFBFC;
   --border-color: #E1E5E9;
   --border-light: #F0F2F5;
+  --card-text: #64748b;
   --text-secondary: #6B7280;
   --text-muted: #9CA3AF;
   --success-color: #10B981;
@@ -91,6 +92,7 @@
   --surface-color: #334155;
   --border-color: #475569;
   --border-light: #374151;
+  --card-text: #171a1f;
   --text-secondary: #CBD5E1;
   --text-muted: #94A3B8;
   
@@ -113,6 +115,9 @@
   box-sizing: border-box;
 }
 
+.card-text {
+color: var(--card-text);
+}
 body {
   background: var(--bg-color);
   color: var(--text-color);
@@ -465,17 +470,19 @@ p {
   transform: translateY(-1px);
 }
 
-/* Tabela Corporativa Avançada */
+/* Tabela Corporativa Avançada - VERSÃO CORRIGIDA E ESTILIZADA */
 .tabela-moderninha {
   width: 100%;
-  border-collapse: separate;
+  border-collapse: separate; /* Mantido para preservar os cantos arredondados */
   border-spacing: 0;
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow);
   background: var(--card-bg);
-}
 
+  /* NOVO: Força o algoritmo de layout fixo. Essencial para o alinhamento. */
+  table-layout: fixed; 
+}
 .tabela-moderninha thead {
   background: var(--gradient-primary);
   color: white;
@@ -484,14 +491,12 @@ p {
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.05em;
 }
-
 .tabela-moderninha th {
   padding: var(--spacing-lg) var(--spacing-lg);
   text-align: left;
   border: none;
   position: relative;
 }
-
 .tabela-moderninha th::after {
   content: '';
   position: absolute;
@@ -501,26 +506,42 @@ p {
   width: 1px;
   background: rgba(255, 255, 255, 0.2);
 }
-
 .tabela-moderninha th:last-child::after {
   display: none;
 }
-
 .tabela-moderninha td {
   padding: var(--spacing-lg) var(--spacing-lg);
   text-align: left;
   font-size: 0.875rem;
   border-bottom: 1px solid var(--cor-linha-table);
   transition: var(--transition-fast);
-}
 
+  /* NOVO: Controla o conteúdo que transborda, cortando com "..." */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* NOVO: Regra específica para a célula que contém o formulário.
+   Permite que o conteúdo dela quebre a linha se necessário, 
+   evitando que ela empurre as outras colunas. */
+.tabela-moderninha td:has(form) {
+  white-space: normal; /* Permite que o conteúdo do formulário respire */
+}
+/* NOVO: Garante que o formulário se alinhe corretamente dentro da célula. */
+.tabela-moderninha td form {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaço entre o campo e o botão */
+}
+/* NOVO: Remove margens que o {{ form.as_p }} pode adicionar. */
+.tabela-moderninha td form p {
+  margin: 0;
+}
 .tabela-moderninha tbody tr {
   transition: var(--transition-fast);
   position: relative;
 }
-
 .tabela-moderninha tbody tr::before {
-  content: '';
   position: absolute;
   left: 0;
   top: 0;
@@ -540,6 +561,7 @@ p {
   transform: translateX(3px);
   box-shadow: var(--shadow-sm);
 }
+
 
 /* Botões Corporativos */
 .btn {
